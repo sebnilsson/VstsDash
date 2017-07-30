@@ -1,0 +1,124 @@
+﻿body {
+    /*padding-top: 50px;*/
+    padding-bottom: 20px;
+}
+
+.monospace {
+    font-family: Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+.no-wrap {
+    white-space: nowrap;
+}
+.flex-noshrink {
+    flex-shrink: 0;
+}
+.one-line {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Dashboard-mode */
+body.dashboard {
+    background-color: #000;
+}
+body.dashboard .card {
+    background-color: #fff;
+}
+body.dashboard .body-content-dashboard > .main-container > h1 {
+    color: #fff;
+}
+
+/* Leaderboard */
+
+.card-header dl, .card-header dt, .card-header dd {
+    margin: 0;
+    padding: 0;
+}
+.leaderboard-unassigned-score .list-group-item, .leaderboard-all-scores .list-group-item {
+    padding: 0.25rem 0.5rem;
+}
+.leaderboard-player .list-group-item {
+    padding: 0.1rem 0.25rem;
+}
+.leaderboard-player-column {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+.leaderboard-player-image {
+    border: 1px solid #888;
+    height: 44px;
+    width: 44px;
+}
+.leaderboard-player-first .leaderboard-player-header {
+    background-color: #ffd700;
+}
+.leaderboard-player-second .leaderboard-player-header {
+    background-color: #c0c0c0;
+}
+.leaderboard-player-third .leaderboard-player-header {
+    background-color: #cd7f32;
+}
+.leaderboard-player {
+    border-color: #333;
+    height: 100%;
+}
+.leaderboard-player .card-header, .leaderboard-player .card-block {
+    padding: .5rem 0.75rem
+}
+.leaderboard-player-block dl, .leaderboard-player-block dt, .leaderboard-player-block dd {
+    margin: 0;
+}
+.leaderboard-player-score-block {
+    border: 1px solid #999;
+    padding: 0.25rem 0;
+}
+.leaderboard-player-meta-block dl {
+    border: 1px solid #999;
+}
+.leaderboard-player-points {
+    border-color: #000;
+    height: 100%;
+}
+/*.leaderboard-player-points-list li:nth-child(odd) {
+    background-color: #ccc;
+}*/
+
+/* Work iterations */
+
+.iteration-work-iteration-items { font-size: 80%; }
+
+.work-iteration-item.card-outline-success,
+.work-iteration-item.card-outline-primary { border-left-width: 6px; }
+
+.work-iteration-item.card-outline-success header,
+.work-iteration-item.card-outline-primary header { border-radius: initial; }
+
+.work-iteration-item header { padding: 0.5rem; }
+
+.work-iteration-item aside { padding: 0.25rem 0.75rem; }
+
+.work-iteration-item-meta { padding: 0 0.75rem; }
+
+.work-iteration-item-children { padding: 0.5rem; }
+
+.work-iteration-item-children-content { padding: 0.5rem 0.5rem 0 0.5rem; }
+
+.work-iteration-item-children header { padding: 0.25rem 0.5rem; }
+
+.work-iteration-item-child { margin-bottom: 0.5rem; }
+
+.work-iteration-item-parent { margin-top: 0.5rem; }
+
+.work-iteration-item-child header { padding: 0.25rem; }
+
+.work-iteration-item-description { padding: 0.5rem; }
+
+.work-iteration-item-description .card {
+    max-height: 10em;
+    overflow: auto;
+}
+
+.work-iteration-item-description .card .card-block { padding: 0.5rem 0.75rem; }
+
+.work-iteration-work aside { padding: 0.25rem 0.75rem; }

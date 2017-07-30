@@ -1,0 +1,149 @@
+﻿@model WorkIterationViewModel
+@{
+    const string HeaderMetaItemClass = "col-lg-4 col-md-6";
+    const string HeaderMetaItemWideClass = "col-lg-6 col-md-12";
+}
+
+<div class="card card-outline-secondary">
+    <div class="card-block small">
+        <div class="row">
+            <div class="@HeaderMetaItemWideClass">
+                IterationPath: <code>@Model.Result.IterationPath</code>
+            </div>
+        </div>
+        <div class="row">
+            @if (Model.Result.IterationStartDate != null || Model.Result.IterationFinishDate != null)
+            {
+                <div class="@HeaderMetaItemClass">
+                    Period:
+
+                    <code>
+                        @if (Model.Result.IterationStartDate != null)
+                        {
+                            @*<a href="@Url.WorkIteration(Model.ProjectId, Model.TeamId, Model.IterationId, asOf: Model.Result.IterationStartDate)">
+                                @Model.Result.IterationStartDate.Value.ToString("yyyy-MM-dd")
+                            </a>*@
+                            @(Model.Result.IterationStartDate.Value.ToString("yyyy-MM-dd"))
+                        }
+                        @if (Model.Result.IterationStartDate != null && Model.Result.IterationFinishDate != null)
+                        {
+                            <text> - </text>
+                        }
+                        @if (Model.Result.IterationFinishDate != null)
+                        {
+                            @*<a href="@Url.WorkIteration(Model.ProjectId, Model.TeamId, Model.IterationId, asOf: Model.Result.IterationFinishDate)">
+                                @Model.Result.IterationFinishDate.Value.ToString("yyyy-MM-dd")
+                            </a>*@
+                            @(Model.Result.IterationFinishDate.Value.ToString("yyyy-MM-dd"))
+                        }
+                    </code>
+                </div>
+            }
+
+            @if (Model.Result.EffortTotal > 0)
+            {
+                <div class="@HeaderMetaItemClass">
+                    Total effort: <code>@Model.Result.EffortTotal</code>
+                </div>
+            }
+
+            <div class="@HeaderMetaItemClass">
+                Total remaining work: <code>@Model.Result.RemainingWorkTotal h</code>
+                <em>(@Model.Result.AllChildItems.Count())</em>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (!Model.Result.IsBacklog)
+{
+    <div class="work-iteration-work card card-outline-info small mt-2">
+        <header class="card-header card-info text-white" data-toggle="collapse" data-target="#iteration-work" role="button">
+            Work
+        </header>
+        <div id="iteration-work" class="collapse show">
+            <aside class="card-block bg-faded">
+                <div class="row">
+                    <div class="@HeaderMetaItemClass">
+                        Total remaining work: <code>@Model.Result.RemainingWorkTotal h</code>
+                        <em>(@Model.Result.AllChildItems.Count())</em>
+                    </div>
+
+                    @if (Model.Result.RemainingWorkToDo > 0)
+                    {
+                        <div class="@HeaderMetaItemClass">
+                            To do remaining work: <code>@Model.Result.RemainingWorkToDo</code>
+                            <em>(@Model.Result.RemainingWorkToDoCount)</em>
+                        </div>
+                    }
+
+                    @if (Model.Result.RemainingWorkInProgress > 0)
+                    {
+                        <div class="@HeaderMetaItemClass">
+                            In progress remaining work: <code>@Model.Result.RemainingWorkInProgress</code>
+                            <em>(@Model.Result.RemainingWorkInProgressCount)</em>
+                        </div>
+                    }
+                </div>
+            </aside>
+            @if (Model.Result.Capacities.Any())
+            {
+                <section class="card-block">
+                    @foreach (var capacity in Model.Result.Capacities)
+                    {
+                        <div>
+                            <strong>@(capacity.TeamMemberDisplayName)</strong>
+                            Capacity: <code>@capacity.TotalCapacityPerDay h</code>
+                            @if (capacity.TotalDaysOff > 0)
+                            {
+                                @:Days off: <code>@capacity.TotalDaysOff</code>
+                            }
+                        </div>
+                    }
+                </section>
+            }
+        </div>
+    </div>
+}
+
+<div class="work-iteration-filter card card-outline-success small mt-2">
+    <header class="card-header card-success text-white pt-2 pb-2" data-toggle="collapse" data-target="#iteration-filters" role="button">
+        Filters
+    </header>
+    <section id="iteration-filters" class="card-block collapse show p-3">
+        <div class="form-inline">
+            <div class="input-group mr-2">
+                <div class="btn-group" role="group">
+                    <button id="iteration-expand-all" class="btn btn-success btn-sm">Expand all items</button>
+                    <button id="iteration-collapse-all" class="btn btn-outline-success btn-sm">Collapse all items</button>
+                </div>
+            </div>
+            <div class="input-group">
+                <div class="input-group-addon">
+                    <label for="iteration-search-text" class="small">Search</label>
+                </div>
+                <input type="text" id="iteration-search-text" class="form-control form-control-sm"/>
+                <span class="input-group-btn">
+                    <button id="iteration-search-text-clear" class="btn btn-sm btn-warning">Clear</button>
+                </span>
+            </div>
+        </div>
+
+        @if (Model.AreaPaths.Any())
+        {
+            <div class="card mt-2">
+                <header class="card-header bg-muted text-success p-2">
+                    Expand by Area
+                </header>
+                <ul class="list-inline p-1 mb-0">
+                    @foreach (var areaPath in Model.AreaPaths)
+                    {
+                        <li class="list-inline-item area-path-item m-1" data-area-path="@(areaPath.Replace('\\', ':'))">
+                            <button class="btn btn-outline-success btn-sm">@areaPath</button>
+                        </li>
+                    }
+                </ul>
+            </div>
+        }
+    </section>
+</div>

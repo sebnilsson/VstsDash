@@ -1,0 +1,6 @@
+﻿@using VstsDash.WebApp
+@{
+    var useEmptyLayout = Context.Request.IsDashboard();
+
+    Layout = useEmptyLayout ? "_EmptyLayout" : "_SiteLayout";
+}

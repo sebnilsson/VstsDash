@@ -1,0 +1,50 @@
+﻿@model IReadOnlyCollection<WorkActivityViewModel.AuthorCommits>
+
+<div class="card card-outline-warning mt-3">
+    <h2 class="card-header card-warning text-white" data-toggle="collapse" data-target="#card-authors" role="button">
+        Authors
+    </h2>
+
+    <div id="card-authors" class="card-block collapse show pb-0">
+        @foreach (var authorCommit in Model)
+        {
+            var author = authorCommit.Author;
+
+            <div class="card card-outline-success mb-3">
+                <h3 class="card-header card-success text-white" title="@author.MemberUniqueName"
+                    data-toggle="collapse" data-target="#author-@author.MemberId" role="button">
+                    @author.MemberDisplayName
+                    <small>
+                        Commits: @authorCommit.CommitCount, Changes: @authorCommit.CommitsTotalChangeCountSum
+                    </small>
+                </h3>
+
+                <div id="author-@author.MemberId" class="card-block collapse">
+                    <ul>
+                        @foreach (var commitInfo in authorCommit.Commits)
+                        {
+                            var commit = commitInfo.Commit;
+                            var repository = commitInfo.Repository;
+
+                            <li>
+                                <small>
+                                    [@repository.RepositoryName]
+                                    @if (commit.AuthorDate != null)
+                                    {
+                                        <span class="monospace">@commit.AuthorDate?.ToString("yyyy-MM-dd HH:mm:ss")</span>
+                                    }
+                                    [<code title="@commit.CommitId">@commit.CommitId.Substring(0, 7)</code>]
+                                    (Changes: @commit.TotalChangeCount)
+                                </small>
+
+                                <span>
+                                    @commit.Comment
+                                </span>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,216 @@
+@model HomeMetaViewModel
+
+<div class="container mt-3 small">
+<div class="card card-outline-secondary">
+<h2 class="card-header">Projects</h2>
+
+@foreach (var project in Model.Projects)
+{
+    <div class="card-block">
+    <div class="card card-outline-primary">
+    <h3 class="card-header card-primary text-white">
+        <span class="badge badge-default">Project</span>
+        @project.Name
+        (<code>@project.Id</code>)
+    </h3>
+
+    <div class="card-block">
+        @if (!string.IsNullOrWhiteSpace(project.Description))
+        {
+            <p class="card-text">@project.Description</p>
+        }
+        @if (!string.IsNullOrWhiteSpace(project.Url))
+        {
+            <p class="card-text">
+                <strong>Url:</strong>
+                (<code>@project.Url</code>)
+            </p>
+        }
+
+        @if (project.Queries.Any())
+        {
+            <div class="card mb-3">
+                <h5 class="card-header" data-toggle="collapse" data-target="#card-queries-@project.Id" role="button">
+                    Queries
+                </h5>
+
+                <div id="card-queries-@project.Id" class="card-block collapse">
+                    <ul>
+                        @foreach (var query in project.Queries)
+                        {
+                            <li>
+                                <code>@query.Id</code>
+                                <strong>query.Name</strong>
+                                (<span class="monospace">@query.Path</span>, Public: <code>@query.IsPublic</code>)
+
+                                @if (!string.IsNullOrWhiteSpace(query.Wiql))
+                                {
+                                    <div>
+                                        <pre><code>@query.Wiql</code></pre>
+                                    </div>
+                                }
+
+                                @if (query.Children.Any())
+                                {
+                                    <ul>
+                                        @foreach (var child in query.Children)
+                                        {
+                                            <li>
+                                                <code>@child.Id</code>
+                                                <strong>@child.Name</strong>
+                                                (<span class="monospace">@child.Path</span>, Public: <code>@child.IsPublic</code>)
+
+                                                @if (!string.IsNullOrWhiteSpace(child.Wiql))
+                                                {
+                                                    <div>
+                                                        <pre><code>@child.Wiql</code></pre>
+                                                    </div>
+                                                }
+                                            </li>
+                                        }
+                                    </ul>
+                                }
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        }
+
+        @if (project.Repositories.Any())
+        {
+            <div class="card mb-3">
+                <h5 class="card-header" data-toggle="collapse" data-target="#card-repositories-@project.Id" role="button">
+                    Repositories
+                </h5>
+
+                <div id="card-repositories-@project.Id" class="card-block collapse">
+                    <ul>
+                        @foreach (var repository in project.Repositories)
+                        {
+                            <li>
+                                <code>@repository.Id</code>
+                                <strong>@repository.Name</strong>
+                                (<span class="monospace">@repository.RemoteUrl</span>)
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        }
+
+        @foreach (var team in project.Teams)
+        {
+            <div class="card card-outline-info mb-3">
+                <h4 class="card-header card-info text-white"
+                    data-toggle="collapse" data-target="#card-team-@project.Id-@team.Id" role="button">
+                    <span class="badge badge-default">Team</span>
+                    @team.Name
+                    (<code>@team.Id</code>)
+                </h4>
+
+                <div id="card-team-@project.Id-@team.Id" class="card-block collapse">
+                    @if (!string.IsNullOrWhiteSpace(project.Description))
+                    {
+                        <div class="card-block">
+                            <p class="card-text">@team.Description</p>
+                        </div>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(team.Url))
+                    {
+                        <p class="card-text">
+                            <strong>Url:</strong>
+                            (<code>@team.Url</code>)
+                        </p>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(team.DefaultIterationId))
+                    {
+                        <p class="card-text">
+                            <strong>Default Iteration:</strong>
+                            @team.DefaultIterationName (<code>@team.DefaultIterationId</code>)
+                        </p>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(team.BacklogIterationId))
+                    {
+                        <p class="card-text">
+                            <strong>Backlog Iteration:</strong>
+                            @team.BacklogIterationName (<code>@team.BacklogIterationId</code>)
+                        </p>
+                    }
+
+                    @if (team.Boards.Any())
+                    {
+                        <div class="card mb-3">
+                            <h6 class="card-header"
+                                data-toggle="collapse" data-target="#card-boards-@project.Id-@team.Id" role="button">
+                                Boards
+                            </h6>
+
+                            <div id="card-boards-@project.Id-@team.Id" class="card-block collapse">
+                                <ul>
+                                    @foreach (var board in team.Boards)
+                                    {
+                                        <li>
+                                            <code>@board.Id</code>
+                                            <strong>@board.Name</strong>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    }
+
+                    @if (team.Members.Any())
+                    {
+                        <div class="card card-outline-success mb-3">
+                            <h5 class="card-header card-success text-white"
+                                data-toggle="collapse" data-target="#card-members-@project.Id-@team.Id" role="button">
+                                Members
+                            </h5>
+
+                            <div id="card-members-@project.Id-@team.Id" class="card-block collapse">
+                                <ul>
+                                    @foreach (var member in team.Members)
+                                    {
+                                        <li>
+                                            <code>@member.Id</code>
+                                            <strong>@member.DisplayName</strong>
+                                            (<span class="monospace">@member.UniqueName</span>)
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    }
+
+                    @if (team.Iterations.Any())
+                    {
+                        <div class="card card-outline-warning mb-3">
+                            <h5 class="card-header card-warning text-white"
+                                data-toggle="collapse" data-target="#card-iterations-@project.Id-@team.Id" role="button">
+                                Iterations
+                            </h5>
+
+                            <div id="card-iterations-@project.Id-@team.Id" class="card-block collapse">
+                                <ul>
+                                    @foreach (var iteration in team.Iterations)
+                                    {
+                                        <li>
+                                            <code>@iteration.Id</code>
+                                            <strong>@iteration.Name</strong>
+                                            (<span class="monospace">@iteration.StartDate?.ToString("yyyy-MM-dd") - @iteration.FinishDate?.ToString("yyyy-MM-dd")</span>)
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+    </div>
+    </div>
+}
+</div>
+</div>

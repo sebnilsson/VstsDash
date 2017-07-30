@@ -1,0 +1,77 @@
+﻿@model WorkLeaderboardViewModel
+@{
+    var dateText = $"{Model.IterationCapacity.IterationWorkDays.First():yyyy-MM-dd} - {Model.IterationCapacity.IterationWorkDays.Last():yyyy-MM-dd}";
+}
+
+<div class="card card-outline-info small mt-0 mb-2">
+    <h2 class="card-header card-info h6 pt-1 pb-1 pl-2 pr-2"
+        title="@string.Join("\n", Model.IterationCapacity.IterationWorkDays.Select(x => x.ToString("yyyy-MM-dd")))">
+        Overview <small>@dateText</small>
+    </h2>
+    @if (!Context.Request.IsDashboard())
+    {
+        <div class="card-block pt-1 pb-0 pl-2 pr-2">
+            <dl class="row mb-0">
+                <dt class="col-sm-3">
+                    Team members
+                </dt>
+                <dd class="col-sm-1"
+                    title="@string.Join("\n", Model.Players.Select(x => x.DisplayName).OrderBy(x => x))">
+                    @Model.Players.Count(x => x.Capacity.WorkDaysTotalCount > 0).ToString(Formats.NumberTwoDecimals)
+                </dd>
+                @if (Model.IterationCapacity.IterationWorkDays.Count != Model.IterationCapacity.NetWorkDays.Count)
+                {
+                    <dt class="col-sm-3">
+                        Iteration work days
+                    </dt>
+                    <dd class="col-sm-1"
+                        title="@string.Join("\n", Model.IterationCapacity.IterationWorkDays.Select(x => x.ToString("yyyy-MM-dd")))">
+                        @Model.IterationCapacity.IterationWorkDays.Count.ToString(Formats.NumberTwoDecimals)d
+                    </dd>
+                }
+                @if (Model.IterationCapacity.TeamDaysOff.Any())
+                {
+                    <dt class="col-sm-3">
+                        Team days off
+                    </dt>
+                    <dd class="col-sm-1"
+                        title="@string.Join("\n", Model.IterationCapacity.TeamDaysOff.Select(x => x.ToString("yyyy-MM-dd")))">
+                        @Model.IterationCapacity.TeamDaysOff.Count.ToString(Formats.NumberTwoDecimals)d
+                    </dd>
+                }
+            </dl>
+        </div>
+    }
+    <div class="card-block pt-1 pb-0 pl-2 pr-2">
+        <dl class="row mb-0">
+            @*@if (Model.Players.Any(x => x.Capacity.DailyPercent > 0))
+            {
+                <dt class="col-sm-3">
+                    Average daily capacity
+                </dt>
+                <dd class="col-sm-1">
+                    @Model.Players.Average(x => x.Capacity.DailyPercent).ToString(Formats.NumberTwoDecimals)%
+                </dd>
+            }*@
+            <dt class="col-sm-3">
+                Team work days
+            </dt>
+            <dd class="col-sm-1"
+                title="@string.Join("\n", Model.IterationCapacity.NetWorkDays.Select(x => x.ToString("yyyy-MM-dd")))">
+                @Model.IterationCapacity.NetWorkDays.Count.ToString(Formats.NumberTwoDecimals)d
+            </dd>
+            <dt class="col-sm-3">
+                Total days capacity
+            </dt>
+            <dd class="col-sm-1">
+                @Model.TotalWorkDaysTotalCount.ToString(Formats.NumberTwoDecimals)d
+            </dd>
+            <dt class="col-sm-3">
+                Total hours capacity
+            </dt>
+            <dd class="col-sm-1">
+                @Model.TotalHoursTotalCount.ToString(Formats.NumberTwoDecimals)h
+            </dd>
+        </dl>
+    </div>
+</div>

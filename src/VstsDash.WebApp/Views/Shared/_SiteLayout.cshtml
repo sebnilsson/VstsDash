@@ -1,0 +1,50 @@
+﻿@{
+    Layout = "_EmptyLayout";
+}
+
+@section scripts
+{
+    @RenderSection("scripts", false)
+}
+
+<nav class="navbar navbar-toggleable-md navbar-light bg-faded">
+    <button type="button" class="navbar-toggler navbar-toggler-right" data-toggle="collapse" data-target=".navbar-collapse">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <a href="@Url.Empty()" class="navbar-brand">
+        VSTS Dash
+    </a>
+
+    <div class="collapse navbar-collapse">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a href="@Url.WorkLeaderboard()" class="nav-link">Leaderboard</a>
+            </li>
+            <li class="nav-item">
+                <a href="@Url.WorkActivity()" class="nav-link">Activity</a>
+            </li>
+            @*<li class="nav-item">
+                <a href="@Url.WorkSprint()" class="nav-link">Sprint</a>
+            </li>
+            <li class="nav-item">
+                <a href="@Url.WorkBacklog()" class="nav-link">Backlog</a>
+            </li>*@
+        </ul>
+    </div>
+</nav>
+
+@*<div class="navbar navbar-toggleable-md navbar-light bg-faded">
+    <div class="container">
+            
+    </div>
+</div>*@
+
+<div class="body-content">
+    @RenderBody()
+    <hr/>
+</div>
+<div class="container">
+    <footer class="small">
+        <p>&copy; @DateTime.Today.Year - Created by <a href="https://sebnilsson.com">Seb" Nilsson</a></p>
+    </footer>
+</div>

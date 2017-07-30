@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard1.6</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.ValueTuple" Version="4.3.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\VstsDash.RestApi.Abstractions\VstsDash.RestApi.Abstractions.csproj" />
+    <ProjectReference Include="..\VstsDash\VstsDash.csproj" />
+  </ItemGroup>
+
+</Project>

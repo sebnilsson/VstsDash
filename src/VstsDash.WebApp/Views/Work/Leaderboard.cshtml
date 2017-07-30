@@ -1,0 +1,122 @@
+﻿@model WorkLeaderboardViewModel
+@{
+    var isDashboard = Context.Request.IsDashboard();
+
+    var requestQuery = Context.Request.Query;
+
+    var hasAnyUnassignedScore = Model.UnassignedScore?.Points.Any() ?? false;
+}
+
+<div class="leaderboard-container main-container @(!isDashboard ? "container" : "container-fluid") pb-3">
+    <h1 class="h2 mb-2">
+        <strong>Leaderboard</strong>: @Model.IterationName
+
+        @if (!isDashboard)
+        {
+            <a href="@Url.WorkLeaderboard(requestQuery["projectId"], requestQuery["teamId"], requestQuery["iterationId"], true)"
+               class="btn btn-warning btn-sm">
+                @Html.Icon(Icons.Dashboard, "fa-fw")
+                Dashboard
+            </a>
+            <a href="@Url.WorkActivity(requestQuery["projectId"], requestQuery["teamId"], requestQuery["iterationId"])"
+               class="btn btn-outline-info btn-sm">
+                Activity
+            </a>
+        }
+    </h1>
+
+    <div class="@(isDashboard ? "row" : null)">
+        @if (Model.IterationCapacity.IterationWorkDays.Any())
+        {
+            <div class="@(isDashboard ? "col-xl-6" : null) @(isDashboard && !hasAnyUnassignedScore ? "offset-xl-3" : null)">
+                @Html.Partial("Leaderboard/_Meta", Model)
+            </div>
+        }
+
+        @if (hasAnyUnassignedScore)
+        {
+            <div class="@(isDashboard ? "col-xl-6" : null)">
+                @Html.Partial("Leaderboard/_UnassignedScore", Model.UnassignedScore)
+            </div>
+        }
+    </div>
+
+    @if (Model.Players.Any())
+    {
+        <div class="card card-outline-primary mt-2 mb-2">
+            @if (Model.TotalScorePointsSum > 0)
+            {
+                <div class="card-header pt-1 pb-1 pl-2 pr-2">
+                    <dl class="row mt-0 mb-0">
+                        <dt class="col-sm-3">
+                            @Html.Icon(Icons.Point, "fa-fw fa-lg")
+                            Total Points
+                        </dt>
+                        <dd class="col-sm-1">
+                            <span class="badge badge-primary monospace">
+                                @Model.TotalScorePointsSum.ToString(Formats.NumberTwoDecimals)
+                            </span>
+                        </dd>
+                        <dt class="col-sm-3">
+                            @Html.Icon(Icons.Goal, "fa-fw fa-lg")
+                            Total Goals
+                        </dt>
+                        <dd class="col-sm-1">
+                            <span class="badge badge-primary monospace">
+                                @Model.TotalScoreGoalsSum.ToString(Formats.NumberTwoDecimals)
+                            </span>
+                        </dd>
+                        <dt class="col-sm-3">
+                            @Html.Icon(Icons.Assist, "fa-fw fa-lg")
+                            Total Assists
+                        </dt>
+                        <dd class="col-sm-1">
+                            <span class="badge badge-primary monospace">
+                                @Model.TotalScoreAssistsSum.ToString(Formats.NumberTwoDecimals)
+                            </span>
+                        </dd>
+                    </dl>
+                </div>
+            }
+
+            <div class="leaderboard-players pt-2 pb-0">
+                <div class="d-inline-flex flex-row flex-wrap align-items-stretch">
+                    @foreach (var player in Model.Players)
+                    {
+                        var isFirst = Model.Players.ElementAtOrDefault(0) == player && player.ScorePointsSum > 0;
+                        var isSecond = Model.Players.ElementAtOrDefault(1) == player && player.ScorePointsSum > 0;
+                        var isThird = Model.Players.ElementAtOrDefault(2) == player && player.ScorePointsSum > 0;
+
+                        @Html.Partial("Leaderboard/_Player", player,
+                            new ViewDataDictionary(ViewData) {{"IsFirst", isFirst}, {"IsSecond", isSecond}, {"IsThird", isThird}})
+                    }
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="card card-outline-danger">
+            <div class="card-block">
+                <em>No players or scores found for leaderboard</em>
+            </div>
+        </div>
+    }
+
+    @if (!isDashboard && Model.Players.Any() && Model.TotalScorePointsSum > 0)
+    {
+        <div class="leaderboard-all-scores card card-outline-info mt-2">
+            <h2 class="card-header card-outline-secondary h6 pt-1 pb-1 pl-2 pr-2">All points</h2>
+
+            <ul class="list-group list-group-flush">
+                @foreach (var point in Model.Players.SelectMany(x => x.Score.Points).OrderByDescending(x => x.EarnedAt))
+                {
+                    <li class="list-group-item">
+                        @Html.Partial("Leaderboard/_PlayerScorePoint", point,
+                            new ViewDataDictionary(ViewData) {{"IncludeEarnedAt", true}})
+                    </li>
+                }
+            </ul>
+        </div>
+    }
+</div>

@@ -1,0 +1,109 @@
+﻿@model VstsDash.AppServices.Models.WorkIterationItem
+@{
+    var isBacklog = ViewData["IsBacklog"] as bool? ?? false;
+}
+@functions
+{
+
+    string HeaderClass => Model.IsTypeProductBacklogItem ? "card-primary text-white" : (Model.IsTypeBug ? "card-danger text-white" : null);
+
+    string CollapseShowClass => !Model.IsStateDone ? "show" : null;
+
+    string ChildrenCollapseShowClass => Model.ChildItems.Any() && !Model.ChildItems.All(x => x.IsStateDone) ? "show" : null;
+}
+
+<work-iteration-item-card state="@Model.State" class="work-iteration-item-parent">
+    <header data-toggle="collapse" data-target="#parent-@Model.Id" role="button"
+            class="card-header @HeaderClass">
+        <code>@Model.Id</code>
+        <span class="ml-1 mr-3">@Model.Title</span>
+
+        @foreach (var tag in Model.Tags)
+        {
+            <span class="badge badge-default bg-faded text-muted">@tag</span>
+        }
+    </header>
+
+    <div id="parent-@Model.Id" data-area-path="@(Model.AreaPath.Replace('\\', ':'))"
+         class="collapse @CollapseShowClass iteration-parent-collapse">
+        <aside class="card-block bg-faded">
+            <div class="row">
+                <work-iteration-item-meta>
+                    <div class="media">
+                        @if (!string.IsNullOrWhiteSpace(Model.AssignedToMember?.ImageUrl))
+                        {
+                            <img src="@(Url.ApiFile(Model.AssignedToMember?.ImageUrl))" class="d-flex mr-1" style="max-height: 24px; max-width: 24px;"/>
+                        }
+
+                        <div class="media-body">
+                            @if (Model.AssignedToMember != null)
+                            {
+                                @Model.AssignedToMember.DisplayName
+                            }
+                            else
+                            {
+                                <em>Unassigned</em>
+                            }
+                        </div>
+                    </div>
+                </work-iteration-item-meta>
+
+                <work-iteration-item-meta label="State">
+                    <state-badge state="@Model.State"></state-badge>
+                </work-iteration-item-meta>
+
+                @if (Model.RemainingWorkTotal > 0)
+                {
+                    <work-iteration-item-meta label="Total Remaining" value="@Model.RemainingWorkTotal h"/>
+                }
+
+                @if (Model.Effort > 0)
+                {
+                    <work-iteration-item-meta label="Effort" value="@Model.Effort"/>
+                }
+            </div>
+            <div class="row">
+                <work-iteration-item-meta is-wide="true" label="Area" value="@Model.AreaPath"/>
+
+                @if (isBacklog)
+                {
+                    <work-iteration-item-meta is-wide="true" label="IterationPath" value="@Model.IterationPath"/>
+                }
+            </div>
+        </aside>
+
+        <section>
+            @if (!string.IsNullOrWhiteSpace(Model.Description))
+            {
+                <div class="card-block work-iteration-item-description">
+                    <div class="card card-outline-secondary">
+                        <div class="card-block">
+                            @Html.Raw(Model.Description)
+                        </div>
+                    </div>
+                </div>
+            }
+
+            @if (Model.ChildItems.Any())
+            {
+                <div class="card-footer work-iteration-item-children">
+                    <section class="card card-outline-info">
+                        <header data-toggle="collapse" data-target="#children-@Model.Id" role="button"
+                                class="card-header card-info text-white">
+                            Children (@Model.ChildItems.Count)
+                        </header>
+                        <div id="children-@Model.Id"
+                             class="work-iteration-item-children-content card-block bg-faded collapse @ChildrenCollapseShowClass">
+                            <div class="row">
+                                @foreach (var child in Model.ChildItems)
+                                {
+                                    @Html.PartialContent("_WorkIterationItemChild", child, new {isBacklog})
+                                }
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            }
+        </section>
+    </div>
+</work-iteration-item-card>

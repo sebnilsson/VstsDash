@@ -1,0 +1,151 @@
+﻿@model WorkLeaderboardViewModel.Player
+@{
+    var isFirst = ViewData["IsFirst"] as bool? ?? false;
+    var isSecond = ViewData["IsSecond"] as bool? ?? false;
+    var isThird = ViewData["IsThird"] as bool? ?? false;
+
+    var playerCssClass = isFirst ? "leaderboard-player-first" : (isSecond ? "leaderboard-player-second" : (isThird ? "leaderboard-player-third" : null));
+}
+
+<div class="leaderboard-player-column @(Context.Request.IsDashboard() ? "col-xl-3" : null) col-lg-4 col-md-6 col-sm-12 mb-3">
+    <div class="leaderboard-player card @playerCssClass">
+        <div class="leaderboard-player-header card-header h3 pt-1 pb-1 pl-2 pr-2" title="@Model.UniqueName">
+            <div class="d-inline-flex flex-row w-100">
+                @if (!string.IsNullOrWhiteSpace(Model.ImageUrl))
+                {
+                    <img src="@Url.ApiFile(Model.ImageUrl)" class="leaderboard-player-image rounded align-self-center mr-2"/>
+                }
+                <h2 class="m-0 align-self-center one-line">
+                    @Model.DisplayName
+                </h2>
+            </div>
+        </div>
+
+        <div>
+            <div class="leaderboard-player-score-block leaderboard-player-block d-flex flex-row text-center bg-inverse text-white">
+                <dl class="w-100 align-self-center">
+                    <dt class="h1 font-weight-bold monospace">
+                        @Model.ScorePointsSum.ToString(Formats.NumberTwoDecimals)
+                    </dt>
+                    <dd>
+                        @Html.Icon(Icons.Point, "fa-fw")
+                        Points
+                    </dd>
+                </dl>
+                <div class="d-flex flex-column align-self-center w-100">
+                    <dl class="d-flex flex-row">
+                        <dt class="w-50 font-weight-bold monospace text-right">
+                            @Model.ScoreGoalsSum.ToString(Formats.NumberTwoDecimals)
+                        </dt>
+                        <dd class="w-100">
+                            @Html.Icon(Icons.Goal, "fa-fw")
+                            Goals
+                        </dd>
+                    </dl>
+                    <dl class="d-flex flex-row">
+                        <dt class="w-50 font-weight-bold monospace text-right">
+                            @Model.ScoreAssistsSum.ToString(Formats.NumberTwoDecimals)
+                        </dt>
+                        <dd class="w-100">
+                            @Html.Icon(Icons.Assist, "fa-fw")
+                            Assists
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+
+            <div class="leaderboard-player-meta-block leaderboard-player-block align-self-center text-center">
+                <div class="d-flex flex-row">
+                    <dl class="w-100 @(Model.Capacity.Multiplier > 2 ? "bg-danger text-white"
+                                           : (Model.Capacity.Multiplier > 1 ? "bg-warning text-white" : null))">
+                        <dt>
+                            @Model.Capacity.Multiplier.ToString(Formats.NumberTwoDecimals)x
+                        </dt>
+                        <dd class="small">
+                            Multiplier
+                        </dd>
+                    </dl>
+                    <dl class="w-100 @(Model.Capacity.DailyHourCount <= 0 ? "bg-faded text-danger"
+                                           : (Model.Capacity.DailyHourCount < 8 ? "bg-faded text-warning"
+                                               : (Model.Capacity.DailyHourCount >= 8 ? "text-success" : null)))">
+                        <dt>
+                            @Model.Capacity.DailyHourCount.ToString(Formats.NumberTwoDecimals)h
+                            @if (Model.Capacity.DailyPercent > 0)
+                            {
+                                @:(@(Model.Capacity.DailyPercent.ToString(Formats.NumberTwoDecimals))%)
+                            }
+                        </dt>
+                        <dd class="small">
+                            Daily capacity
+                        </dd>
+                    </dl>
+                    @if (Model.Capacity.MemberDaysOff.Any())
+                    {
+                        <dl class="w-100 bg-info text-white"
+                            title="@string.Join("\n", Model.Capacity.AllDaysOff.Select(x => x.ToString("yyyy-MM-dd")))">
+                            <dt>
+                                @Model.Capacity.MemberDaysOff.Count.ToString(Formats.NumberTwoDecimals)d
+                            </dt>
+                            <dd class="small">
+                                Days off
+                            </dd>
+                        </dl>
+                    }
+                </div>
+
+                @if (Model.Capacity.WorkDaysTotalCount > 0 || Model.Capacity.HoursTotalCount > 0)
+                {
+                    <div class="d-flex flex-row">
+                        <dl class="w-100 bg-faded">
+                            <dt>
+                                @Model.Capacity.WorkDaysTotalCount.ToString(Formats.NumberTwoDecimals)d
+                            </dt>
+                            <dd class="small">
+                                Days capacity
+                            </dd>
+                        </dl>
+                        <dl class="w-100 bg-faded">
+                            <dt>
+                                @Model.Capacity.HoursTotalCount.ToString(Formats.NumberTwoDecimals)h
+                            </dt>
+                            <dd class="small">
+                                Hours capacity
+                            </dd>
+                        </dl>
+                        @if (Model.Capacity.NetWorkDays.Count != Model.Capacity.WorkDaysTotalCount && Model.Capacity.WorkDaysTotalCount > 0)
+                        {
+                            <dl class="w-100 bg-info text-white"
+                                title="@string.Join("\n", Model.Capacity.NetWorkDays.Select(x => x.ToString("yyyy-MM-dd")))">
+                                <dt>
+                                    @(Model.Capacity.NetWorkDays.Count)d
+                                </dt>
+                                <dd class="small">
+                                    Work days
+                                </dd>
+                            </dl>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+
+        @if (Model.Score.Points.Any())
+        {
+            <div class="leaderboard-player-points card card-outline-secondary pb-1">
+                <h3 class="card-header h6 pt-1 pb-1 bg-inverse text-white">Recent points</h3>
+                <ul class="leaderboard-player-points-list list-group list-group-flush">
+                    @foreach (var point in Model.Score.Points.Take(5))
+                    {
+                        <li class="list-group-item">
+                            <div class="w-100 d-inline-flex flex-row align-items-center"
+                                 title="@($"[{point.Id}] {point.Description} ({point.EarnedAt:yyyy-MM-dd HH:mm:ss})")">
+                                @Html.Partial("Leaderboard/_PlayerScorePoint", point,
+                                    new ViewDataDictionary(ViewData) {{"OneLine", true}})
+                            </div>
+                        </li>
+                    }
+                </ul>
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,50 @@
+﻿@{
+    var isDashboard = Context.Request.IsDashboard();
+
+    string title = ViewData["Title"] as string;
+    string htmlTitle = !string.IsNullOrWhiteSpace(title) ? $"{title} - VSTS Dash" : "VSTS Dash";
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>@htmlTitle</title>
+
+    <environment names="Development">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/@(JsLibsVersions.BootstrapVersion)/css/bootstrap.css"/>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/@(JsLibsVersions.FontAwesomeVersion)/css/font-awesome.css"/>
+        <link rel="stylesheet" href="~/css/site.css"/>
+    </environment>
+    <environment names="Staging,Production">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/@(JsLibsVersions.BootstrapVersion)/css/bootstrap.min.css"/>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/@(JsLibsVersions.FontAwesomeVersion)/css/font-awesome.min.css"/>
+        <link rel="stylesheet" href="~/css/site.css"/>
+    </environment>
+</head>
+<body class="@(isDashboard ? "dashboard" : null)">
+
+<div class="body-content @(isDashboard ? "body-content-dashboard" : null)">
+    @RenderBody()
+</div>
+
+<environment names="Development">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/@(JsLibsVersions.JQueryVersion)/jquery.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/@(JsLibsVersions.TetherVersion)/js/tether.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/@(JsLibsVersions.BootstrapVersion)/js/bootstrap.js"></script>
+    @*<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/@(D3Version)/d3.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3plus/@(D3PlusVersion)/d3plus.js"></script>*@
+</environment>
+<environment names="Staging,Production">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/@(JsLibsVersions.JQueryVersion)/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/@(JsLibsVersions.TetherVersion)/js/tether.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/@(JsLibsVersions.BootstrapVersion)/js/bootstrap.min.js"></script>
+    @*<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/@(D3Version)/d3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3plus/@(D3PlusVersion)/d3plus.min.js"></script>*@
+</environment>
+
+<script src="~/js/site.js"></script>
+
+@RenderSection("scripts", false)
+</body>
+</html>

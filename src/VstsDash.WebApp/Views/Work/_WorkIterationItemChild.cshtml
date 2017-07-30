@@ -1,0 +1,51 @@
+﻿@model VstsDash.AppServices.Models.WorkIterationItem
+@{
+    const string ChildCardSizeClass = "col-xl-4 col-lg-6 col-md-6 col-sm-12";
+}
+
+<div class="@ChildCardSizeClass">
+    <work-iteration-item-card state="@Model.State" class="work-iteration-item-child">
+        <header class="card-header card-warning">
+            <code>@Model.Id</code>
+            <span class="mr-2">@Model.Title</span>
+
+            @foreach (var tag in Model.Tags)
+            {
+                <span class="badge badge-default bg-faded text-muted">@tag</span>
+            }
+        </header>
+
+        <aside class="card-block">
+            <div class="row">
+                <work-iteration-item-meta is-child="true">
+                    <div class="media">
+                        @if (!string.IsNullOrWhiteSpace(Model.AssignedToMember?.ImageUrl))
+                        {
+                            <img src="@(Url.ApiFile(Model.AssignedToMember?.ImageUrl))" class="d-flex mr-1" style="max-height: 24px; max-width: 24px;"/>
+                        }
+
+                        <div class="media-body">
+                            @if (Model.AssignedToMember != null)
+                            {
+                                @Model.AssignedToMember.DisplayName
+                            }
+                            else
+                            {
+                                <em>Unassigned</em>
+                            }
+                        </div>
+                    </div>
+                </work-iteration-item-meta>
+
+                <work-iteration-item-meta is-child="true" label="State">
+                    <state-badge state="@Model.State"></state-badge>
+                </work-iteration-item-meta>
+
+                @if (Model.RemainingWork > 0)
+                {
+                    <work-iteration-item-meta is-child="true" label="Remaining" value="@Model.RemainingWork h"/>
+                }
+            </div>
+        </aside>
+    </work-iteration-item-card>
+</div>

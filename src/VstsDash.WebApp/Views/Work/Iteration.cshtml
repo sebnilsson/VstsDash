@@ -1,0 +1,35 @@
+﻿@model WorkIterationViewModel
+
+<div class="container mt-3">
+    <h1>
+        @if (Model.Result.IsBacklog)
+        {
+            <em class="small">Backlog: </em>
+        }
+
+        @Model.Result.IterationName
+
+        @if (!Model.Result.IsBacklog)
+        {
+            <a href="@Url.WorkLeaderboard(Model.ProjectId, Model.TeamId, Model.IterationId)"
+               class="btn btn-outline-warning btn-sm">
+                Leaderboard
+            </a>
+            <a href="@Url.WorkActivity(Model.ProjectId, Model.TeamId, Model.IterationId)"
+               class="btn btn-outline-info btn-sm">
+                Activity
+            </a>
+        }
+    </h1>
+
+    @Html.Partial("_WorkIterationHeader", Model)
+
+    <hr/>
+
+    <div class="iteration-work-iteration-items">
+        @foreach (var item in Model.Result.Items)
+        {
+            @Html.PartialContent("_WorkIterationItem", item, new {isBacklog = Model.Result.IsBacklog})
+        }
+    </div>
+</div>

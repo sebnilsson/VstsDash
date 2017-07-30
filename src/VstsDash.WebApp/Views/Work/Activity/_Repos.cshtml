@@ -1,0 +1,65 @@
+@model IReadOnlyCollection<WorkActivityViewModel.RepositoryAuthors>
+
+<div class="card card-outline-primary mt-3">
+    <h2 class="card-header card-primary text-white" data-toggle="collapse" data-target="#card-repos" role="button">
+        Repos
+    </h2>
+
+    <div id="card-repos" class="card-block collapse show pb-0">
+        @foreach (var repoAuthor in Model)
+        {
+            var repository = repoAuthor.Repository;
+
+            <div class="card card-outline-info mb-3">
+                <h3 class="card-header card-info text-white" title="@repository.RepositoryId"
+                    data-toggle="collapse" data-target="#repo-@repository.RepositoryId" role="button">
+                    @repository.RepositoryName
+                    <small>
+                        Total commits: @repoAuthor.AuthorCommitsCountSum
+                    </small>
+                </h3>
+
+                <div id="repo-@repository.RepositoryId" class="card-block pb-0 collapse">
+                    @foreach (var authorCommit in repoAuthor.AuthorCommits)
+                    {
+                        var author = authorCommit.Author;
+
+                        <div class="card card-outline-success mb-3">
+                            <h4 class="card-header card-success text-white" title="@author.MemberUniqueName"
+                                data-toggle="collapse" data-target="#repo-@repository.RepositoryId-author-@author.MemberId" role="button">
+                                @author.MemberDisplayName
+                                <small>
+                                    Commits: @authorCommit.CommitCount, Changes: @authorCommit.CommitsTotalChangeCountSum
+                                </small>
+                            </h4>
+
+                            <div id="repo-@repository.RepositoryId-author-@author.MemberId" class="card-block collapse">
+                                <ul>
+                                    @foreach (var commitInfo in authorCommit.Commits)
+                                    {
+                                        var commit = commitInfo.Commit;
+
+                                        <li>
+                                            <small>
+                                                @if (commit.AuthorDate != null)
+                                                {
+                                                    <span class="monospace">@commit.AuthorDate?.ToString("yyyy-MM-dd HH:mm:ss")</span>
+                                                }
+                                                [<code title="@commit.CommitId">@commit.CommitId.Substring(0, 7)</code>]
+                                                (Changes: @commit.TotalChangeCount)
+                                            </small>
+
+                                            <span>
+                                                @commit.Comment
+                                            </span>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</div>
