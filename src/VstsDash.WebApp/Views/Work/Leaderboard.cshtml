@@ -9,17 +9,19 @@
 
 <div class="leaderboard-container main-container @(!isDashboard ? "container" : "container-fluid") pb-3">
     <h1 class="h2 mb-2">
+        @Html.Icon(Icons.Leaderboard, "fa-fw")
         <strong>Leaderboard</strong>: @Model.IterationName
 
         @if (!isDashboard)
         {
             <a href="@Url.WorkLeaderboard(requestQuery["projectId"], requestQuery["teamId"], requestQuery["iterationId"], true)"
-               class="btn btn-warning btn-sm">
+               class="btn btn-success btn-sm">
                 @Html.Icon(Icons.Dashboard, "fa-fw")
                 Dashboard
             </a>
             <a href="@Url.WorkActivity(requestQuery["projectId"], requestQuery["teamId"], requestQuery["iterationId"])"
-               class="btn btn-outline-info btn-sm">
+               class="btn btn-info btn-sm">
+                @Html.Icon(Icons.Activity, "fa-fw")
                 Activity
             </a>
         }

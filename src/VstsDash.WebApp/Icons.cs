@@ -13,5 +13,9 @@
         public const string Change = "fa-pencil";
 
         public const string Dashboard = "fa-tachometer";
+
+        public const string Activity = "fa-heartbeat";
+
+        public const string Leaderboard = "fa-futbol-o";
     }
 }

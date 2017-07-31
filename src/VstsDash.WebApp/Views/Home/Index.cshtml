@@ -84,12 +84,14 @@
 
                                                     <div class="flex-noshrink">
                                                         <a href="@Url.WorkActivity(project.Id, team.Id, iteration.Id)"
-                                                           class="btn btn-outline-info btn-sm">
+                                                           class="btn btn-info btn-sm">
+                                                            @Html.Icon(Icons.Activity, "fa-fw")
                                                             Activity
                                                         </a>
 
                                                         <a href="@Url.WorkLeaderboard(project.Id, team.Id, iteration.Id)"
-                                                           class="btn btn-outline-warning btn-sm">
+                                                           class="btn btn-warning btn-sm">
+                                                            @Html.Icon(Icons.Leaderboard, "fa-fw")
                                                             Leaderboard
                                                         </a>
                                                     </div>
