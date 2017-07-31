@@ -27,7 +27,7 @@
     @if (!isDashboard)
     {
         <a href="@Url.WorkActivity(requestQuery["projectId"], requestQuery["teamId"], requestQuery["iterationId"], true)"
-           class="btn btn-success btn-sm">
+           class="btn btn-outline-success btn-sm">
             @Html.Icon(Icons.Dashboard, "fa-fw")
             Dashboard
         </a>
@@ -58,16 +58,16 @@
                                   ? Model.Authors.Sum(ac => ac.CommitCount).ToString(Formats.NumberTwoDecimals)
                                   : "-")
                         </dt>
-                        <dd class="small">
-                            <small class="one-line">@Html.Icon(Icons.Commit, "fa-fw") Commits</small>
+                        <dd class="small one-line">
+                            @Html.Icon(Icons.Commit, "fa-fw") Commits
                         </dd>
                         <dt class="font-weight-bold monospace">
                             @(Model.Authors.Any()
                                   ? Model.Authors.Sum(ac => ac.CommitsTotalChangeCountSum).ToString(Formats.NumberTwoDecimals)
                                   : "-")
                         </dt>
-                        <dd class="small">
-                            <small class="one-line">@Html.Icon(Icons.Change, "fa-fw") Changes</small>
+                        <dd class="small one-line">
+                            @Html.Icon(Icons.Change, "fa-fw") Changes
                         </dd>
                     </dl>
                 </div>
@@ -83,16 +83,16 @@
                                   ? Model.Authors.Average(ac => ac.CommitsTotalChangeCountSum / ac.CommitCount).ToString(Formats.NumberTwoDecimals)
                                   : "-")
                         </dt>
-                        <dd class="small">
-                            <small class="one-line">Avg @Html.Icon(Icons.Change, "fa-fw")/@Html.Icon(Icons.Commit, "fa-fw")</small>
+                        <dd class="small one-line">
+                            Avg @Html.Icon(Icons.Change, "fa-fw")/@Html.Icon(Icons.Commit, "fa-fw")
                         </dd>
                         <dt class="font-weight-bold monospace">
                             @(Model.Authors.Any()
                                   ? Model.Authors.SelectMany(ac => ac.Commits).Max(c => c.Commit.TotalChangeCount).ToString(Formats.NumberTwoDecimals)
                                   : "-")
                         </dt>
-                        <dd class="small">
-                            <small class="one-line">Most @Html.Icon(Icons.Change, "fa-fw")/@Html.Icon(Icons.Commit, "fa-fw")</small>
+                        <dd class="small one-line">
+                            Most @Html.Icon(Icons.Change, "fa-fw")/@Html.Icon(Icons.Commit, "fa-fw")
                         </dd>
                         <dt class="font-weight-bold monospace">
                             @(Model.Authors.Any()
@@ -104,8 +104,8 @@
                                       .ToString(Formats.NumberTwoDecimals)
                                   : "-")
                         </dt>
-                        <dd class="break-word small">
-                            <small class="one-line">Most @Html.Icon(Icons.Commit, "fa-fw")/day</small>
+                        <dd class="small one-line">
+                            Most @Html.Icon(Icons.Commit, "fa-fw")/day
                         </dd>
                         <dt class="font-weight-bold monospace">
                             @(Model.Authors.Any()
@@ -117,8 +117,8 @@
                                       .ToString(Formats.NumberTwoDecimals)
                                   : "-")
                         </dt>
-                        <dd class="break-word small">
-                            <small class="one-line">Most @Html.Icon(Icons.Change, "fa-fw")/day</small>
+                        <dd class="small one-line">
+                            Most @Html.Icon(Icons.Change, "fa-fw")/day
                         </dd>
                     </dl>
                 </div>
