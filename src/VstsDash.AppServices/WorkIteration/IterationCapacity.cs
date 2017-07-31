@@ -13,13 +13,14 @@ namespace VstsDash.AppServices.WorkIteration
         public IterationCapacity(
             IterationApiResponse iteration,
             IterationDaysOffApiResponse teamDaysOff,
-            IterationCapacityListApiResponse capacities = null)
+            IterationCapacityListApiResponse capacities = null,
+            Guid? memberId = null)
             : this(
                 iteration?.Attributes?.StartDate,
                 iteration?.Attributes?.FinishDate,
                 teamDaysOff?.DaysOff.SelectMany(x => x.Start.GetWorkDatesUntil(x.End)),
-                capacities?.Value.SelectMany(c => c.Activities.Select(a => a.CapacityPerDay)),
-                capacities?.Value.SelectMany(c => c.DaysOff.SelectMany(d => d.Start.GetWorkDatesUntil(d.End))))
+                GetMemberCapacityPerDay(capacities, memberId),
+                GetMemberDaysOff(capacities, memberId))
         {
         }
 
@@ -30,17 +31,15 @@ namespace VstsDash.AppServices.WorkIteration
             IEnumerable<double> memberCapacityPerDay = null,
             IEnumerable<DateTime> memberDaysOff = null)
         {
-            var memberDaysOffList = WorkDatesUtility.GetWorkDates(memberDaysOff ?? Enumerable.Empty<DateTime>())
-                .Distinct()
-                .ToList();
+            memberDaysOff = memberDaysOff ?? Enumerable.Empty<DateTime>();
+            teamDaysOff = teamDaysOff ?? Enumerable.Empty<DateTime>();
 
-            var teamDaysOffList = WorkDatesUtility.GetWorkDates(teamDaysOff ?? Enumerable.Empty<DateTime>())
-                .Distinct()
-                .ToList();
+            var memberDaysOffList = WorkDatesUtility.GetWorkDates(memberDaysOff).Distinct().ToList();
+            var teamDaysOffList = WorkDatesUtility.GetWorkDates(teamDaysOff).Distinct().ToList();
 
-            var iterationWorkDays = GetIterationWorkDays(iterationStartAt, iterationEndAt).ToList();
+            var iterationWorkDays = GetIterationWorkDays(iterationStartAt, iterationEndAt).Distinct().ToList();
 
-            var allDaysOff = teamDaysOffList.Concat(memberDaysOffList).Distinct().ToList();
+            var allDaysOff = memberDaysOffList.Concat(teamDaysOffList).Distinct().ToList();
             var netWorkDays = iterationWorkDays.Except(allDaysOff).ToList();
 
             AllDaysOff = new ReadOnlyCollection<DateTime>(allDaysOff);
@@ -87,6 +86,30 @@ namespace VstsDash.AppServices.WorkIteration
             return iterationStart != DateTime.MinValue && iterationEnd != DateTime.MinValue
                 ? iterationStart.GetWorkDatesUntil(iterationEnd)
                 : Enumerable.Empty<DateTime>();
+        }
+
+        private static IEnumerable<double> GetMemberCapacityPerDay(IterationCapacityListApiResponse capacities,
+            Guid? memberId)
+        {
+            if (capacities == null || memberId == null)
+                return null;
+
+            return capacities
+                .Value
+                .Where(x => x.TeamMember.Id == memberId.Value)
+                .SelectMany(x => x.Activities.Select(a => a.CapacityPerDay));
+        }
+
+        private static IEnumerable<DateTime> GetMemberDaysOff(IterationCapacityListApiResponse capacities,
+            Guid? memberId)
+        {
+            if (capacities == null || memberId == null)
+                return null;
+
+            return capacities
+                .Value
+                .Where(x => x.TeamMember.Id == memberId.Value)
+                .SelectMany(x => x.DaysOff.SelectMany(d => d.Start.GetWorkDatesUntil(d.End)));
         }
     }
 }

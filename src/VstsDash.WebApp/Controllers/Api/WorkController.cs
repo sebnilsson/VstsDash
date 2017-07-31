@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using VstsDash.AppServices.WorkActivity;
 using VstsDash.AppServices.WorkIteration;
 using VstsDash.RestApi;
+using VstsDash.RestApi.ApiResponses;
 
 namespace VstsDash.WebApp.Controllers.Api
 {
@@ -37,43 +38,28 @@ namespace VstsDash.WebApp.Controllers.Api
             string teamId = null,
             string iterationId = null)
         {
-            var workActivityData = await GetWorkActivityData(projectId, teamId, iterationId);
+            var jsonData = await GetWorkActivityJsonData(projectId, teamId, iterationId);
 
-            var data = GetJsonData(workActivityData);
-
-            return Json(data);
+            return Json(jsonData);
         }
 
         [HttpGet("memberactivities/{memberId}")]
         public async Task<IActionResult> MemberActivities(
-            string memberId,
+            Guid memberId,
             string projectId = null,
             string teamId = null,
             string iterationId = null)
         {
-            var workActivityData = await GetWorkActivityData(projectId, teamId, iterationId, memberId);
+            var jsonData = await GetWorkActivityJsonData(projectId, teamId, iterationId, memberId);
 
-            var data = GetJsonData(workActivityData);
-
-            return Json(data);
+            return Json(jsonData);
         }
 
-        private static IList<object[]> GetJsonData(
-            IEnumerable<(DateTime Date, List<CommitInfo> CommitInfos)> workActivityData)
-        {
-            return (from data in workActivityData
-                orderby data.Date
-                let isDateInPast = data.Date.Date <= DateTime.UtcNow.Date
-                let commitCount = isDateInPast ? data.CommitInfos.Count : (int?) null
-                let totalChangeCount = isDateInPast ? data.CommitInfos.Sum(c => c.Commit.TotalChangeCount) : (int?) null
-                select new object[] {data.Date, commitCount, totalChangeCount}).ToList();
-        }
-
-        private async Task<IEnumerable<(DateTime Date, List<CommitInfo> CommitInfos)>> GetWorkActivityData(
+        private async Task<IList<object[]>> GetWorkActivityJsonData(
             string projectId,
             string teamId,
             string iterationId,
-            string memberId = null)
+            Guid? memberId = null)
         {
             var idParams = await GetEnsuredIdParams(projectId, teamId, iterationId);
 
@@ -83,34 +69,43 @@ namespace VstsDash.WebApp.Controllers.Api
                 idParams.IterationId);
 
             IEnumerable<CommitInfo> commits = activity.Commits;
-            if (!string.IsNullOrWhiteSpace(memberId))
+            IterationCapacityListApiResponse iterationCapacities = null;
+            if (memberId != null)
             {
-                var normalizedMemberId = NormalizeGuidId(memberId);
+                var normalizedMemberId = NormalizeGuidId(memberId.Value);
 
-                commits = commits.Where(x => normalizedMemberId ==
-                                             NormalizeGuidId(Convert.ToString(x.Author.MemberId)));
+                commits = commits.Where(x => normalizedMemberId == NormalizeGuidId(x.Author.MemberId));
+
+                iterationCapacities =
+                    await _iterationsApi.GetCapacities(idParams.ProjectId, idParams.TeamId, idParams.IterationId);
             }
 
             var iteration = await _iterationsApi.Get(idParams.ProjectId, idParams.TeamId, idParams.IterationId);
             var teamDaysOff =
                 await _iterationsApi.GetTeamDaysOff(idParams.ProjectId, idParams.TeamId, idParams.IterationId);
 
-            var capacity = new IterationCapacity(iteration, teamDaysOff);
-            
-            var dates = activity.FromDate.GetDatesUntil(activity.ToDate);
+            var capacity = new IterationCapacity(iteration, teamDaysOff, iterationCapacities, memberId);
 
-            return from date in dates
-                let isWorkDay = capacity.NetWorkDays.Contains(date)
+            var dates = activity.FromDate.GetWorkDatesUntil(activity.ToDate).OrderBy(x => x).ToList();
+
+            return (from date in dates
                 let dayCommits = commits
                     .Where(x => (x.Commit.AuthorDate ?? DateTimeOffset.MinValue).Date == date.Date)
                     .ToList()
-                where isWorkDay || dayCommits.Any()
-                select (date, dayCommits);
+                let isDateInPast = date.Date <= DateTime.UtcNow.Date
+                let hasCommits = dayCommits.Any()
+                let isWorkDay = capacity.NetWorkDays.Contains(date)
+                let shouldIncludeData = hasCommits || isDateInPast && isWorkDay
+                let commitCount = shouldIncludeData ? dayCommits.Count : (int?) null
+                let totalChangeCount = shouldIncludeData
+                    ? dayCommits.Sum(c => c.Commit.TotalChangeCount)
+                    : (int?) null
+                select new object[] {date, commitCount, totalChangeCount}).ToList();
         }
 
-        private static string NormalizeGuidId(string id)
+        private static string NormalizeGuidId(Guid id)
         {
-            return id?.Replace("-", string.Empty).ToLowerInvariant();
+            return Convert.ToString(id).Replace("-", string.Empty).ToLowerInvariant();
         }
     }
 }

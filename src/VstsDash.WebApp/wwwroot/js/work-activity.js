@@ -1,7 +1,7 @@
 ﻿(function() {
     google.charts.load("current", { 'packages': ["corechart"], 'language': "en" });
     google.charts.setOnLoadCallback(function() {
-        $(function () {
+        $(function() {
             var params = getParams();
 
             drawCharts(params);
@@ -64,10 +64,8 @@
             x[0] = new Date(x[0]);
             return x;
         });
-
-        data = [["Date", "Commits", "Changes"]].concat(mappedData);
-
-        var options = getChartOptions();
+        
+        var options = getChartOptions(mappedData, false);
 
         options.chartArea = {
             width: "100%",
@@ -92,9 +90,7 @@
             return x;
         });
 
-        data = [["Date", "Commits", "Changes"]].concat(mappedData);
-
-        var options = getChartOptions();
+        var options = getChartOptions(mappedData, true);
 
         options.chartArea = {
             width: "85%",
@@ -107,23 +103,41 @@
     }
 
     function drawLineChart(data, options, element) {
-        var dataTable = google.visualization.arrayToDataTable(data);
+        var dataTable = new google.visualization.DataTable();
+        dataTable.addColumn({ label: 'Date', type: 'date', role: 'domain' });
+        dataTable.addColumn({ label: 'Commits', type: 'number', role: 'data' });
+        dataTable.addColumn({ label: 'Changes', type: 'number', role: 'data' });
+        dataTable.addRows(data);
 
         var chart = new google.visualization.LineChart(element);
 
         chart.draw(dataTable, options);
     }
 
-    function getChartOptions() {
+    function getChartOptions(data, isTeamActivities) {
+        //var hAxisTicks = data.map(function(x) {
+        //    return x[0];
+        //});
+
+        var hAxisMinValue = data[0][0];
+        var hAxisMaxValue = data[data.length - 1][0];
+
+        var pointSize = isTeamActivities ? 5 : 3;
+        var legendPosition = isTeamActivities ? "top" : "none";
+
         var options = {
             curveType: "function",
-            legend: { position: "top" },
+            legend: { position: legendPosition },
+            pointSize: pointSize,
             series: {
                 0: { targetAxisIndex: 0 },
                 1: { targetAxisIndex: 1 }
             },
             hAxis: {
-                format: "yyyy-MM-dd"
+                format: "yyyy-MM-dd",
+                minValue: hAxisMinValue,
+                maxValue: hAxisMaxValue,
+                //ticks: hAxisTicks
             },
             vAxes: {
                 0: { title: "Commits" },
