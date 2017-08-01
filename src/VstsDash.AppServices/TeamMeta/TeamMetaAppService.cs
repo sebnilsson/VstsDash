@@ -4,11 +4,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using VstsDash.RestApi;
 using VstsDash.RestApi.ApiResponses;
+using VstsDash.RestApi.Caching;
 
 namespace VstsDash.AppServices.TeamMeta
 {
     public class TeamMetaAppService
     {
+        private readonly ICache _cache;
         private readonly IGitApiService _gitApi;
         private readonly IIterationsApiService _iterationsApi;
         private readonly IProjectsApiService _projectsApi;
@@ -17,6 +19,7 @@ namespace VstsDash.AppServices.TeamMeta
         private readonly IWorkApiService _workApi;
 
         public TeamMetaAppService(
+            ICache cache,
             IGitApiService gitApi,
             IIterationsApiService iterationsApi,
             IProjectsApiService projectsApi,
@@ -24,6 +27,7 @@ namespace VstsDash.AppServices.TeamMeta
             ITeamsApiService teamsApi,
             IWorkApiService workApi)
         {
+            _cache = cache ?? throw new ArgumentNullException(nameof(cache));
             _gitApi = gitApi ?? throw new ArgumentNullException(nameof(gitApi));
             _iterationsApi = iterationsApi ?? throw new ArgumentNullException(nameof(iterationsApi));
             _projectsApi = projectsApi ?? throw new ArgumentNullException(nameof(projectsApi));
@@ -33,6 +37,13 @@ namespace VstsDash.AppServices.TeamMeta
         }
 
         public async Task<TeamMetaResult> GetTeamMeta()
+        {
+            var cacheKey = $"{GetType().FullName}.{nameof(GetTeamMeta)}";
+
+            return await _cache.GetOrCreateAsync(cacheKey, GetTeamMetaInternal, CacheDuration.Medium);
+        }
+
+        private async Task<TeamMetaResult> GetTeamMetaInternal()
         {
             var projects = await _projectsApi.GetList();
 
