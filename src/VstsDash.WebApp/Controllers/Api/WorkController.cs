@@ -17,11 +17,14 @@ namespace VstsDash.WebApp.Controllers.Api
 
         private readonly WorkActivityAppService _workActivityAppService;
 
+        private readonly WorkIterationAppService _workIterationAppService;
+
         public WorkController(
             AppSettings appSettings,
             IIterationsApiService iterationsApi,
             IWorkApiService workApi,
-            WorkActivityAppService workActivityAppService)
+            WorkActivityAppService workActivityAppService,
+            WorkIterationAppService workIterationAppService)
             : base(appSettings, workApi)
         {
             if (appSettings == null) throw new ArgumentNullException(nameof(appSettings));
@@ -30,6 +33,26 @@ namespace VstsDash.WebApp.Controllers.Api
             _iterationsApi = iterationsApi ?? throw new ArgumentNullException(nameof(iterationsApi));
             _workActivityAppService = workActivityAppService ??
                                       throw new ArgumentNullException(nameof(workActivityAppService));
+            _workIterationAppService = workIterationAppService ??
+                                       throw new ArgumentNullException(nameof(workIterationAppService));
+        }
+
+        [HttpGet("teamdoneefforts")]
+        public async Task<IActionResult> TeamDoneEfforts(
+            string projectId = null,
+            string teamId = null,
+            string iterationId = null)
+        {
+            var idParams = await GetEnsuredIdParams(projectId, teamId, iterationId);
+
+            var efforts = await _workIterationAppService.GetWorkIterationDoneEffortsPerDay(
+                idParams.ProjectId,
+                idParams.TeamId,
+                idParams.IterationId);
+
+            var jsonData = efforts.Select(x => new object[] {x.Key, x.Value}).ToList();
+
+            return Json(jsonData);
         }
 
         [HttpGet("teamactivities")]

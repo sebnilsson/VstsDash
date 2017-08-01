@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using VstsDash.RestApi.ApiResponses;
 using VstsDash.AppServices.WorkIteration;
+using VstsDash.RestApi.ApiResponses;
 
 namespace VstsDash.AppServices.WorkLeaderboard
 {

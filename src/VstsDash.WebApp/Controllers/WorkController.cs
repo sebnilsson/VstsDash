@@ -60,13 +60,13 @@ namespace VstsDash.WebApp.Controllers
 
             var test = model.Authors
                 .Select(r =>
-                (Item: r, Score:
-                r.CommitCount / (double)model.AuthorsCommitCountSum
-                + r.CommitsTotalChangeCountSum
-                / (double)model.AuthorsCommitsTotalChangeCountSum)
-            )
-            .OrderByDescending(x => x.Score)
-            .ToList();
+                    (Item: r, Score:
+                    r.CommitCount / (double) model.AuthorsCommitCountSum
+                    + r.CommitsTotalChangeCountSum
+                    / (double) model.AuthorsCommitsTotalChangeCountSum)
+                )
+                .OrderByDescending(x => x.Score)
+                .ToList();
 
             return View(model);
         }

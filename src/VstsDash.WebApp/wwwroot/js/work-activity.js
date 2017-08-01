@@ -1,12 +1,199 @@
 ﻿(function() {
     google.charts.load("current", { 'packages': ["corechart"], 'language': "en" });
-    google.charts.setOnLoadCallback(function() {
-        $(function() {
-            var params = getParams();
+    google.charts.setOnLoadCallback(onGoogleChartsLoad);
 
-            drawCharts(params);
-        });
-    });
+    var params = {};
+
+    var charts = {
+        draw: {
+            all: function() {
+                this.teamActivities();
+                this.teamDoneEfforts();
+                this.memberActivities();
+            },
+            teamActivities: function() {
+                var $element = $("#team-activities-chart"),
+                    element = $element[0];
+
+                if (!element) {
+                    return;
+                }
+
+                charts.data.getTeamActivityJson(function(data) {
+                    var mappedData = charts.data.getMappedData(data);
+
+                    var dataTable = charts.googleCharts.getActivitiesDataTable(mappedData);
+
+                    var options = charts.googleCharts.getOptions(mappedData);
+
+                    options.pointSize = 5;
+                    options.chartArea = {
+                        width: "85%",
+                        height: "85%"
+                    };
+
+                    charts.googleCharts.drawLineChart(dataTable, options, element);
+                });
+            },
+            teamDoneEfforts: function() {
+                var $element = $("#team-done-efforts-chart"),
+                    element = $element[0];
+
+                if (!element) {
+                    return;
+                }
+
+                charts.data.getTeamDoneEffortsJson(function (data) {
+                    var mappedData = charts.data.getMappedData(data);
+
+                    var dataTable = charts.googleCharts.getDoneEffortsDataTable(mappedData);
+
+                    var options = charts.googleCharts.getOptions(mappedData);
+
+                    options.legend.position = "none";
+                    options.pointSize = 5;
+                    options.chartArea = {
+                        width: "85%",
+                        height: "85%"
+                    };
+                    options.vAxes[0].minValue = 10;
+
+                    charts.googleCharts.drawLineChart(dataTable, options, element);
+                });
+            },
+            memberActivities: function() {
+                var $memberActivities = $(".activity-member-activity");
+
+                for (var i = 0; i < $memberActivities.length; i++) {
+                    memberActivity(i);
+                }
+
+                function memberActivity(index) {
+                    var $memberActivity = $memberActivities.eq(index),
+                        element = $memberActivity[0],
+                        memberId = $memberActivity.data("memberId");
+
+                    if (!element) {
+                        return;
+                    }
+
+                    charts.data.getMemberActivityJson(
+                        memberId,
+                        function(data) {
+                            var mappedData = charts.data.getMappedData(data);
+
+                            var dataTable = charts.googleCharts.getActivitiesDataTable(mappedData);
+
+                            var options = charts.googleCharts.getOptions(mappedData);
+
+                            options.pointSize = 3;
+                            options.legend.position = "none";
+                            options.chartArea = {
+                                width: "100%",
+                                height: "100%"
+                            };
+
+                            if (params.memberMaxCommits) {
+                                options.vAxes[0].minValue = 0;
+                                options.vAxes[0].maxValue = params.memberMaxCommits;
+                            }
+                            if (params.memberMaxChanges) {
+                                options.vAxes[1].minValue = 0;
+                                options.vAxes[1].maxValue = params.memberMaxChanges;
+                            }
+
+                            charts.googleCharts.drawLineChart(dataTable, options, element);
+                        });
+                }
+            }
+        },
+        data: {
+            getMappedData: function(data) {
+                return data.map(function(x) {
+                    x[0] = new Date(x[0]);
+                    return x;
+                });
+            },
+            getMemberActivityJson: function(memberId, callbackFn) {
+                var memberActivityUrl = "/api/work/memberactivities/" +
+                    ((memberId || "") + "?") +
+                    (params.iterationId ? "iterationId=" + params.iterationId + "&" : "") +
+                    (params.projectId ? "projectId=" + params.projectId + "&" : "") +
+                    (params.teamId ? "teamId=" + params.teamId : "");
+
+                $.getJSON(memberActivityUrl, callbackFn);
+            },
+            getTeamActivityJson: function(callbackFn) {
+                var teamActivitiesUrl = "/api/work/teamactivities?" +
+                    (params.iterationId ? "iterationId=" + params.iterationId + "&" : "") +
+                    (params.projectId ? "projectId=" + params.projectId + "&" : "") +
+                    (params.teamId ? "teamId=" + params.teamId : "");
+
+                $.getJSON(teamActivitiesUrl, callbackFn);
+            },
+            getTeamDoneEffortsJson: function(callbackFn) {
+                var teamDoneEffortsJsonUrl = "/api/work/teamdoneefforts?" +
+                    (params.iterationId ? "iterationId=" + params.iterationId + "&" : "") +
+                    (params.projectId ? "projectId=" + params.projectId + "&" : "") +
+                    (params.teamId ? "teamId=" + params.teamId : "");
+
+                $.getJSON(teamDoneEffortsJsonUrl, callbackFn);
+            }
+        },
+        googleCharts: {
+            getOptions: function(data) {
+                //var hAxisTicks = data.map(function(x) {
+                //    return x[0];
+                //});
+
+                var hAxisMinValue = params.fromDate ? new Date(params.fromDate) : data[0][0];
+                var hAxisMaxValue = params.toDate ? new Date(params.toDate) : data[data.length - 1][0];
+
+                var options = {
+                    curveType: "function",
+                    legend: { position: "top" },
+                    series: {
+                        0: { targetAxisIndex: 0 },
+                        1: { targetAxisIndex: 1 }
+                    },
+                    hAxis: {
+                        format: "yyyy-MM-dd",
+                        minValue: hAxisMinValue,
+                        maxValue: hAxisMaxValue,
+                        //ticks: hAxisTicks
+                    },
+                    vAxes: {
+                        0: { title: "Commits" },
+                        1: { title: "Changes" }
+                    }
+                };
+                return options;
+            },
+            getActivitiesDataTable: function(data) {
+                var dataTable = new google.visualization.DataTable();
+                dataTable.addColumn({ label: "Date", type: "date", role: "domain" });
+                dataTable.addColumn({ label: "Commits", type: "number", role: "data" });
+                dataTable.addColumn({ label: "Changes", type: "number", role: "data" });
+                dataTable.addRows(data);
+
+                return dataTable;
+            },
+            getDoneEffortsDataTable: function(data) {
+                var dataTable = new google.visualization.DataTable();
+                dataTable.addColumn({ label: "Date", type: "date", role: "domain" });
+                dataTable.addColumn({ label: "Done Effort", type: "number", role: "data" });
+                dataTable.addRows(data);
+
+                return dataTable;
+
+            },
+            drawLineChart: function(dataTable, options, element) {
+                var chart = new google.visualization.LineChart(element);
+
+                chart.draw(dataTable, options);
+            }
+        }
+    };
 
     function getParams() {
         var $activityContainer = $(".activity-container");
@@ -25,134 +212,11 @@
         };
     }
 
-    function drawCharts(params) {
-        var teamActivitiesUrl = "/api/work/teamactivities?" +
-            (params.iterationId ? "iterationId=" + params.iterationId + "&" : "") +
-            (params.projectId ? "projectId=" + params.projectId + "&" : "") +
-            (params.teamId ? "teamId=" + params.teamId : "");
+    function onGoogleChartsLoad() {
+        $(function() {
+            params = getParams();
 
-        $.getJSON(teamActivitiesUrl,
-            function(data) {
-                drawTeamActivities(params, data);
-            });
-
-        var $memberActivities = $(".activity-member-activity");
-
-        for (var i = 0; i < $memberActivities.length; i++) {
-            var $memberActivity = $memberActivities.eq(i),
-                memberId = $memberActivity.data("memberId");
-
-            var memberActivityUrl = "/api/work/memberactivities/" +
-                ((memberId || "") + "?") +
-                (params.iterationId ? "iterationId=" + params.iterationId + "&" : "") +
-                (params.projectId ? "projectId=" + params.projectId + "&" : "") +
-                (params.teamId ? "teamId=" + params.teamId : "");
-
-            getMemberActivitJson(params, memberActivityUrl, $memberActivity);
-        }
-    }
-
-    function getMemberActivitJson(params, memberActivityUrl, $memberActivity) {
-        $.getJSON(memberActivityUrl,
-            function(data) {
-                drawMembersActivity(params, data, $memberActivity);
-            });
-    }
-
-    function drawMembersActivity(params, data, $memberActivity) {
-        var mappedData = data.map(function(x) {
-            x[0] = new Date(x[0]);
-            return x;
+            charts.draw.all();
         });
-        
-        var options = getChartOptions(mappedData, false);
-
-        options.chartArea = {
-            width: "100%",
-            height: "100%"
-        };
-
-        if (params.memberMaxCommits) {
-            options.vAxes[0].minValue = 0;
-            options.vAxes[0].maxValue = params.memberMaxCommits;
-        }
-        if (params.memberMaxChanges) {
-            options.vAxes[1].minValue = 0;
-            options.vAxes[1].maxValue = params.memberMaxChanges;
-        }
-
-        drawLineChart(data, options, $memberActivity[0]);
-    }
-
-    function drawTeamActivities(params, data) {
-        var mappedData = data.map(function(x) {
-            x[0] = new Date(x[0]);
-            return x;
-        });
-
-        var options = getChartOptions(mappedData, true);
-
-        options.chartArea = {
-            width: "85%",
-            height: "85%"
-        };
-
-        addHAxisMinMaxValues(params, options);
-
-        drawLineChart(data, options, document.getElementById("team-activities-chart"));
-    }
-
-    function drawLineChart(data, options, element) {
-        var dataTable = new google.visualization.DataTable();
-        dataTable.addColumn({ label: 'Date', type: 'date', role: 'domain' });
-        dataTable.addColumn({ label: 'Commits', type: 'number', role: 'data' });
-        dataTable.addColumn({ label: 'Changes', type: 'number', role: 'data' });
-        dataTable.addRows(data);
-
-        var chart = new google.visualization.LineChart(element);
-
-        chart.draw(dataTable, options);
-    }
-
-    function getChartOptions(data, isTeamActivities) {
-        //var hAxisTicks = data.map(function(x) {
-        //    return x[0];
-        //});
-
-        var hAxisMinValue = data[0][0];
-        var hAxisMaxValue = data[data.length - 1][0];
-
-        var pointSize = isTeamActivities ? 5 : 3;
-        var legendPosition = isTeamActivities ? "top" : "none";
-
-        var options = {
-            curveType: "function",
-            legend: { position: legendPosition },
-            pointSize: pointSize,
-            series: {
-                0: { targetAxisIndex: 0 },
-                1: { targetAxisIndex: 1 }
-            },
-            hAxis: {
-                format: "yyyy-MM-dd",
-                minValue: hAxisMinValue,
-                maxValue: hAxisMaxValue,
-                //ticks: hAxisTicks
-            },
-            vAxes: {
-                0: { title: "Commits" },
-                1: { title: "Changes" }
-            }
-        };
-        return options;
-    }
-
-    function addHAxisMinMaxValues(params, options) {
-        if (params.fromDate) {
-            options.hAxis.minValue = new Date(params.fromDate);
-        }
-        if (params.toDate) {
-            options.hAxis.maxValue = new Date(params.toDate);
-        }
     }
 })();

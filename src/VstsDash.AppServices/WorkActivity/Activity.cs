@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using VstsDash.AppServices.WorkIteration;
 using VstsDash.RestApi.ApiResponses;
 
 namespace VstsDash.AppServices.WorkActivity
@@ -62,7 +63,7 @@ namespace VstsDash.AppServices.WorkActivity
                 yield return new AuthorCommits(author, commits);
             }
         }
-
+        
         private static IEnumerable<RepoAuthors> GetRepos(IReadOnlyCollection<CommitInfo> commitInfo)
         {
             var repositories = commitInfo.Select(x => x.Repository).Distinct(x => x.RepositoryId).ToList();

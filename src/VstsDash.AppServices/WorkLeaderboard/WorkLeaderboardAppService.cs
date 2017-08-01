@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using VstsDash.RestApi;
 using VstsDash.AppServices.WorkIteration;
+using VstsDash.RestApi;
 
 namespace VstsDash.AppServices.WorkLeaderboard
 {
@@ -31,17 +31,17 @@ namespace VstsDash.AppServices.WorkLeaderboard
             var iterationTask = _iterationsApi.Get(projectId, teamId, iterationId);
             var teamDaysOffTask = _iterationsApi.GetTeamDaysOff(projectId, teamId, iterationId);
             var teamMembersTask = _teamsApi.GetAllTeamMembers();
-            var workItemsTask = _workIterationAppService.GetWorkIteration(projectId, teamId, iterationId);
+            var workIterationTask = _workIterationAppService.GetWorkIteration(projectId, teamId, iterationId);
 
-            await Task.WhenAll(iterationTask, capacitiesTask, teamDaysOffTask, teamMembersTask, workItemsTask);
+            await Task.WhenAll(iterationTask, capacitiesTask, teamDaysOffTask, teamMembersTask, workIterationTask);
 
             var capaticies = capacitiesTask.Result;
             var iteration = iterationTask.Result;
             var teamDaysOff = teamDaysOffTask.Result;
             var teamMembers = teamMembersTask.Result.Value.ToList();
-            var workItems = workItemsTask.Result;
+            var workIteration = workIterationTask.Result;
 
-            return new Leaderboard(teamMembers, iteration, capaticies, teamDaysOff, workItems);
+            return new Leaderboard(teamMembers, iteration, capaticies, teamDaysOff, workIteration);
         }
     }
 }

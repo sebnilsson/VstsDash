@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using VstsDash.AppServices.WorkIteration;
 using VstsDash.RestApi;
 using VstsDash.RestApi.ApiResponses;
 using VstsDash.RestApi.Caching;
@@ -58,12 +59,16 @@ namespace VstsDash.AppServices.WorkActivity
             var fromDate = iteration?.Attributes?.StartDate ?? DateTime.Now;
             var toDate = iteration?.Attributes?.FinishDate ?? fromDate.AddDays(DefaultActivityDays);
 
+            var capacitiesTask = _iterationsApi.GetCapacities(projectId, teamId, iterationId);
             var repositoriesTask = _gitApi.GetRepositoryList(projectId);
+            var teamDaysOffTask = _iterationsApi.GetTeamDaysOff(projectId, teamId, iterationId);
             var teamMembersTask = _teamsApi.GetAllTeamMembers();
 
-            await Task.WhenAll(repositoriesTask, teamMembersTask);
+            await Task.WhenAll(capacitiesTask, repositoriesTask, teamDaysOffTask, teamMembersTask);
 
+            var capacities = capacitiesTask.Result;
             var repositories = repositoriesTask.Result;
+            var teamDaysOff = teamDaysOffTask.Result;
             var teamMembers = teamMembersTask.Result;
 
             var commitInfoTasks = repositories
@@ -74,6 +79,8 @@ namespace VstsDash.AppServices.WorkActivity
             await Task.WhenAll(commitInfoTasks);
 
             var commitInfo = commitInfoTasks.SelectMany(x => x.Result).ToList();
+
+            var iterationCapacity = new IterationCapacity(iteration, teamDaysOff, capacities);
 
             return new Activity(commitInfo, fromDate, toDate, iteration);
         }
