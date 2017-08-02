@@ -18,6 +18,16 @@
     white-space: nowrap;
 }
 
+.border-white-1 {
+    border: 1px solid #ccc;
+}
+.border-left-1 {
+    border-left: 1px solid #000;
+}
+.border-right-1 {
+    border-right: 1px solid #000;
+}
+
 /* Dashboard-mode */
 body.dashboard {
     background-color: #000;

@@ -5,11 +5,13 @@
     var requestQuery = Context.Request.Query;
 
     var hasAnyUnassignedScore = Model.UnassignedScore?.Points.Any() ?? false;
+
+    var dateText = $"{Model.IterationCapacity.IterationWorkDays.First():yyyy-MM-dd} - {Model.IterationCapacity.IterationWorkDays.Last():yyyy-MM-dd}";
 }
 
 <div class="leaderboard-container main-container @(!isDashboard ? "container" : "container-fluid") pb-3">
     <h1 class="h2 mb-2">
-        @Html.Icon(Icons.Leaderboard, "fa-fw")
+        <icon value="@Icons.Leaderboard" />
         <strong>Leaderboard</strong>: @Model.IterationName
 
         @if (!isDashboard)
@@ -24,6 +26,11 @@
                 @Html.Icon(Icons.Activity, "fa-fw")
                 Activity
             </a>
+        }
+
+        @if (!string.IsNullOrWhiteSpace(dateText))
+        {
+            <small>@dateText</small>
         }
     </h1>
 

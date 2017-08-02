@@ -21,21 +21,26 @@
      data-member-max-commits="@(Model.Authors.Any() ? Model.Authors.Max(ac => ac.MaxCommitDayCount) : 0)"
      data-member-max-changes="@(Model.Authors.Any() ? Model.Authors.Max(ac => ac.MaxChangeDayCount) : 0)">
 <h1 class="h2">
-    @Html.Icon(Icons.Activity, "fa-fw")
+    <icon value="@Icons.Activity"/>
     <strong>Activity</strong>@(!string.IsNullOrWhiteSpace(Model.IterationName) ? $": {Model.IterationName}" : null)
 
     @if (!isDashboard)
     {
         <a href="@Url.WorkActivity(requestQuery["projectId"], requestQuery["teamId"], requestQuery["iterationId"], true)"
            class="btn btn-outline-success btn-sm">
-            @Html.Icon(Icons.Dashboard, "fa-fw")
+            <icon value="@Icons.Dashboard"/>
             Dashboard
         </a>
         <a href="@Url.WorkLeaderboard(requestQuery["projectId"], requestQuery["teamId"], requestQuery["iterationId"])"
            class="btn btn-warning btn-sm">
-            @Html.Icon(Icons.Leaderboard, "fa-fw")
+            <icon value="@Icons.Leaderboard"/>
             Leaderboard
         </a>
+    }
+
+    @if (!string.IsNullOrWhiteSpace(dateText))
+    {
+        <small>@dateText</small>
     }
 </h1>
 
@@ -44,85 +49,65 @@
         <div class="card card-outline-primary">
             <h2 class="card-header card-primary text-white h6 pt-1 pb-1 pl-2 pr-2">
                 Team activities
-                @if (!string.IsNullOrWhiteSpace(dateText))
-                {
-                    <small>@dateText</small>
-                }
             </h2>
             <div class="card-block p-2">
                 <div class="d-flex flex-row text-center">
                     @if (Model.Commits.Any())
                     {
-                        <div class="d-flex flex-column align-self-center">
-                            <dl class="text-center">
-                                <dt class="font-weight-bold monospace">
-                                    @(Model.Authors.Any()
-                                          ? Model.Authors.Sum(ac => ac.CommitCount).ToString(Formats.NumberTwoDecimals)
-                                          : "-")
-                                </dt>
-                                <dd class="small one-line">
-                                    @Html.Icon(Icons.Commit, "fa-fw") Commits
-                                </dd>
-                                <dt class="font-weight-bold monospace">
-                                    @(Model.Authors.Any()
-                                          ? Model.Authors.Sum(ac => ac.CommitsTotalChangeCountSum).ToString(Formats.NumberTwoDecimals)
-                                          : "-")
-                                </dt>
-                                <dd class="small one-line">
-                                    @Html.Icon(Icons.Change, "fa-fw") Changes
-                                </dd>
-                            </dl>
+                        <div class="d-flex flex-column">
+                            <stat value="@(Model.Authors.Any()
+                                               ? Model.Authors.Sum(ac => ac.CommitCount).ToString(Formats.NumberTwoDecimals)
+                                               : "-")"
+                                  is-inverse="true" class="pl-1 pr-1">
+                                <icon value="@Icons.Commit"/> Commits
+                            </stat>
+                            <stat value="@(Model.Authors.Any()
+                                               ? Model.Authors.Sum(ac => ac.CommitsTotalChangeCountSum).ToString(Formats.NumberTwoDecimals)
+                                               : "-")"
+                                  is-inverse="true" class="pl-1 pr-1">
+                                <icon value="@Icons.Change"/> Changes
+                            </stat>
                         </div>
 
                         <div class="w-100">
                             <div id="team-activities-chart" style="height: 300px;"></div>
                         </div>
 
-                        <div class="d-flex flex-column align-self-center">
-                            <dl class="text-center">
-                                <dt class="font-weight-bold monospace">
-                                    @(Model.Authors.Any()
-                                          ? Model.Authors.Average(ac => ac.CommitsTotalChangeCountSum / ac.CommitCount).ToString(Formats.NumberTwoDecimals)
-                                          : "-")
-                                </dt>
-                                <dd class="small one-line">
-                                    Avg @Html.Icon(Icons.Change, "fa-fw")/@Html.Icon(Icons.Commit, "fa-fw")
-                                </dd>
-                                <dt class="font-weight-bold monospace">
-                                    @(Model.Authors.Any()
-                                          ? Model.Authors.SelectMany(ac => ac.Commits).Max(c => c.Commit.TotalChangeCount).ToString(Formats.NumberTwoDecimals)
-                                          : "-")
-                                </dt>
-                                <dd class="small one-line">
-                                    Most @Html.Icon(Icons.Change, "fa-fw")/@Html.Icon(Icons.Commit, "fa-fw")
-                                </dd>
-                                <dt class="font-weight-bold monospace">
-                                    @(Model.Authors.Any()
-                                          ? Model
-                                              .Authors
-                                              .SelectMany(ac => ac.Commits)
-                                              .GroupBy(c => (c.Commit.AuthorDate ?? DateTime.MinValue).Date)
-                                              .Max(g => g.Count())
-                                              .ToString(Formats.NumberTwoDecimals)
-                                          : "-")
-                                </dt>
-                                <dd class="small one-line">
-                                    Most @Html.Icon(Icons.Commit, "fa-fw")/day
-                                </dd>
-                                <dt class="font-weight-bold monospace">
-                                    @(Model.Authors.Any()
-                                          ? Model
-                                              .Authors
-                                              .SelectMany(ac => ac.Commits)
-                                              .GroupBy(c => (c.Commit.AuthorDate ?? DateTime.MinValue).Date)
-                                              .Max(g => g.Sum(x => x.Commit.TotalChangeCount))
-                                              .ToString(Formats.NumberTwoDecimals)
-                                          : "-")
-                                </dt>
-                                <dd class="small one-line">
-                                    Most @Html.Icon(Icons.Change, "fa-fw")/day
-                                </dd>
-                            </dl>
+                        <div class="d-flex flex-column">
+                            <stat value="@(Model.Authors.Any()
+                                               ? Model.Authors.Average(ac => ac.CommitsTotalChangeCountSum / ac.CommitCount).ToString(Formats.NumberTwoDecimals)
+                                               : "-")"
+                                  is-inverse="true" class="pl-1 pr-1">
+                                Avg <icon value="@Icons.Change"/>/<icon value="@Icons.Commit"/>
+                            </stat>
+                            <stat value="@(Model.Authors.Any()
+                                               ? Model.Authors.SelectMany(ac => ac.Commits).Max(c => c.Commit.TotalChangeCount).ToString(Formats.NumberTwoDecimals)
+                                               : "-")"
+                                  is-inverse="true" class="pl-1 pr-1">
+                                Most <icon value="@Icons.Change"/>/<icon value="@Icons.Commit"/>
+                            </stat>
+                            <stat value="@(Model.Authors.Any()
+                                               ? Model
+                                                   .Authors
+                                                   .SelectMany(ac => ac.Commits)
+                                                   .GroupBy(c => (c.Commit.AuthorDate ?? DateTime.MinValue).Date)
+                                                   .Max(g => g.Count())
+                                                   .ToString(Formats.NumberTwoDecimals)
+                                               : "-")"
+                                  is-inverse="true" class="pl-1 pr-1">
+                                Most <icon value="@Icons.Commit"/>/day
+                            </stat>
+                            <stat value="@(Model.Authors.Any()
+                                               ? Model
+                                                   .Authors
+                                                   .SelectMany(ac => ac.Commits)
+                                                   .GroupBy(c => (c.Commit.AuthorDate ?? DateTime.MinValue).Date)
+                                                   .Max(g => g.Sum(x => x.Commit.TotalChangeCount))
+                                                   .ToString(Formats.NumberTwoDecimals)
+                                               : "-")"
+                                  is-inverse="true" class="pl-1 pr-1">
+                                Most <icon value="@Icons.Change"/>/day
+                            </stat>
                         </div>
                     }
                     else
@@ -159,80 +144,84 @@
     <div class="card card-outline-success mt-3">
         <h2 class="card-header card-success text-white h6 pt-1 pb-1 pl-2 pr-2">Members activities</h2>
         <div class="card-block p-2">
-            <div class="d-inline-flex flex-row flex-wrap align-items-stretch">
+            <div class="d-inline-flex flex-row flex-wrap align-items-stretch text-center">
                 @foreach (var authorCommit in Model.Authors)
                 {
                     var author = authorCommit.Author;
 
-                    <div class="@(isDashboard ? "col-xl-3" : null) col-lg-4 col-md-6 col-sm-12 mt-1 mb-1 pl-1 pr-1">
-                        <div class="d-inline-flex flex-row w-100" style="min-height: 44px;">
-                            @if (!string.IsNullOrWhiteSpace(author.MemberImageUrl))
-                            {
-                                <img src="@Url.ApiFile(author.MemberImageUrl)" class="leaderboard-player-image rounded align-self-center mr-2"/>
-                            }
-                            <h2 class="m-0 align-self-center one-line" title="@author.MemberUniqueName">
-                                @author.MemberDisplayName
-                            </h2>
-                        </div>
-                        <div class="d-flex flex-row text-center">
-                            @if (!isDashboard)
-                            {
-                                <div class="d-flex flex-column align-self-center">
-                                    <dl class="text-center">
-                                        <dt class="font-weight-bold monospace">
-                                            @authorCommit.CommitCount.ToString(Formats.NumberTwoDecimals)
-                                        </dt>
-                                        <dd class="small">
-                                            <small class="one-line">@Html.Icon(Icons.Commit, "fa-fw") Commits</small>
-                                        </dd>
-                                        <dt class="font-weight-bold monospace">
-                                            @authorCommit.CommitsTotalChangeCountSum.ToString(Formats.NumberTwoDecimals)
-                                        </dt>
-                                        <dd class="small">
-                                            <small class="one-line">@Html.Icon(Icons.Change, "fa-fw") Changes</small>
-                                        </dd>
-                                    </dl>
+                    <div class="@(isDashboard ? "col-xl-3" : null) col-lg-4 col-md-6 col-sm-12 mt-1 mb-1 pl-2 pr-2">
+                        <div class="card" style="border-color: #333;">
+                            <div class="card-header h3 pt-1 pb-1 pl-2 pr-2">
+                                <div class="d-inline-flex flex-row w-100" style="min-height: 44px;">
+                                    @if (!string.IsNullOrWhiteSpace(author.MemberImageUrl))
+                                    {
+                                        <img src="@Url.ApiFile(author.MemberImageUrl)" class="leaderboard-player-image rounded align-self-center mr-2"/>
+                                    }
+                                    <h2 class="m-0 align-self-center one-line" title="@author.MemberUniqueName">
+                                        @author.MemberDisplayName
+                                    </h2>
                                 </div>
-                            }
-
-                            <div class="activity-member-activity w-100" data-member-id="@author.MemberId"
-                                 style="height: 150px;">
                             </div>
-
-                            <div class="d-flex flex-column align-self-center">
-                                <dl class="text-center">
-                                    <dt class="font-weight-bold monospace">
-                                        @(authorCommit.CommitCount > 0
-                                              ? (authorCommit.CommitsTotalChangeCountSum / authorCommit.CommitCount).ToString(Formats.NumberTwoDecimals)
-                                              : "-")
-                                    </dt>
-                                    <dd class="small">
-                                        <small class="one-line">Avg @Html.Icon(Icons.Change, "fa-fw")/@Html.Icon(Icons.Commit, "fa-fw")</small>
-                                    </dd>
-                                    <dt class="font-weight-bold monospace">
-                                        @(authorCommit.CommitCount > 0
-                                              ? authorCommit.Commits.Max(c => c.Commit.TotalChangeCount).ToString(Formats.NumberTwoDecimals)
-                                              : "-")
-                                    </dt>
-                                    <dd class="small">
-                                        <small class="one-line">Most @Html.Icon(Icons.Change, "fa-fw")/@Html.Icon(Icons.Commit, "fa-fw")</small>
-                                    </dd>
+                            <div class="card-block p-0">
+                                <div class="d-flex flex-row align-items-stretch">
                                     @if (!isDashboard)
                                     {
-                                        <dt class="font-weight-bold monospace">
-                                            @(authorCommit.CommitCount > 0
-                                                  ? authorCommit
-                                                      .Commits
-                                                      .GroupBy(c => (c.Commit.AuthorDate ?? DateTime.MinValue).Date)
-                                                      .Max(g => g.Count())
-                                                      .ToString(Formats.NumberTwoDecimals)
-                                                  : "-")
-                                        </dt>
-                                        <dd class="small">
-                                            <small class="one-line">Most @Html.Icon(Icons.Commit, "fa-fw")/day</small>
-                                        </dd>
+                                        <div class="d-flex flex-column">
+                                            <stat value="@authorCommit.CommitCount.ToString(Formats.NumberTwoDecimals)"
+                                                  description-css="mb-0" is-inverse="true">
+                                                <small>
+                                                    <icon value="@Icons.Commit"/> Commits
+                                                </small>
+                                            </stat>
+                                            <stat value="@authorCommit.CommitsTotalChangeCountSum.ToString(Formats.NumberTwoDecimals)"
+                                                  description-css="mb-0" is-inverse="true">
+                                                <small>
+                                                    <icon value="@Icons.Change"/> Changes
+                                                </small>
+                                            </stat>
+                                        </div>
                                     }
-                                </dl>
+
+                                    <div class="activity-member-activity w-100" data-member-id="@author.MemberId"
+                                         style="height: 134px;">
+                                    </div>
+
+                                    <div class="d-flex flex-column">
+                                        <stat value="@(authorCommit.CommitCount > 0
+                                                           ? (authorCommit.CommitsTotalChangeCountSum / authorCommit.CommitCount).ToString(Formats.NumberTwoDecimals)
+                                                           : "-")"
+                                              description-css="mb-0" is-inverse="true">
+                                            <small>
+                                                Avg <icon value="@Icons.Change"/>/<icon value="@Icons.Commit"/>
+                                            </small>
+                                        </stat>
+
+                                        <stat value="@(authorCommit.CommitCount > 0
+                                                           ? authorCommit.Commits.Max(c => c.Commit.TotalChangeCount).ToString(Formats.NumberTwoDecimals)
+                                                           : "-")"
+                                              description-css="mb-0" is-inverse="true">
+                                            <small>
+                                                Most <icon value="@Icons.Change"/>/<icon value="@Icons.Commit"/>
+                                            </small>
+                                        </stat>
+
+                                        @if (!isDashboard)
+                                        {
+                                            <stat value="@(authorCommit.CommitCount > 0
+                                                               ? authorCommit
+                                                                   .Commits
+                                                                   .GroupBy(c => (c.Commit.AuthorDate ?? DateTime.MinValue).Date)
+                                                                   .Max(g => g.Count())
+                                                                   .ToString(Formats.NumberTwoDecimals)
+                                                               : "-")"
+                                                  description-css="mb-0" is-inverse="true">
+                                                <small>
+                                                    Most <icon value="@Icons.Commit"/>/day
+                                                </small>
+                                            </stat>
+                                        }
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

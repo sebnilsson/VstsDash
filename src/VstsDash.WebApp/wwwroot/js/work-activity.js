@@ -43,7 +43,7 @@
                     return;
                 }
 
-                charts.data.getTeamDoneEffortsJson(function (data) {
+                charts.data.getTeamDoneEffortsJson(function(data) {
                     var mappedData = charts.data.getMappedData(data);
 
                     var dataTable = charts.googleCharts.getDoneEffortsDataTable(mappedData);
