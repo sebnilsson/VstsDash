@@ -38,7 +38,7 @@ namespace VstsDash.AppServices.WorkLeaderboard
             var capaticies = capacitiesTask.Result;
             var iteration = iterationTask.Result;
             var teamDaysOff = teamDaysOffTask.Result;
-            var teamMembers = teamMembersTask.Result.Value.ToList();
+            var teamMembers = teamMembersTask.Result;
             var workIteration = workIterationTask.Result;
 
             return new Leaderboard(teamMembers, iteration, capaticies, teamDaysOff, workIteration);

@@ -10,8 +10,6 @@ namespace VstsDash.WebApp.TagHelpers
     {
         private const string DefaultCssClass = "mb-0";
 
-        private const string DefaultDescriptionCss = "small one-line";
-
         private const string DefaultValueCss = "font-weight-bold monospace";
 
         [HtmlAttributeName("class")]
@@ -25,6 +23,12 @@ namespace VstsDash.WebApp.TagHelpers
 
         [HtmlAttributeName("is-inverse")]
         public bool IsInverse { get; set; }
+
+        [HtmlAttributeName("is-description-small")]
+        public bool IsDescriptionSmall { get; set; } = true;
+
+        [HtmlAttributeName("is-description-one-line")]
+        public bool IsDescriptionOneLine { get; set; } = true;
 
         [HtmlAttributeName("value")]
         public string Value { get; set; }
@@ -79,7 +83,10 @@ namespace VstsDash.WebApp.TagHelpers
             var ddTag = new TagBuilder("dd");
             ddTag.InnerHtml.AppendHtml(description);
 
-            var cssClass = $"{DefaultDescriptionCss} {DescriptionCss}".Trim();
+            var defaultDescriptionCss =
+                $"{(IsDescriptionOneLine ? "one-line" : null)} {(IsDescriptionSmall ? "small" : null)}".Trim();
+            var cssClass = $"{defaultDescriptionCss} {DescriptionCss}".Trim();
+
             ddTag.AddCssClass(cssClass);
 
             return ddTag;

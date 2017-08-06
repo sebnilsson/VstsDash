@@ -3,6 +3,7 @@
     var isFirst = ViewData["IsFirst"] as bool? ?? false;
     var isSecond = ViewData["IsSecond"] as bool? ?? false;
     var isThird = ViewData["IsThird"] as bool? ?? false;
+    var teamWorkDays = ViewData["TeamWorkDays"] as IEnumerable<DateTime> ?? Enumerable.Empty<DateTime>();
 
     var playerCssClass = isFirst ? "leaderboard-player-first" : (isSecond ? "leaderboard-player-second" : (isThird ? "leaderboard-player-third" : null));
 }
@@ -56,10 +57,10 @@
 
             <div class="leaderboard-player-meta-block leaderboard-player-block align-self-center text-center">
                 <div class="d-flex flex-row">
-                    <dl class="w-100 @(Model.Capacity.Multiplier > 2 ? "bg-danger text-white"
-                                           : (Model.Capacity.Multiplier > 1 ? "bg-warning text-white" : null))">
+                    <dl class="w-100 @(Model.CapacityMultiplier > 2 ? "bg-danger text-white"
+                                           : (Model.CapacityMultiplier > 1 ? "bg-warning text-white" : null))">
                         <dt>
-                            @Model.Capacity.Multiplier.ToString(Formats.NumberTwoDecimals)x
+                            @Model.CapacityMultiplier.ToString(Formats.NumberTwoDecimals)x
                         </dt>
                         <dd class="small">
                             Multiplier
@@ -82,9 +83,9 @@
                     @if (Model.Capacity.MemberDaysOff.Any())
                     {
                         <dl class="w-100 bg-info text-white"
-                            title="@string.Join("\n", Model.Capacity.AllDaysOff.Select(x => x.ToString("yyyy-MM-dd")))">
+                            title="@string.Join("\n", Model.Capacity.DaysOff.Select(x => x.ToString("yyyy-MM-dd")))">
                             <dt>
-                                @Model.Capacity.MemberDaysOff.Count.ToString(Formats.NumberTwoDecimals)d
+                                @Model.Capacity.DaysOff.Count.ToString(Formats.NumberTwoDecimals)d
                             </dt>
                             <dd class="small">
                                 Days off
@@ -93,12 +94,12 @@
                     }
                 </div>
 
-                @if (Model.Capacity.WorkDaysTotalCount > 0 || Model.Capacity.HoursTotalCount > 0)
+                @if (Model.Capacity.TotalWorkDayCount > 0 || Model.Capacity.HoursTotalCount > 0)
                 {
                     <div class="d-flex flex-row">
                         <dl class="w-100 bg-faded">
                             <dt>
-                                @Model.Capacity.WorkDaysTotalCount.ToString(Formats.NumberTwoDecimals)d
+                                @Model.Capacity.TotalWorkDayCount.ToString(Formats.NumberTwoDecimals)d
                             </dt>
                             <dd class="small">
                                 Days capacity
@@ -112,12 +113,12 @@
                                 Hours capacity
                             </dd>
                         </dl>
-                        @if (Model.Capacity.NetWorkDays.Count != Model.Capacity.WorkDaysTotalCount && Model.Capacity.WorkDaysTotalCount > 0)
+                        @if (!Model.Capacity.WorkDays.SequenceEqual(teamWorkDays) && Model.Capacity.TotalWorkDayCount > 0)
                         {
                             <dl class="w-100 bg-info text-white"
-                                title="@string.Join("\n", Model.Capacity.NetWorkDays.Select(x => x.ToString("yyyy-MM-dd")))">
+                                title="@string.Join("\n", Model.Capacity.WorkDays.Select(x => x.ToString("yyyy-MM-dd")))">
                                 <dt>
-                                    @(Model.Capacity.NetWorkDays.Count)d
+                                    @(Model.Capacity.WorkDays.Count)d
                                 </dt>
                                 <dd class="small">
                                     Work days

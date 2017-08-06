@@ -13,9 +13,14 @@ namespace VstsDash.AppServices.WorkActivity
             IEnumerable<CommitInfo> commitData,
             DateTime fromDate,
             DateTime toDate,
+            TeamCapacity teamCapacity,
+            IReadOnlyDictionary<DateTime, double?> effortDone,
             IterationApiResponse iteration = null)
         {
             if (commitData == null) throw new ArgumentNullException(nameof(commitData));
+
+            TeamCapacity = teamCapacity ?? throw new ArgumentNullException(nameof(teamCapacity));
+            EffortDone = effortDone ?? throw new ArgumentNullException(nameof(effortDone));
 
             FromDate = fromDate;
             ToDate = toDate;
@@ -41,7 +46,11 @@ namespace VstsDash.AppServices.WorkActivity
 
         public IReadOnlyCollection<CommitInfo> Commits { get; }
 
+        public IReadOnlyDictionary<DateTime, double?> EffortDone { get; }
+
         public DateTime FromDate { get; }
+
+        public TeamCapacity TeamCapacity { get; }
 
         public string IterationName { get; }
 
@@ -63,7 +72,7 @@ namespace VstsDash.AppServices.WorkActivity
                 yield return new AuthorCommits(author, commits);
             }
         }
-        
+
         private static IEnumerable<RepoAuthors> GetRepos(IReadOnlyCollection<CommitInfo> commitInfo)
         {
             var repositories = commitInfo.Select(x => x.Repository).Distinct(x => x.RepositoryId).ToList();

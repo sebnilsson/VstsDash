@@ -44,16 +44,16 @@
     }
 </h1>
 
-<div class="@(isDashboard ? "row" : null)">
-    <div class="@(isDashboard ? "col-xl-7" : null)">
-        <div class="card card-outline-primary">
-            <h2 class="card-header card-primary text-white h6 pt-1 pb-1 pl-2 pr-2">
-                Team activities
-            </h2>
-            <div class="card-block p-2">
-                <div class="d-flex flex-row text-center">
-                    @if (Model.Commits.Any())
-                    {
+@if (Model.Commits.Any())
+{
+    <div class="@(isDashboard ? "row" : null)">
+        <div class="@(isDashboard ? "col-xl-6" : null)">
+            <div class="card card-outline-primary">
+                <h2 class="card-header card-primary text-white h6 pt-1 pb-1 pl-2 pr-2">
+                    Team activities
+                </h2>
+                <div class="card-block p-2">
+                    <div class="d-flex flex-row text-center">
                         <div class="d-flex flex-column">
                             <stat value="@(Model.Authors.Any()
                                                ? Model.Authors.Sum(ac => ac.CommitCount).ToString(Formats.NumberTwoDecimals)
@@ -109,38 +109,47 @@
                                 Most <icon value="@Icons.Change"/>/day
                             </stat>
                         </div>
-                    }
-                    else
-                    {
-                        <div class="text-center align-self-center w-100">
-                            <em>No commits</em>
-                        </div>
-                    }
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    @if (Model.Commits.Any())
-    {
-        <div class="@(isDashboard ? "col-xl-5" : "mt-3")">
+        <div class="@(isDashboard ? "col-xl-6" : "mt-3")">
             <div class="card card-outline-info">
                 <h2 class="card-header card-info text-white h6 pt-1 pb-1 pl-2 pr-2">
                     Team done efforts
                 </h2>
 
                 <div class="card-block p-2">
-                    <div>
-                        <div id="team-done-efforts-chart" class="w-100" style="height: 300px;"></div>
+                    <div class="d-flex flex-row text-center">
+                        <div class="d-flex flex-column">
+                            <stat value="@(Model.LastEffortDone != null ? Model.LastEffortDone.Value.ToString(Formats.NumberTwoDecimals) : "-")"
+                                  is-inverse="true" class="pl-1 pr-1">
+                                <icon value="@Icons.EffortDone"/>
+                                Effort done
+                            </stat>
+                            <stat value="@(Model.EffortDonePerMember != null ? Model.EffortDonePerMember.Value.ToString(Formats.NumberThreeDecimals) : "-")"
+                                  is-inverse="true" class="pl-1 pr-1">
+                                <icon value="@Icons.EffortDone"/>/member
+                            </stat>
+                            <stat value="@(Model.EffortDonePerDay != null ? Model.EffortDonePerDay.Value.ToString(Formats.NumberThreeDecimals) : "-")"
+                                  is-inverse="true" class="pl-1 pr-1">
+                                <icon value="@Icons.EffortDone"/>/day
+                            </stat>
+                            <stat value="@(Model.MaxEffortDonePerDay != null ? Model.MaxEffortDonePerDay.Value.ToString(Formats.NumberTwoDecimals) : "-")"
+                                  is-inverse="true" class="pl-1 pr-1">
+                                Max <icon value="@Icons.EffortDone"/>/day
+                            </stat>
+                        </div>
+
+                        <div class="w-100">
+                            <div id="team-done-efforts-chart" class="w-100" style="height: 300px;"></div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    }
-</div>
-
-@if (Model.Commits.Any())
-{
+    </div>
     <div class="card card-outline-success mt-3">
         <h2 class="card-header card-success text-white h6 pt-1 pb-1 pl-2 pr-2">Members activities</h2>
         <div class="card-block p-2">
@@ -183,7 +192,7 @@
                                     }
 
                                     <div class="activity-member-activity w-100" data-member-id="@author.MemberId"
-                                         style="height: 134px;">
+                                         style="height: 150px;">
                                     </div>
 
                                     <div class="d-flex flex-column">
@@ -238,5 +247,11 @@
 
         @Html.Partial("Activity/_Commits", Model.Commits)
     }
+}
+else
+{
+    <div class="card card-outline-info text-center">
+        <em>No activities</em>
+    </div>
 }
 </div>

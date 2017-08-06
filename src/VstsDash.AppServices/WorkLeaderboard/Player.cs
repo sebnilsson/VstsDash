@@ -1,29 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using VstsDash.AppServices.WorkIteration;
 using VstsDash.RestApi.ApiResponses;
 
 namespace VstsDash.AppServices.WorkLeaderboard
 {
     public class Player
     {
+        private const int MaxCapacityMultiplier = 4;
+
         public Player(
             TeamMemberApiResponse teamMember,
-            IterationApiResponse iteration,
-            IEnumerable<DateTime> teamDaysOff,
-            IterationCapacityApiResponse capacity = null,
+            TeamCapacity teamCapacity,
+            TeamMemberCapacity memberCapacity = null,
             Score score = null)
         {
             if (teamMember == null) throw new ArgumentNullException(nameof(teamMember));
-            if (iteration == null) throw new ArgumentNullException(nameof(iteration));
-            if (teamDaysOff == null) throw new ArgumentNullException(nameof(teamDaysOff));
+            if (teamCapacity == null) throw new ArgumentNullException(nameof(teamCapacity));
 
             DisplayName = teamMember.DisplayName;
             Id = teamMember.Id;
             ImageUrl = teamMember.ImageUrl;
             UniqueName = teamMember.UniqueName;
 
-            Capacity = new LeaderboardCapacity(iteration, teamDaysOff, capacity);
+            Capacity = memberCapacity ?? TeamMemberCapacity.Default(teamMember.Id, teamCapacity);
+            CapacityMultiplier =
+                (Capacity.DailyPercent > 0 ? 100 / Capacity.DailyPercent : MaxCapacityMultiplier)
+                .Clamp(1, MaxCapacityMultiplier);
 
             Score = score ?? Score.Empty;
 
@@ -32,7 +36,9 @@ namespace VstsDash.AppServices.WorkLeaderboard
             ScorePointsSum = GetScoreSum(Score.Points);
         }
 
-        public LeaderboardCapacity Capacity { get; }
+        public TeamMemberCapacity Capacity { get; }
+
+        public double CapacityMultiplier { get; }
 
         public string DisplayName { get; }
 
@@ -52,7 +58,7 @@ namespace VstsDash.AppServices.WorkLeaderboard
 
         private double GetScoreSum(IEnumerable<Point> points)
         {
-            return points.Sum(x => x.Value * Capacity.Multiplier);
+            return points.Sum(x => x.Value * CapacityMultiplier);
         }
     }
 }

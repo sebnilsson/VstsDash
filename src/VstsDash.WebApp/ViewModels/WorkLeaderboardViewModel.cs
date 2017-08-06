@@ -6,7 +6,7 @@ namespace VstsDash.WebApp.ViewModels
 {
     public class WorkLeaderboardViewModel
     {
-        public Player.PlayerCapacity IterationCapacity { get; set; }
+        public LeaderboardTeamCapacity TeamCapacity { get; set; }
 
         public string IterationName { get; set; }
 
@@ -20,13 +20,32 @@ namespace VstsDash.WebApp.ViewModels
 
         public double TotalScorePointsSum { get; set; }
 
-        public double TotalWorkDaysTotalCount { get; set; }
+        public double TotalWorkDayCount { get; set; }
 
         public Player.PlayerScore UnassignedScore { get; set; }
+
+        public class LeaderboardTeamCapacity
+        {
+            public double DailyHourCount { get; set; }
+
+            public double DailyPercent { get; set; }
+
+            public double HoursTotalCount { get; set; }
+
+            public IReadOnlyCollection<DateTime> IterationWorkDays { get; set; }
+
+            public IReadOnlyCollection<DateTime> TeamDaysOff { get; set; }
+
+            public IReadOnlyCollection<DateTime> WorkDays { get; set; }
+
+            public double TotalWorkDayCount { get; set; }
+        }
 
         public class Player
         {
             public PlayerCapacity Capacity { get; set; }
+
+            public double CapacityMultiplier { get; set; }
 
             public string DisplayName { get; set; }
 
@@ -52,19 +71,13 @@ namespace VstsDash.WebApp.ViewModels
 
                 public double HoursTotalCount { get; set; }
 
-                public double Multiplier { get; set; }
-
-                public IReadOnlyCollection<DateTime> AllDaysOff { get; set; }
-
-                public IReadOnlyCollection<DateTime> IterationWorkDays { get; set; }
-
-                public IReadOnlyCollection<DateTime> NetWorkDays { get; set; }
+                public IReadOnlyCollection<DateTime> DaysOff { get; set; }
 
                 public IReadOnlyCollection<DateTime> MemberDaysOff { get; set; }
 
-                public IReadOnlyCollection<DateTime> TeamDaysOff { get; set; }
+                public IReadOnlyCollection<DateTime> WorkDays { get; set; }
 
-                public double WorkDaysTotalCount { get; set; }
+                public double TotalWorkDayCount { get; set; }
             }
 
             public class PlayerScore

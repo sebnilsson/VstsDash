@@ -17,5 +17,7 @@
         public const string Activity = "fa-heartbeat";
 
         public const string Leaderboard = "fa-futbol-o";
+
+        public const string EffortDone = "fa-check-circle";
     }
 }

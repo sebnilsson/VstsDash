@@ -27,16 +27,21 @@ namespace VstsDash.AppServices.WorkActivity
 
         private readonly ITeamsApiService _teamsApi;
 
+        private readonly WorkIterationAppService _workIterationAppService;
+
         public WorkActivityAppService(
             ICache cache,
             IGitApiService gitApi,
             IIterationsApiService iterationsApi,
-            ITeamsApiService teamsApi)
+            ITeamsApiService teamsApi,
+            WorkIterationAppService workIterationAppService)
         {
             _cache = cache ?? throw new ArgumentNullException(nameof(cache));
             _gitApi = gitApi ?? throw new ArgumentNullException(nameof(gitApi));
             _iterationsApi = iterationsApi ?? throw new ArgumentNullException(nameof(iterationsApi));
             _teamsApi = teamsApi ?? throw new ArgumentNullException(nameof(teamsApi));
+            _workIterationAppService = workIterationAppService ??
+                                       throw new ArgumentNullException(nameof(workIterationAppService));
         }
 
         public async Task<Activity> GetActivity(
@@ -64,12 +69,16 @@ namespace VstsDash.AppServices.WorkActivity
             var teamDaysOffTask = _iterationsApi.GetTeamDaysOff(projectId, teamId, iterationId);
             var teamMembersTask = _teamsApi.GetAllTeamMembers();
 
-            await Task.WhenAll(capacitiesTask, repositoriesTask, teamDaysOffTask, teamMembersTask);
+            var effortDoneTask =
+                _workIterationAppService.GetWorkIterationDoneEffortsPerDay(projectId, teamId, iterationId);
+
+            await Task.WhenAll(capacitiesTask, repositoriesTask, teamDaysOffTask, teamMembersTask, effortDoneTask);
 
             var capacities = capacitiesTask.Result;
             var repositories = repositoriesTask.Result;
             var teamDaysOff = teamDaysOffTask.Result;
             var teamMembers = teamMembersTask.Result;
+            var effortDones = effortDoneTask.Result;
 
             var commitInfoTasks = repositories
                 .Value
@@ -79,10 +88,10 @@ namespace VstsDash.AppServices.WorkActivity
             await Task.WhenAll(commitInfoTasks);
 
             var commitInfo = commitInfoTasks.SelectMany(x => x.Result).ToList();
-
-            var iterationCapacity = new IterationCapacity(iteration, teamDaysOff, capacities);
-
-            return new Activity(commitInfo, fromDate, toDate, iteration);
+            
+            var teamCapacity = new TeamCapacity(iteration, teamDaysOff, teamMembers, capacities);
+            
+            return new Activity(commitInfo, fromDate, toDate, teamCapacity, effortDones, iteration);
         }
 
         private async Task<ICollection<CommitInfo>> GetCommitInfo(

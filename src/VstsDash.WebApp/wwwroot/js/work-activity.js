@@ -56,6 +56,9 @@
                         width: "85%",
                         height: "85%"
                     };
+                    options.vAxes = {
+                        0: { title: "Effort done" }
+                    };
                     options.vAxes[0].minValue = 10;
 
                     charts.googleCharts.drawLineChart(dataTable, options, element);

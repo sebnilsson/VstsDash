@@ -66,20 +66,21 @@ namespace VstsDash.AppServices.WorkIteration
             var teamDaysOff = teamDaysOffTask.Result;
             var workIterationItems = workIterationItemsTask.Result.Items;
 
-            var iterationCapacity = new IterationCapacity(iteration, teamDaysOff);
+            var teamCapacity = new TeamCapacity(iteration, teamDaysOff);
 
-            var doneEffortsPerDay = GetWorkIterationDoneEffortsPerDayInternal(workIterationItems, iterationCapacity)
+            var doneEffortsPerDay = GetWorkIterationDoneEffortsPerDayInternal(teamCapacity, workIterationItems)
                 .ToDictionary(x => x.Key, x => x.Value);
             return new ReadOnlyDictionary<DateTime, double?>(doneEffortsPerDay);
         }
 
         private static IEnumerable<KeyValuePair<DateTime, double?>> GetWorkIterationDoneEffortsPerDayInternal(
-            ICollection<WorkItem> workIterationItems,
-            IterationCapacity iterationCapacity)
+            TeamCapacity teamCapacity,
+            ICollection<WorkItem> workIterationItems)
         {
-            foreach (var workDay in iterationCapacity.NetWorkDays)
+            foreach (var workDay in teamCapacity.IterationWorkDays)
             {
-                var isWorkDayPast = workDay <= DateTime.Today;
+                var isWorkDay = !teamCapacity.TeamDaysOff.Contains(workDay);
+                var isPastWorkDay = isWorkDay && workDay <= DateTime.UtcNow.Date;
 
                 var doneWorkIterationItems = workIterationItems
                     .Where(x =>
@@ -87,9 +88,9 @@ namespace VstsDash.AppServices.WorkIteration
                         (x.ClosedDate ?? x.ChangedDate ?? DateTime.MaxValue).Date <= workDay.Date)
                     .ToList();
 
-                var doneEffortSum = isWorkDayPast
+                var doneEffortSum = isPastWorkDay
                     ? (doneWorkIterationItems.Any() ? doneWorkIterationItems.Sum(x => x.Effort) : 0)
-                    : (double?)null;
+                    : (double?) null;
                 yield return new KeyValuePair<DateTime, double?>(workDay, doneEffortSum);
             }
         }

@@ -6,7 +6,7 @@
 
     var hasAnyUnassignedScore = Model.UnassignedScore?.Points.Any() ?? false;
 
-    var dateText = $"{Model.IterationCapacity.IterationWorkDays.First():yyyy-MM-dd} - {Model.IterationCapacity.IterationWorkDays.Last():yyyy-MM-dd}";
+    var dateText = $"{Model.TeamCapacity.IterationWorkDays.First():yyyy-MM-dd} - {Model.TeamCapacity.IterationWorkDays.Last():yyyy-MM-dd}";
 }
 
 <div class="leaderboard-container main-container @(!isDashboard ? "container" : "container-fluid") pb-3">
@@ -35,7 +35,7 @@
     </h1>
 
     <div class="@(isDashboard ? "row" : null)">
-        @if (Model.IterationCapacity.IterationWorkDays.Any())
+        @if (Model.TeamCapacity.WorkDays.Any())
         {
             <div class="@(isDashboard ? "col-xl-6" : null) @(isDashboard && !hasAnyUnassignedScore ? "offset-xl-3" : null)">
                 @Html.Partial("Leaderboard/_Meta", Model)
@@ -97,7 +97,13 @@
                         var isThird = Model.Players.ElementAtOrDefault(2) == player && player.ScorePointsSum > 0;
 
                         @Html.Partial("Leaderboard/_Player", player,
-                            new ViewDataDictionary(ViewData) {{"IsFirst", isFirst}, {"IsSecond", isSecond}, {"IsThird", isThird}})
+                            new ViewDataDictionary(ViewData)
+                            {
+                                { "IsFirst", isFirst },
+                                { "IsSecond", isSecond },
+                                { "IsThird", isThird },
+                                { "TeamWorkDays", Model.TeamCapacity.WorkDays }
+                            })
                     }
                 </div>
             </div>

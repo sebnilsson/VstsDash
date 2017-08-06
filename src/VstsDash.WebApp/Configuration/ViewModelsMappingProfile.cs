@@ -4,6 +4,7 @@ using Autofac;
 using AutoMapper;
 using VstsDash.AppServices.TeamMeta;
 using VstsDash.AppServices.WorkActivity;
+using VstsDash.AppServices.WorkIteration;
 using VstsDash.AppServices.WorkLeaderboard;
 using VstsDash.WebApp.ViewModels;
 
@@ -67,6 +68,8 @@ namespace VstsDash.WebApp.Configuration
                     opt => opt.MapFrom(
                         src => src.Repos.OrderByDescending(r => r.AuthorCommits.Sum(ac => ac.Commits.Count))));
             CreateMap<Author, WorkActivityViewModel.Author>();
+            CreateMap<TeamCapacity, WorkActivityViewModel.ActivityTeamCapacity>();
+            CreateMap<TeamMemberCapacity, WorkActivityViewModel.ActivityTeamCapacity.ActivityTeamMemberCapacity>();
             CreateMap<Commit, WorkActivityViewModel.Commit>();
             CreateMap<CommitInfo, WorkActivityViewModel.CommitInfo>();
             CreateMap<Repo, WorkActivityViewModel.Repository>();
@@ -84,8 +87,9 @@ namespace VstsDash.WebApp.Configuration
         private void MapWorkLeaderboardViewModel()
         {
             CreateMap<Leaderboard, WorkLeaderboardViewModel>();
+            CreateMap<TeamCapacity, WorkLeaderboardViewModel.LeaderboardTeamCapacity>();
             CreateMap<Player, WorkLeaderboardViewModel.Player>();
-            CreateMap<LeaderboardCapacity, WorkLeaderboardViewModel.Player.PlayerCapacity>();
+            CreateMap<TeamMemberCapacity, WorkLeaderboardViewModel.Player.PlayerCapacity>();
             CreateMap<Score, WorkLeaderboardViewModel.Player.PlayerScore>();
             CreateMap<Point, WorkLeaderboardViewModel.Player.PlayerScore.Point>();
         }

@@ -14,7 +14,7 @@ namespace VstsDash.AppServices.WorkLeaderboard
         public const string WorkItemExcludeTagName = "lb-exclude";
 
         public Leaderboard(
-            IReadOnlyCollection<TeamMemberApiResponse> teamMembers,
+            TeamMemberListApiResponse teamMembers,
             IterationApiResponse iteration,
             IterationCapacityListApiResponse capacities,
             IterationDaysOffApiResponse teamDaysOff,
@@ -28,26 +28,18 @@ namespace VstsDash.AppServices.WorkLeaderboard
 
             IterationName = iteration.Name;
 
+            var teamMemberList = teamMembers.Value.ToList();
+
+            var teamCapacity = new TeamCapacity(iteration, teamDaysOff, teamMembers, capacities);
+
             var workItems = GetWorkItems(workIteration);
 
-            var scores = LeaderboardScoresHelper.GetScores(iteration, workItems, teamMembers);
+            var scores = LeaderboardScoresHelper.GetScores(iteration, workItems, teamMemberList);
 
-            var teamDaysOffDates = teamDaysOff
-                .DaysOff
-                .SelectMany(x => x.Start.GetDatesUntil(x.End))
-                .Distinct()
-                .ToList();
-
-            var leaderboardTeamMembers = GetPlayers(
-                iteration,
-                teamMembers,
-                capacities.Value,
-                teamDaysOffDates,
-                scores);
-
-            IterationCapacity = new LeaderboardCapacity(iteration, teamDaysOffDates);
+            var leaderboardTeamMembers = GetPlayers(teamMemberList, teamCapacity, scores);
 
             Players = new ReadOnlyCollection<Player>(leaderboardTeamMembers);
+            TeamCapacity = teamCapacity;
 
             UnassignedScore = scores.Where(x => x.Key == Guid.Empty).Select(x => x.Value).FirstOrDefault();
 
@@ -56,10 +48,10 @@ namespace VstsDash.AppServices.WorkLeaderboard
             TotalScorePointsSum = Players.Sum(x => x.ScorePointsSum);
 
             TotalHoursTotalCount = Players.Sum(x => x.Capacity.HoursTotalCount);
-            TotalWorkDaysTotalCount = Players.Sum(x => x.Capacity.WorkDaysTotalCount);
+            TotalWorkDayCount = Players.Sum(x => x.Capacity.TotalWorkDayCount);
         }
 
-        public LeaderboardCapacity IterationCapacity { get; }
+        public TeamCapacity TeamCapacity { get; }
 
         public string IterationName { get; }
 
@@ -73,18 +65,16 @@ namespace VstsDash.AppServices.WorkLeaderboard
 
         public double TotalScorePointsSum { get; }
 
-        public double TotalWorkDaysTotalCount { get; }
+        public double TotalWorkDayCount { get; }
 
         public Score UnassignedScore { get; }
 
         private static IList<Player> GetPlayers(
-            IterationApiResponse iteration,
             IEnumerable<TeamMemberApiResponse> teamMembers,
-            IEnumerable<IterationCapacityApiResponse> capacities,
-            IEnumerable<DateTime> teamDaysOff,
+            TeamCapacity teamCapacity,
             IDictionary<Guid, Score> scores)
         {
-            return GetPlayersInternal(iteration, teamMembers, capacities, teamDaysOff, scores)
+            return GetPlayersInternal(teamMembers, teamCapacity, scores)
                 .Where(x => x.Capacity.DailyHourCount > 0 || x.ScorePointsSum > 0)
                 .OrderByDescending(x => x.ScorePointsSum)
                 .ThenByDescending(x => x.ScoreGoalsSum)
@@ -97,19 +87,15 @@ namespace VstsDash.AppServices.WorkLeaderboard
         }
 
         private static IEnumerable<Player> GetPlayersInternal(
-            IterationApiResponse iteration,
             IEnumerable<TeamMemberApiResponse> teamMembers,
-            IEnumerable<IterationCapacityApiResponse> capacities,
-            IEnumerable<DateTime> teamDaysOff,
+            TeamCapacity teamCapacity,
             IDictionary<Guid, Score> scores)
         {
             return from teamMember in teamMembers
-                let memberCapacity = capacities.FirstOrDefault(x => x.TeamMember.Id == teamMember.Id)
+                let memberCapacity = teamCapacity.Members.FirstOrDefault(x => x.MemberId == teamMember.Id)
                 let memberScore = scores.Where(x => x.Key == teamMember.Id).Select(x => x.Value).FirstOrDefault()
                 select new Player(
-                    teamMember,
-                    iteration,
-                    teamDaysOff,
+                    teamMember, teamCapacity,
                     memberCapacity,
                     memberScore);
         }
