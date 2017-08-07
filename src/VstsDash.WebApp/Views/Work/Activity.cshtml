@@ -18,8 +18,8 @@
      data-qs-team-id="@requestQuery["teamId"]"
      data-from-date="@Model.FromDate.ToEpoch()"
      data-to-date="@Model.ToDate.ToEpoch()"
-     data-member-max-commits="@(Model.Authors.Any() ? Model.Authors.Max(ac => ac.MaxCommitDayCount) : 0)"
-     data-member-max-changes="@(Model.Authors.Any() ? Model.Authors.Max(ac => ac.MaxChangeDayCount) : 0)">
+     data-member-max-commits="@(Model.Authors.Any() ? Model.Authors.Max(ac => ac.MaxCommitsPerDay) ?? 0 : 0)"
+     data-member-max-changes="@(Model.Authors.Any() ? Model.Authors.Max(ac => ac.MaxChangePerDay) : 0)">
 <h1 class="h2">
     <icon value="@Icons.Activity"/>
     <strong>Activity</strong>@(!string.IsNullOrWhiteSpace(Model.IterationName) ? $": {Model.IterationName}" : null)
@@ -196,8 +196,8 @@
                                     </div>
 
                                     <div class="d-flex flex-column">
-                                        <stat value="@(authorCommit.CommitCount > 0
-                                                           ? (authorCommit.CommitsTotalChangeCountSum / authorCommit.CommitCount).ToString(Formats.NumberTwoDecimals)
+                                        <stat value="@(authorCommit.AverageChangePerCommit != null
+                                                           ? authorCommit.AverageChangePerCommit.Value.ToString(Formats.NumberTwoDecimals)
                                                            : "-")"
                                               description-css="mb-0" is-inverse="true">
                                             <small>
@@ -205,8 +205,8 @@
                                             </small>
                                         </stat>
 
-                                        <stat value="@(authorCommit.CommitCount > 0
-                                                           ? authorCommit.Commits.Max(c => c.Commit.TotalChangeCount).ToString(Formats.NumberTwoDecimals)
+                                        <stat value="@(authorCommit.AverageChangePerCommit != null
+                                                           ? authorCommit.AverageChangePerCommit.Value.ToString(Formats.NumberTwoDecimals)
                                                            : "-")"
                                               description-css="mb-0" is-inverse="true">
                                             <small>
@@ -216,12 +216,8 @@
 
                                         @if (!isDashboard)
                                         {
-                                            <stat value="@(authorCommit.CommitCount > 0
-                                                               ? authorCommit
-                                                                   .Commits
-                                                                   .GroupBy(c => (c.Commit.AuthorDate ?? DateTime.MinValue).Date)
-                                                                   .Max(g => g.Count())
-                                                                   .ToString(Formats.NumberTwoDecimals)
+                                            <stat value="@(authorCommit.MaxCommitsPerDay != null
+                                                               ? authorCommit.MaxCommitsPerDay.Value.ToString(Formats.NumberTwoDecimals)
                                                                : "-")"
                                                   description-css="mb-0" is-inverse="true">
                                                 <small>

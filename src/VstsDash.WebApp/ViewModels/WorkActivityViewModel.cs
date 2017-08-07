@@ -48,12 +48,11 @@ namespace VstsDash.WebApp.ViewModels
             if (LastEffortDone == null || LastEffortDone <= 0)
                 return LastEffortDone;
 
-            var fullWorkDayCount = ActiveMemberCapacities.Any()
-                ? ActiveMemberCapacities.Average(x => x.TotalWorkDayCount / TeamCapacity.WorkDays.Count) *
-                  TeamCapacity.WorkDays.Count
+            var pastWorkDayCount = ActiveMemberCapacities.Any()
+                ? ActiveMemberCapacities.Sum(c => c.WorkDays.Count(w => w.Date <= DateTimeOffset.UtcNow.Date))
                 : 0;
 
-            return fullWorkDayCount >= 0 ? LastEffortDone / fullWorkDayCount : null;
+            return pastWorkDayCount > 0 ? LastEffortDone / pastWorkDayCount : null;
         }
 
         private double? GetEffortDonePerMember()
@@ -95,6 +94,10 @@ namespace VstsDash.WebApp.ViewModels
 
         public class AuthorCommits
         {
+            public double? AverageChangePerCommit => CommitCount > 0
+                ? CommitsTotalChangeCountSum / (double) CommitCount
+                : (double?) null;
+
             public Author Author { get; set; }
 
             public int CommitCount => Commits.Count;
@@ -103,19 +106,21 @@ namespace VstsDash.WebApp.ViewModels
 
             public int CommitsTotalChangeCountSum => Commits.Sum(x => x.Commit.TotalChangeCount);
 
-            public int MaxCommitDayCount => KnownAuthorCommits.Any()
-                ? KnownAuthorCommits
-                    .GroupBy(x => (x.Commit.AuthorDate ?? DateTime.MinValue).Date)
-                    .Max(g => g.Count())
-                : 0;
+            private IEnumerable<CommitInfo> KnownAuthorCommits => Commits.Where(x => x.Author.MemberId != Guid.Empty);
 
-            public int MaxChangeDayCount => KnownAuthorCommits.Any()
+            public int? MaxChangePerCommit => KnownAuthorCommits.Any()
+                ? KnownAuthorCommits.Max(x => x.Commit.TotalChangeCount)
+                : (int?) null;
+
+            public int? MaxChangePerDay => KnownAuthorCommits.Any()
                 ? KnownAuthorCommits
                     .GroupBy(x => (x.Commit.AuthorDate ?? DateTime.MinValue).Date)
                     .Max(g => g.Sum(x => x.Commit.TotalChangeCount))
-                : 0;
+                : (int?) null;
 
-            private IEnumerable<CommitInfo> KnownAuthorCommits => Commits.Where(x => x.Author.MemberId != Guid.Empty);
+            public int? MaxCommitsPerDay => KnownAuthorCommits.Any()
+                ? KnownAuthorCommits.GroupBy(c => (c.Commit.AuthorDate ?? DateTime.MinValue).Date).Max(g => g.Count())
+                : (int?) null;
         }
 
         public class ActivityTeamCapacity
