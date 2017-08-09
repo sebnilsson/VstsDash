@@ -113,7 +113,7 @@ namespace VstsDash.WebApp.Controllers.Api
 
                 var capacitiesTask =
                     _iterationsApi.GetCapacities(idParams.ProjectId, idParams.TeamId, idParams.IterationId);
-                var teamMembersTask = _teamsApi.GetMembers(idParams.ProjectId, idParams.TeamId);
+                var teamMembersTask = _teamsApi.GetAllTeamMembers();
 
                 await Task.WhenAll(capacitiesTask, teamMembersTask);
 
@@ -122,19 +122,20 @@ namespace VstsDash.WebApp.Controllers.Api
 
             var memberCapacity = teamCapacity.Members.FirstOrDefault(x => x.MemberId == memberId);
 
-            var workDays = memberCapacity?.WorkDays ?? teamCapacity.WorkDays;
-            var hasAnyMemberWorkDays = memberCapacity?.WorkDays?.Any() ?? false;
+            var daysOff = memberCapacity?.DaysOff ?? teamCapacity.TeamDaysOff;
 
             var dates = teamCapacity.IterationWorkDays;
 
+            var isMemberWithWorkCapacity = memberCapacity != null && memberCapacity.TotalWorkDayCount > 0;
+
             return (from date in dates
                     let dayCommits = commits
-                        .Where(x => (x.Commit.AuthorDate ?? DateTimeOffset.MinValue).Date == date.Date)
+                        .Where(x => (x.Commit.AuthorDate ?? DateTimeOffset.MinValue).Date == date)
                         .ToList()
                     let hasCommits = dayCommits.Any()
-                    let isWorkDay = workDays.Contains(date)
-                    let isPastWorkDay = isWorkDay && date.Date <= DateTime.UtcNow.Date
-                    let shouldIncludeData = hasCommits || !hasAnyMemberWorkDays || isPastWorkDay
+                    let isWorkDay = !daysOff.Contains(date)
+                    let isPastWorkDay = isWorkDay && date <= DateTime.UtcNow.Date
+                    let shouldIncludeData = hasCommits || isPastWorkDay && isMemberWithWorkCapacity
                     let commitCount = shouldIncludeData ? dayCommits.Count : (int?) null
                     let totalChangeCount = shouldIncludeData
                         ? dayCommits.Sum(c => c.Commit.TotalChangeCount)
