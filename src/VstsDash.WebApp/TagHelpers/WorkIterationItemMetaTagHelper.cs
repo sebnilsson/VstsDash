@@ -40,8 +40,8 @@ namespace VstsDash.WebApp.TagHelpers
             }
 
             var cssClass = IsChild && IsWide
-                ? WideChildCssClass
-                : (IsChild ? ChildCssClass : (IsWide ? WideCssClass : CssClass));
+                               ? WideChildCssClass
+                               : (IsChild ? ChildCssClass : (IsWide ? WideCssClass : CssClass));
 
             output.TagName = "div";
 
@@ -57,8 +57,7 @@ namespace VstsDash.WebApp.TagHelpers
 
         private string GetHtmlContent()
         {
-            if (string.IsNullOrWhiteSpace(Value))
-                return null;
+            if (string.IsNullOrWhiteSpace(Value)) return null;
 
             var htmlContent = !string.IsNullOrWhiteSpace(Label) ? $"{Label}: " : null;
 

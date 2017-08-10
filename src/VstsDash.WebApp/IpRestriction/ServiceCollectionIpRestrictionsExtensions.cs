@@ -15,8 +15,7 @@ namespace VstsDash.WebApp.IpRestriction
             var ipRestrictionSettings = ipRestrictionSettingsSection.Get<IpRestrictionsSettings>();
 
             var isIpRestrictionsEnabled = ipRestrictionSettings?.Enable ?? false;
-            if (!isIpRestrictionsEnabled)
-                return;
+            if (!isIpRestrictionsEnabled) return;
 
             services.Configure<IpRestrictionsSettings>(ipRestrictionSettingsSection);
         }

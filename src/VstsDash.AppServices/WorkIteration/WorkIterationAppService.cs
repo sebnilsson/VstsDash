@@ -11,8 +11,11 @@ namespace VstsDash.AppServices.WorkIteration
     public class WorkIterationAppService : IAppService
     {
         private readonly IIterationsApiService _iterationsApi;
+
         private readonly ITeamsApiService _teamsApi;
+
         private readonly IWiqlApiService _wiqlApi;
+
         private readonly IWorkApiService _workApi;
 
         public WorkIterationAppService(
@@ -42,8 +45,8 @@ namespace VstsDash.AppServices.WorkIteration
             var isBacklog = iteration.Id == setting.BacklogIteration?.Id;
 
             var capacities = !isBacklog
-                ? await _iterationsApi.GetCapacities(projectId, teamId, iterationId)
-                : new IterationCapacityListApiResponse();
+                                 ? await _iterationsApi.GetCapacities(projectId, teamId, iterationId)
+                                 : new IterationCapacityListApiResponse();
 
             var workItems = await GetWorkIterationWorkItems(projectId, iteration.Path, isBacklog);
 
@@ -73,28 +76,6 @@ namespace VstsDash.AppServices.WorkIteration
             return new ReadOnlyDictionary<DateTime, double?>(doneEffortsPerDay);
         }
 
-        private static IEnumerable<KeyValuePair<DateTime, double?>> GetWorkIterationDoneEffortsPerDayInternal(
-            TeamCapacity teamCapacity,
-            ICollection<WorkItem> workIterationItems)
-        {
-            foreach (var workDay in teamCapacity.IterationWorkDays)
-            {
-                var isWorkDay = !teamCapacity.TeamDaysOff.Contains(workDay);
-                var isPastWorkDay = isWorkDay && workDay <= DateTime.UtcNow.Date;
-
-                var doneWorkIterationItems = workIterationItems
-                    .Where(x =>
-                        x.IsStateDone && x.Effort > 0 &&
-                        (x.ClosedDate ?? x.ChangedDate ?? DateTime.MaxValue).Date <= workDay.Date)
-                    .ToList();
-
-                var doneEffortSum = isPastWorkDay
-                    ? (doneWorkIterationItems.Any() ? doneWorkIterationItems.Sum(x => x.Effort) : 0)
-                    : (double?) null;
-                yield return new KeyValuePair<DateTime, double?>(workDay, doneEffortSum);
-            }
-        }
-
         public async Task<WorkItemListApiResponse> GetWorkIterationWorkItems(
             string projectId,
             string iterationPath,
@@ -105,15 +86,36 @@ namespace VstsDash.AppServices.WorkIteration
             var workItemSourceIds = wiqlWorkItems.WorkItemRelations.Select(x => x.Source?.Id);
             var workItemTargetIds = wiqlWorkItems.WorkItemRelations.Select(x => x.Target?.Id);
 
-            var workItemIds =
-                workItemSourceIds.Concat(workItemTargetIds)
-                    .Where(x => x != null && x > 0)
-                    .Select(x => x.Value)
-                    .Distinct()
-                    .ToArray();
+            var workItemIds = workItemSourceIds.Concat(workItemTargetIds)
+                .Where(x => x != null && x > 0)
+                .Select(x => x.Value)
+                .Distinct()
+                .ToArray();
 
             var workItems = await _workApi.GetWorkItemList(workItemIds);
             return workItems;
+        }
+
+        private static IEnumerable<KeyValuePair<DateTime, double?>> GetWorkIterationDoneEffortsPerDayInternal(
+            TeamCapacity teamCapacity,
+            ICollection<WorkItem> workIterationItems)
+        {
+            foreach (var workDay in teamCapacity.IterationWorkDays)
+            {
+                var isWorkDay = !teamCapacity.TeamDaysOff.Contains(workDay);
+                var isPastWorkDay = isWorkDay && workDay <= DateTime.UtcNow.Date;
+
+                var doneWorkIterationItems = workIterationItems
+                    .Where(
+                        x => x.IsStateDone && x.Effort > 0 && (x.ClosedDate ?? x.ChangedDate ?? DateTime.MaxValue).Date
+                             <= workDay.Date)
+                    .ToList();
+
+                var doneEffortSum = isPastWorkDay
+                                        ? (doneWorkIterationItems.Any() ? doneWorkIterationItems.Sum(x => x.Effort) : 0)
+                                        : (double?)null;
+                yield return new KeyValuePair<DateTime, double?>(workDay, doneEffortSum);
+            }
         }
     }
 }

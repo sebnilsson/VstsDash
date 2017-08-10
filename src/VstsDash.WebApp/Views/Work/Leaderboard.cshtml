@@ -11,7 +11,7 @@
 
 <div class="leaderboard-container main-container @(!isDashboard ? "container" : "container-fluid") pb-3">
     <h1 class="h2 mb-2">
-        <icon value="@Icons.Leaderboard" />
+        <icon value="@Icons.Leaderboard"/>
         <strong>Leaderboard</strong>: @Model.IterationName
 
         @if (!isDashboard)
@@ -96,14 +96,7 @@
                         var isSecond = Model.Players.ElementAtOrDefault(1) == player && player.ScorePointsSum > 0;
                         var isThird = Model.Players.ElementAtOrDefault(2) == player && player.ScorePointsSum > 0;
 
-                        @Html.Partial("Leaderboard/_Player", player,
-                            new ViewDataDictionary(ViewData)
-                            {
-                                { "IsFirst", isFirst },
-                                { "IsSecond", isSecond },
-                                { "IsThird", isThird },
-                                { "TeamWorkDays", Model.TeamCapacity.WorkDays }
-                            })
+                        @Html.Partial("Leaderboard/_Player", player, new ViewDataDictionary(ViewData) { { "IsFirst", isFirst }, { "IsSecond", isSecond }, { "IsThird", isThird }, { "TeamWorkDays", Model.TeamCapacity.WorkDays } })
                     }
                 </div>
             </div>
@@ -127,8 +120,7 @@
                 @foreach (var point in Model.Players.SelectMany(x => x.Score.Points).OrderByDescending(x => x.EarnedAt))
                 {
                     <li class="list-group-item">
-                        @Html.Partial("Leaderboard/_PlayerScorePoint", point,
-                            new ViewDataDictionary(ViewData) {{"IncludeEarnedAt", true}})
+                        @Html.Partial("Leaderboard/_PlayerScorePoint", point, new ViewDataDictionary(ViewData) { { "IncludeEarnedAt", true } })
                     </li>
                 }
             </ul>

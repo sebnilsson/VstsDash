@@ -16,9 +16,9 @@ namespace VstsDash.AppServices.TeamMeta
             Url = member.Url;
         }
 
-        public Guid Id { get; }
-
         public string DisplayName { get; }
+
+        public Guid Id { get; }
 
         public string ImageUrl { get; }
 

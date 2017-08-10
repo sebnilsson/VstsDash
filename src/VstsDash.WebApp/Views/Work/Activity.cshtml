@@ -55,15 +55,11 @@
                 <div class="card-block p-2">
                     <div class="d-flex flex-row text-center">
                         <div class="d-flex flex-column">
-                            <stat value="@(Model.Authors.Any()
-                                               ? Model.Authors.Sum(ac => ac.CommitCount).ToString(Formats.NumberTwoDecimals)
-                                               : "-")"
+                            <stat value="@(Model.Authors.Any() ? Model.Authors.Sum(ac => ac.CommitCount).ToString(Formats.NumberTwoDecimals) : "-")"
                                   is-inverse="true" class="pl-1 pr-1">
                                 <icon value="@Icons.Commit"/> Commits
                             </stat>
-                            <stat value="@(Model.Authors.Any()
-                                               ? Model.Authors.Sum(ac => ac.CommitsTotalChangeCountSum).ToString(Formats.NumberTwoDecimals)
-                                               : "-")"
+                            <stat value="@(Model.Authors.Any() ? Model.Authors.Sum(ac => ac.CommitsTotalChangeCountSum).ToString(Formats.NumberTwoDecimals) : "-")"
                                   is-inverse="true" class="pl-1 pr-1">
                                 <icon value="@Icons.Change"/> Changes
                             </stat>
@@ -74,37 +70,19 @@
                         </div>
 
                         <div class="d-flex flex-column">
-                            <stat value="@(Model.Authors.Any()
-                                               ? Model.Authors.Average(ac => ac.CommitsTotalChangeCountSum / ac.CommitCount).ToString(Formats.NumberTwoDecimals)
-                                               : "-")"
+                            <stat value="@(Model.Authors.Any() ? Model.Authors.Average(ac => ac.CommitsTotalChangeCountSum / ac.CommitCount).ToString(Formats.NumberTwoDecimals) : "-")"
                                   is-inverse="true" class="pl-1 pr-1">
                                 Avg <icon value="@Icons.Change"/>/<icon value="@Icons.Commit"/>
                             </stat>
-                            <stat value="@(Model.Authors.Any()
-                                               ? Model.Authors.SelectMany(ac => ac.Commits).Max(c => c.Commit.TotalChangeCount).ToString(Formats.NumberTwoDecimals)
-                                               : "-")"
+                            <stat value="@(Model.Authors.Any() ? Model.Authors.SelectMany(ac => ac.Commits).Max(c => c.Commit.TotalChangeCount).ToString(Formats.NumberTwoDecimals) : "-")"
                                   is-inverse="true" class="pl-1 pr-1">
                                 Most <icon value="@Icons.Change"/>/<icon value="@Icons.Commit"/>
                             </stat>
-                            <stat value="@(Model.Authors.Any()
-                                               ? Model
-                                                   .Authors
-                                                   .SelectMany(ac => ac.Commits)
-                                                   .GroupBy(c => (c.Commit.AuthorDate ?? DateTime.MinValue).Date)
-                                                   .Max(g => g.Count())
-                                                   .ToString(Formats.NumberTwoDecimals)
-                                               : "-")"
+                            <stat value="@(Model.Authors.Any() ? Model.Authors.SelectMany(ac => ac.Commits).GroupBy(c => (c.Commit.AuthorDate ?? DateTime.MinValue).Date).Max(g => g.Count()).ToString(Formats.NumberTwoDecimals) : "-")"
                                   is-inverse="true" class="pl-1 pr-1">
                                 Most <icon value="@Icons.Commit"/>/day
                             </stat>
-                            <stat value="@(Model.Authors.Any()
-                                               ? Model
-                                                   .Authors
-                                                   .SelectMany(ac => ac.Commits)
-                                                   .GroupBy(c => (c.Commit.AuthorDate ?? DateTime.MinValue).Date)
-                                                   .Max(g => g.Sum(x => x.Commit.TotalChangeCount))
-                                                   .ToString(Formats.NumberTwoDecimals)
-                                               : "-")"
+                            <stat value="@(Model.Authors.Any() ? Model.Authors.SelectMany(ac => ac.Commits).GroupBy(c => (c.Commit.AuthorDate ?? DateTime.MinValue).Date).Max(g => g.Sum(x => x.Commit.TotalChangeCount)).ToString(Formats.NumberTwoDecimals) : "-")"
                                   is-inverse="true" class="pl-1 pr-1">
                                 Most <icon value="@Icons.Change"/>/day
                             </stat>
@@ -196,18 +174,14 @@
                                     </div>
 
                                     <div class="d-flex flex-column">
-                                        <stat value="@(authorCommit.AverageChangePerCommit != null
-                                                           ? authorCommit.AverageChangePerCommit.Value.ToString(Formats.NumberTwoDecimals)
-                                                           : "-")"
+                                        <stat value="@(authorCommit.AverageChangePerCommit != null ? authorCommit.AverageChangePerCommit.Value.ToString(Formats.NumberTwoDecimals) : "-")"
                                               description-css="mb-0" is-inverse="true">
                                             <small>
                                                 Avg <icon value="@Icons.Change"/>/<icon value="@Icons.Commit"/>
                                             </small>
                                         </stat>
 
-                                        <stat value="@(authorCommit.AverageChangePerCommit != null
-                                                           ? authorCommit.AverageChangePerCommit.Value.ToString(Formats.NumberTwoDecimals)
-                                                           : "-")"
+                                        <stat value="@(authorCommit.AverageChangePerCommit != null ? authorCommit.AverageChangePerCommit.Value.ToString(Formats.NumberTwoDecimals) : "-")"
                                               description-css="mb-0" is-inverse="true">
                                             <small>
                                                 Most <icon value="@Icons.Change"/>/<icon value="@Icons.Commit"/>
@@ -216,9 +190,7 @@
 
                                         @if (!isDashboard)
                                         {
-                                            <stat value="@(authorCommit.MaxCommitsPerDay != null
-                                                               ? authorCommit.MaxCommitsPerDay.Value.ToString(Formats.NumberTwoDecimals)
-                                                               : "-")"
+                                            <stat value="@(authorCommit.MaxCommitsPerDay != null ? authorCommit.MaxCommitsPerDay.Value.ToString(Formats.NumberTwoDecimals) : "-")"
                                                   description-css="mb-0" is-inverse="true">
                                                 <small>
                                                     Most <icon value="@Icons.Commit"/>/day

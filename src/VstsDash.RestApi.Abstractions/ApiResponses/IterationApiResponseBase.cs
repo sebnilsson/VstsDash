@@ -4,11 +4,11 @@ namespace VstsDash.RestApi.ApiResponses
 {
     public class IterationApiResponseBase
     {
+        public IterationApiResponseAttributes Attributes { get; set; }
+
         public Guid Id { get; set; }
 
         public string Name { get; set; }
-
-        public IterationApiResponseAttributes Attributes { get; set; }
 
         public string Url { get; set; }
 
@@ -19,5 +19,4 @@ namespace VstsDash.RestApi.ApiResponses
             public DateTime? StartDate { get; set; }
         }
     }
-
 }

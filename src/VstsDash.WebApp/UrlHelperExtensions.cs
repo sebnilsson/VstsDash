@@ -7,10 +7,12 @@ namespace VstsDash.WebApp
     {
         public static string ApiFile(this IUrlHelper urlHelper, string url)
         {
-            return urlHelper.RouteUrl(RouteNames.ApiFiles, new
-            {
-                url
-            });
+            return urlHelper.RouteUrl(
+                RouteNames.ApiFiles,
+                new
+                {
+                    url
+                });
         }
 
         public static string Empty(this IUrlHelper urlHelper)
@@ -25,26 +27,30 @@ namespace VstsDash.WebApp
             string iterationId = null,
             bool isDashboard = false)
         {
-            return urlHelper.RouteUrl(RouteNames.Default, new
-            {
-                Controller = "Work",
-                Action = "Activity",
-                projectId,
-                teamId,
-                iterationId,
-                dashboard = isDashboard ? "1" : null
-            });
+            return urlHelper.RouteUrl(
+                RouteNames.Default,
+                new
+                {
+                    Controller = "Work",
+                    Action = "Activity",
+                    projectId,
+                    teamId,
+                    iterationId,
+                    dashboard = isDashboard ? "1" : null
+                });
         }
 
         public static string WorkBacklog(this IUrlHelper urlHelper, string projectId = null, string teamId = null)
         {
-            return urlHelper.RouteUrl(RouteNames.Default, new
-            {
-                Controller = "Work",
-                Action = "Backlog",
-                projectId,
-                teamId
-            });
+            return urlHelper.RouteUrl(
+                RouteNames.Default,
+                new
+                {
+                    Controller = "Work",
+                    Action = "Backlog",
+                    projectId,
+                    teamId
+                });
         }
 
         public static string WorkIteration(
@@ -56,15 +62,17 @@ namespace VstsDash.WebApp
         {
             var asOfValue = asOf != null ? $"{asOf:yyyy-MM-ddTHH:mm:ssZ}" : null;
 
-            return urlHelper.RouteUrl(RouteNames.Default, new
-            {
-                Controller = "Work",
-                Action = "Iteration",
-                projectId,
-                teamId,
-                iterationId,
-                asOf = asOfValue
-            });
+            return urlHelper.RouteUrl(
+                RouteNames.Default,
+                new
+                {
+                    Controller = "Work",
+                    Action = "Iteration",
+                    projectId,
+                    teamId,
+                    iterationId,
+                    asOf = asOfValue
+                });
         }
 
         public static string WorkLeaderboard(
@@ -74,26 +82,30 @@ namespace VstsDash.WebApp
             string iterationId = null,
             bool isDashboard = false)
         {
-            return urlHelper.RouteUrl(RouteNames.Default, new
-            {
-                Controller = "Work",
-                Action = "Leaderboard",
-                projectId,
-                teamId,
-                iterationId,
-                dashboard = isDashboard ? "1" : null
-            });
+            return urlHelper.RouteUrl(
+                RouteNames.Default,
+                new
+                {
+                    Controller = "Work",
+                    Action = "Leaderboard",
+                    projectId,
+                    teamId,
+                    iterationId,
+                    dashboard = isDashboard ? "1" : null
+                });
         }
 
         public static string WorkSprint(this IUrlHelper urlHelper, string projectId = null, string teamId = null)
         {
-            return urlHelper.RouteUrl(RouteNames.Default, new
-            {
-                Controller = "Work",
-                Action = "Sprint",
-                projectId,
-                teamId
-            });
+            return urlHelper.RouteUrl(
+                RouteNames.Default,
+                new
+                {
+                    Controller = "Work",
+                    Action = "Sprint",
+                    projectId,
+                    teamId
+                });
         }
     }
 }

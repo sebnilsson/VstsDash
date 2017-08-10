@@ -24,33 +24,11 @@ namespace VstsDash.RestApi
 
             var query = isBacklog ? GetBacklogQuery(iterationPath) : GetIterationQuery(iterationPath);
             var json = new
-            {
-                query
-            };
+                       {
+                           query
+                       };
 
             return await _apiClient.Post<WiqlWorkItemLinkApiResponse>(url, json);
-        }
-
-        private static string GetIterationQuery(string iterationPath)
-        {
-            var iterationRootIndex = iterationPath.IndexOf('\\');
-            var iterationRoot = iterationRootIndex >= 0
-                ? iterationPath.Substring(0, iterationRootIndex)
-                : iterationPath;
-
-            var query =
-                "SELECT [System.Id], [System.WorkItemType], [System.Title], [System.State], [Microsoft.VSTS.Scheduling.Effort], [Microsoft.VSTS.Scheduling.RemainingWork], [System.Tags], [System.AssignedTo], [Microsoft.VSTS.Common.BacklogPriority], [System.AreaId], [System.AreaPath], [Microsoft.VSTS.Common.Activity] "
-                + "FROM WorkItemLinks " + "WHERE ((Source.[System.WorkItemType] in ('Product Backlog Item', 'Bug') and "
-                + "Source.[System.State] in ('New', 'Approved', 'Committed', 'Done')) and "
-                + $"Source.[System.IterationPath] under '{iterationRoot}') and "
-                + "([System.Links.LinkType] = 'System.LinkTypes.Hierarchy-Forward') and "
-                + "(((Target.[System.WorkItemType] in ('Task') and "
-                + "Target.[System.State] in ('To Do', 'In Progress', 'Done')) or "
-                + "(Target.[System.WorkItemType] in ('Product Backlog Item', 'Bug') and "
-                + "Target.[System.State] in ('New', 'Approved', 'Committed', 'Done'))) and "
-                + $"Target.[System.IterationPath] under '{iterationPath}') "
-                + "ORDER BY [Microsoft.VSTS.Common.BacklogPriority] ASC, [System.Id] ASC MODE (Recursive, ReturnMatchingChildren)";
-            return query;
         }
 
         private static string GetBacklogQuery(string iterationPath)
@@ -67,6 +45,28 @@ namespace VstsDash.RestApi
                 + $"((Target.[System.WorkItemType] in ('Task')) and "
                 + $"Target.[System.State] in ('To Do', 'In Progress', 'Done'))) "
                 + $"ORDER BY [Microsoft.VSTS.Common.BacklogPriority] ASC, [System.Id] ASC MODE (Recursive)";
+            return query;
+        }
+
+        private static string GetIterationQuery(string iterationPath)
+        {
+            var iterationRootIndex = iterationPath.IndexOf('\\');
+            var iterationRoot = iterationRootIndex >= 0
+                                    ? iterationPath.Substring(0, iterationRootIndex)
+                                    : iterationPath;
+
+            var query =
+                "SELECT [System.Id], [System.WorkItemType], [System.Title], [System.State], [Microsoft.VSTS.Scheduling.Effort], [Microsoft.VSTS.Scheduling.RemainingWork], [System.Tags], [System.AssignedTo], [Microsoft.VSTS.Common.BacklogPriority], [System.AreaId], [System.AreaPath], [Microsoft.VSTS.Common.Activity] "
+                + "FROM WorkItemLinks " + "WHERE ((Source.[System.WorkItemType] in ('Product Backlog Item', 'Bug') and "
+                + "Source.[System.State] in ('New', 'Approved', 'Committed', 'Done')) and "
+                + $"Source.[System.IterationPath] under '{iterationRoot}') and "
+                + "([System.Links.LinkType] = 'System.LinkTypes.Hierarchy-Forward') and "
+                + "(((Target.[System.WorkItemType] in ('Task') and "
+                + "Target.[System.State] in ('To Do', 'In Progress', 'Done')) or "
+                + "(Target.[System.WorkItemType] in ('Product Backlog Item', 'Bug') and "
+                + "Target.[System.State] in ('New', 'Approved', 'Committed', 'Done'))) and "
+                + $"Target.[System.IterationPath] under '{iterationPath}') "
+                + "ORDER BY [Microsoft.VSTS.Common.BacklogPriority] ASC, [System.Id] ASC MODE (Recursive, ReturnMatchingChildren)";
             return query;
         }
     }

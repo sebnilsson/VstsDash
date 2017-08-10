@@ -9,8 +9,8 @@ namespace VstsDash.AppServices.TeamMeta
     public class TeamMetaIteration
     {
         public TeamMetaIteration(
-            IterationApiResponseBase iteration, 
-            IterationCapacityListApiResponse capacities, 
+            IterationApiResponseBase iteration,
+            IterationCapacityListApiResponse capacities,
             IterationDaysOffApiResponse teamDaysOff)
         {
             if (iteration == null) throw new ArgumentNullException(nameof(iteration));
@@ -34,30 +34,15 @@ namespace VstsDash.AppServices.TeamMeta
 
         public DateTime? FinishDate { get; }
 
-        public string Name { get; }
-
         public Guid Id { get; }
+
+        public string Name { get; }
 
         public DateTime? StartDate { get; }
 
         public IReadOnlyCollection<DayOff> TeamDaysOff { get; }
 
         public string Url { get; }
-
-        public class DayOff
-        {
-            public DayOff(IterationDayOff dayOff)
-            {
-                if (dayOff == null) throw new ArgumentNullException(nameof(dayOff));
-
-                Start = dayOff.Start;
-                End = dayOff.End;
-            }
-
-            public DateTime Start { get;  }
-
-            public DateTime End { get;  }
-        }
 
         public class Capacity
         {
@@ -90,6 +75,21 @@ namespace VstsDash.AppServices.TeamMeta
 
                 public string Name { get; }
             }
+        }
+
+        public class DayOff
+        {
+            public DayOff(IterationDayOff dayOff)
+            {
+                if (dayOff == null) throw new ArgumentNullException(nameof(dayOff));
+
+                Start = dayOff.Start;
+                End = dayOff.End;
+            }
+
+            public DateTime End { get; }
+
+            public DateTime Start { get; }
         }
     }
 }

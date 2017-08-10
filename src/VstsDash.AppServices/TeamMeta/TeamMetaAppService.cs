@@ -11,11 +11,17 @@ namespace VstsDash.AppServices.TeamMeta
     public class TeamMetaAppService
     {
         private readonly ICache _cache;
+
         private readonly IGitApiService _gitApi;
+
         private readonly IIterationsApiService _iterationsApi;
+
         private readonly IProjectsApiService _projectsApi;
+
         private readonly IQueriesApiService _queriesApi;
+
         private readonly ITeamsApiService _teamsApi;
+
         private readonly IWorkApiService _workApi;
 
         public TeamMetaAppService(
@@ -47,57 +53,67 @@ namespace VstsDash.AppServices.TeamMeta
         {
             var projects = await _projectsApi.GetList();
 
-            var teamsResultTasks = projects.Value
-                .Select(async x => (
-                    ProjectId: Convert.ToString(x.Id),
-                    Project: x,
-                    Teams: await _teamsApi.GetList(Convert.ToString(x.Id))))
+            var teamsResultTasks = projects.Value.Select(
+                    async x => ( ProjectId: Convert.ToString(x.Id), Project: x, Teams:
+                        await _teamsApi.GetList(Convert.ToString(x.Id))))
                 .ToList();
 
             await Task.WhenAll(teamsResultTasks);
 
-            var teamsResult = teamsResultTasks
-                .Select(x => x.Result)
-                .SelectMany(x => x.Teams.Value.Select(t => (
-                    ProjectId: x.ProjectId,
-                    Project: x.Project,
-                    TeamId: Convert.ToString(t.Id),
-                    Team: t)))
+            var teamsResult = teamsResultTasks.Select(x => x.Result)
+                .SelectMany(
+                    x => x.Teams.Value.Select(
+                        t => ( ProjectId: x.ProjectId, Project: x.Project, TeamId: Convert.ToString(t.Id), Team: t)))
                 .ToList();
 
-            var iterationsResultTasks = teamsResult.Select(async x => (
-                    ProjectId: x.ProjectId,
-                    Project: x.Project,
-                    TeamId: x.TeamId,
-                    Team: x.Team,
-                    Iterations: await _iterationsApi.GetList(x.ProjectId, x.TeamId)))
+            var iterationsResultTasks = teamsResult.Select(
+                    async x => ( ProjectId: x.ProjectId, Project: x.Project, TeamId: x.TeamId, Team: x.Team, Iterations:
+                        await _iterationsApi.GetList(x.ProjectId, x.TeamId)))
                 .ToList();
 
             await Task.WhenAll(iterationsResultTasks);
 
-            var iterationsResult = iterationsResultTasks
-                .Select(x => x.Result)
-                .SelectMany(x => x.Iterations.Value.Select(
-                    i => new IterationData
-                    {
-                        Project = x.Project,
-                        Team = x.Team,
-                        Iteration = i
-                    }))
+            var iterationsResult = iterationsResultTasks.Select(x => x.Result)
+                .SelectMany(
+                    x => x.Iterations.Value.Select(
+                        i => new IterationData
+                             {
+                                 Project = x.Project,
+                                 Team = x.Team,
+                                 Iteration = i
+                             }))
                 .ToList();
 
             return await GetTeamMetaResult(iterationsResult);
         }
 
-        private async Task<TeamMetaResult> GetTeamMetaResult(IEnumerable<IterationData> iterationData)
+        private async Task<List<TeamMetaIteration>> GetTeamMetaIterations(
+            string projectId,
+            string teamId,
+            IEnumerable<IterationApiResponseBase> iterations)
         {
-            var projects = await GetTeamMetaProjects(iterationData);
+            var teamMetaIterations = new List<TeamMetaIteration>();
 
-            return new TeamMetaResult(projects);
+            foreach (var iteration in iterations)
+            {
+                var iterationId = Convert.ToString(iteration.Id);
+
+                var capacitiesTask = _iterationsApi.GetCapacities(projectId, teamId, iterationId);
+                var teamDaysOffTask = _iterationsApi.GetTeamDaysOff(projectId, teamId, iterationId);
+
+                await Task.WhenAll(capacitiesTask, teamDaysOffTask);
+
+                var capacities = capacitiesTask.Result;
+                var teamDaysOff = teamDaysOffTask.Result;
+
+                var teamMetaIteration = new TeamMetaIteration(iteration, capacities, teamDaysOff);
+                teamMetaIterations.Add(teamMetaIteration);
+            }
+
+            return teamMetaIterations;
         }
 
-        private async Task<IList<TeamMetaProject>> GetTeamMetaProjects(
-            IEnumerable<IterationData> iterationData)
+        private async Task<IList<TeamMetaProject>> GetTeamMetaProjects(IEnumerable<IterationData> iterationData)
         {
             var projectGroups = iterationData.GroupBy(x => Convert.ToString(x.Project.Id)).ToList();
 
@@ -136,6 +152,13 @@ namespace VstsDash.AppServices.TeamMeta
             return teamMetaProjects;
         }
 
+        private async Task<TeamMetaResult> GetTeamMetaResult(IEnumerable<IterationData> iterationData)
+        {
+            var projects = await GetTeamMetaProjects(iterationData);
+
+            return new TeamMetaResult(projects);
+        }
+
         private async Task<List<TeamMetaTeam>> GetTeamMetaTeams(
             string projectId,
             IEnumerable<IGrouping<string, IterationData>> teamGroups)
@@ -151,8 +174,7 @@ namespace VstsDash.AppServices.TeamMeta
                 var teamMembersTask = _teamsApi.GetMembers(projectId, teamId);
                 var boardsTask = _workApi.GetBoardList(projectId, teamId);
 
-                var iterations = teamGroup
-                    .Select(x => x.Iteration).ToList();
+                var iterations = teamGroup.Select(x => x.Iteration).ToList();
 
                 var teamMetaIterationsTask = GetTeamMetaIterations(projectId, teamId, iterations);
 
@@ -172,39 +194,13 @@ namespace VstsDash.AppServices.TeamMeta
             return teamMetaTeams;
         }
 
-        private async Task<List<TeamMetaIteration>> GetTeamMetaIterations(
-            string projectId,
-            string teamId,
-            IEnumerable<IterationApiResponseBase> iterations)
-        {
-            var teamMetaIterations = new List<TeamMetaIteration>();
-
-            foreach (var iteration in iterations)
-            {
-                var iterationId = Convert.ToString(iteration.Id);
-
-                var capacitiesTask = _iterationsApi.GetCapacities(projectId, teamId, iterationId);
-                var teamDaysOffTask = _iterationsApi.GetTeamDaysOff(projectId, teamId, iterationId);
-
-                await Task.WhenAll(capacitiesTask, teamDaysOffTask);
-
-                var capacities = capacitiesTask.Result;
-                var teamDaysOff = teamDaysOffTask.Result;
-
-                var teamMetaIteration = new TeamMetaIteration(iteration, capacities, teamDaysOff);
-                teamMetaIterations.Add(teamMetaIteration);
-            }
-
-            return teamMetaIterations;
-        }
-
         private class IterationData
         {
+            public IterationApiResponseBase Iteration { get; set; }
+
             public ProjectApiResponse Project { get; set; }
 
             public TeamApiResponse Team { get; set; }
-
-            public IterationApiResponseBase Iteration { get; set; }
         }
     }
 }

@@ -7,8 +7,7 @@ namespace VstsDash.AppServices.WorkActivity
     {
         public Commit(GitCommitApiResponse gitCommit)
         {
-            if (gitCommit == null)
-                throw new ArgumentNullException(nameof(gitCommit));
+            if (gitCommit == null) throw new ArgumentNullException(nameof(gitCommit));
 
             Comment = gitCommit.Comment;
             CommitId = gitCommit.CommitId;

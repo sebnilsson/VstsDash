@@ -14,12 +14,9 @@ namespace VstsDash.WebApp.Configuration
             IConfigurationRoot configuration,
             IHostingEnvironment env)
         {
-            if (services == null)
-                throw new ArgumentNullException(nameof(services));
-            if (configuration == null)
-                throw new ArgumentNullException(nameof(configuration));
-            if (env == null)
-                throw new ArgumentNullException(nameof(env));
+            if (services == null) throw new ArgumentNullException(nameof(services));
+            if (configuration == null) throw new ArgumentNullException(nameof(configuration));
+            if (env == null) throw new ArgumentNullException(nameof(env));
 
             var builder = new ContainerBuilder();
 
@@ -27,7 +24,7 @@ namespace VstsDash.WebApp.Configuration
 
             var teamServicesConfiguration = configuration.GetSection("TeamServices");
             var appSettings = new AppSettings(teamServicesConfiguration);
-            
+
             builder.RegisterInstance(env);
             builder.RegisterInstance(appSettings);
 

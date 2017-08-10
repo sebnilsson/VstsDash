@@ -16,8 +16,8 @@ namespace VstsDash.WebApp.TagHelpers
             var isStateInProgress = WorkItemState.IsInProgress(State);
 
             var stateClass = isStateDone
-                ? "badge-success"
-                : (isStateCommit || isStateInProgress ? "badge-primary" : "badge-default");
+                                 ? "badge-success"
+                                 : (isStateCommit || isStateInProgress ? "badge-primary" : "badge-default");
 
             var htmlContent = $@"
 <small>

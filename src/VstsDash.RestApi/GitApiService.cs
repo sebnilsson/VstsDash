@@ -37,8 +37,7 @@ namespace VstsDash.RestApi
         {
             var query = "?" + (fromDate != null ? $"fromDate={fromDate.Value:yyyy-MM-dd}&" : null)
                         + (toDate != null ? $"toDate={toDate.Value:yyyy-MM-dd}&" : null)
-                        + (!string.IsNullOrWhiteSpace(branch) ? $"branch={branch}&" : null)
-                        + "api-version=3.0";
+                        + (!string.IsNullOrWhiteSpace(branch) ? $"branch={branch}&" : null) + "api-version=3.0";
 
             var url = $"DefaultCollection/_apis/git/repositories/{repositoryId}/commits{query}";
 

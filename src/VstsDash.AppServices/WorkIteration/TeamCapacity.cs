@@ -52,9 +52,19 @@ namespace VstsDash.AppServices.WorkIteration
 
         public IReadOnlyCollection<DateTime> TeamDaysOff { get; }
 
+        public double TotalWorkDayCount => Members.Any() ? Members.Sum(x => x.HoursTotalCount) : 0;
+
         public IReadOnlyCollection<DateTime> WorkDays { get; }
 
-        public double TotalWorkDayCount => Members.Any() ? Members.Sum(x => x.HoursTotalCount) : 0;
+        private static IEnumerable<DateTime> GetIterationWorkDays(IterationApiResponseBase iteration)
+        {
+            var iterationStartAt = iteration.Attributes?.StartDate ?? DateTime.MinValue;
+            var iterationEndAt = iteration.Attributes?.FinishDate ?? DateTime.MinValue;
+
+            return iterationStartAt != DateTime.MinValue && iterationEndAt != DateTime.MinValue
+                       ? iterationStartAt.GetWorkDatesUntil(iterationEndAt)
+                       : Enumerable.Empty<DateTime>();
+        }
 
         private static IEnumerable<TeamMemberCapacity> GetMembers(
             IEnumerable<TeamMemberApiResponse> teamMembers,
@@ -66,25 +76,14 @@ namespace VstsDash.AppServices.WorkIteration
             capacities = capacities ?? Enumerable.Empty<IterationCapacityApiResponse>();
 
             return from member in teamMembers
-                join c in capacities on member.Id equals c.TeamMember.Id into c
-                from capacity in c.DefaultIfEmpty()
-                select new TeamMemberCapacity(member.Id, capacity, iterationWorkDays, teamDaysOff);
-        }
-
-        private static IEnumerable<DateTime> GetIterationWorkDays(IterationApiResponseBase iteration)
-        {
-            var iterationStartAt = iteration.Attributes?.StartDate ?? DateTime.MinValue;
-            var iterationEndAt = iteration.Attributes?.FinishDate ?? DateTime.MinValue;
-
-            return iterationStartAt != DateTime.MinValue && iterationEndAt != DateTime.MinValue
-                ? iterationStartAt.GetWorkDatesUntil(iterationEndAt)
-                : Enumerable.Empty<DateTime>();
+                   join c in capacities on member.Id equals c.TeamMember.Id into c
+                   from capacity in c.DefaultIfEmpty()
+                   select new TeamMemberCapacity(member.Id, capacity, iterationWorkDays, teamDaysOff);
         }
 
         private static IEnumerable<DateTime> GetTeamDaysOff(IEnumerable<IterationDayOff> daysOff)
         {
-            return daysOff?.SelectMany(x => x.Start.GetWorkDatesUntil(x.End))
-                   ?? Enumerable.Empty<DateTime>();
+            return daysOff?.SelectMany(x => x.Start.GetWorkDatesUntil(x.End)) ?? Enumerable.Empty<DateTime>();
         }
     }
 }

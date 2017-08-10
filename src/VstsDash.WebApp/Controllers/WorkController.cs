@@ -36,12 +36,12 @@ namespace VstsDash.WebApp.Controllers
 
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _workApi = workApi ?? throw new ArgumentNullException(nameof(workApi));
-            _workActivityAppService = workActivityAppService ??
-                                      throw new ArgumentNullException(nameof(workActivityAppService));
-            _workIterationAppService = workIterationAppService ??
-                                       throw new ArgumentNullException(nameof(workIterationAppService));
-            _workLeaderboardAppService = workLeaderboardAppService ??
-                                         throw new ArgumentNullException(nameof(workLeaderboardAppService));
+            _workActivityAppService = workActivityAppService
+                                      ?? throw new ArgumentNullException(nameof(workActivityAppService));
+            _workIterationAppService = workIterationAppService
+                                       ?? throw new ArgumentNullException(nameof(workIterationAppService));
+            _workLeaderboardAppService = workLeaderboardAppService
+                                         ?? throw new ArgumentNullException(nameof(workLeaderboardAppService));
         }
 
         public async Task<IActionResult> Activity(
@@ -51,20 +51,16 @@ namespace VstsDash.WebApp.Controllers
         {
             var idParams = await GetEnsuredIdParams(projectId, teamId, iterationId);
 
-            var workActivity = await _workActivityAppService.GetActivity(
-                idParams.ProjectId,
-                idParams.TeamId,
-                idParams.IterationId);
+            var workActivity =
+                await _workActivityAppService.GetActivity(idParams.ProjectId, idParams.TeamId, idParams.IterationId);
 
             var model = _mapper.Map<WorkActivityViewModel>(workActivity);
 
             var test = model.Authors
-                .Select(r =>
-                    (Item: r, Score:
-                    r.CommitCount / (double) model.AuthorsCommitCountSum
-                    + r.CommitsTotalChangeCountSum
-                    / (double) model.AuthorsCommitsTotalChangeCountSum)
-                )
+                .Select(
+                    r => (Item: r, Score: r.CommitCount / (double)model.AuthorsCommitCountSum
+                                          + r.CommitsTotalChangeCountSum
+                                          / (double)model.AuthorsCommitsTotalChangeCountSum))
                 .OrderByDescending(x => x.Score)
                 .ToList();
 

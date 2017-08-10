@@ -24,8 +24,7 @@ namespace VstsDash.RestApi
         {
             var uri = new Uri(url, UriKind.RelativeOrAbsolute);
 
-            if (!uri.IsAbsoluteUri)
-                return;
+            if (!uri.IsAbsoluteUri) return;
 
             if (!uri.Host.EndsWith(".visualstudio.com"))
                 throw new ArgumentOutOfRangeException(nameof(url), "Host must be '.visualstudio.com'.");

@@ -10,7 +10,9 @@ namespace VstsDash.WebApp.Controllers.Api
     public class MetaController : ControllerBase
     {
         private readonly IProjectsApiService _projectsApi;
+
         private readonly IQueriesApiService _queriesApi;
+
         private readonly ITeamsApiService _teamsApi;
 
         public MetaController(
@@ -33,10 +35,12 @@ namespace VstsDash.WebApp.Controllers.Api
         {
             var projects = await _projectsApi.GetList();
 
-            return Json(projects, new JsonSerializerSettings
-            {
-                Formatting = Formatting.Indented
-            });
+            return Json(
+                projects,
+                new JsonSerializerSettings
+                {
+                    Formatting = Formatting.Indented
+                });
         }
 
         [HttpGet("{projectId}")]
@@ -44,10 +48,12 @@ namespace VstsDash.WebApp.Controllers.Api
         {
             var projects = await _queriesApi.GetList(projectId);
 
-            return Json(projects, new JsonSerializerSettings
-            {
-                Formatting = Formatting.Indented
-            });
+            return Json(
+                projects,
+                new JsonSerializerSettings
+                {
+                    Formatting = Formatting.Indented
+                });
         }
 
         [HttpGet("{projectId}")]
@@ -55,10 +61,12 @@ namespace VstsDash.WebApp.Controllers.Api
         {
             var teams = await _teamsApi.GetList(projectId);
 
-            return Json(teams, new JsonSerializerSettings
-            {
-                Formatting = Formatting.Indented
-            });
+            return Json(
+                teams,
+                new JsonSerializerSettings
+                {
+                    Formatting = Formatting.Indented
+                });
         }
     }
 }

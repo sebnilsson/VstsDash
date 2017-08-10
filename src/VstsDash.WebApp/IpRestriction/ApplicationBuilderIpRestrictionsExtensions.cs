@@ -8,16 +8,13 @@ namespace VstsDash.WebApp.IpRestriction
     {
         public static void UseIpRestrictions(this IApplicationBuilder app, IConfiguration configuration)
         {
-            if (app == null)
-                throw new ArgumentNullException(nameof(app));
+            if (app == null) throw new ArgumentNullException(nameof(app));
 
-            var settings = configuration
-                .GetSection(IpRestrictionsSettings.ConfigurationSectionKey)
+            var settings = configuration.GetSection(IpRestrictionsSettings.ConfigurationSectionKey)
                 .Get<IpRestrictionsSettings>();
 
             var isEnabled = settings?.Enable ?? false;
-            if (!isEnabled)
-                return;
+            if (!isEnabled) return;
 
             app.UseMiddleware<IpRestrictionsMiddleware>();
         }

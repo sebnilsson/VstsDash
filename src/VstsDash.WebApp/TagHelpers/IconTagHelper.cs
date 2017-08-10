@@ -23,7 +23,7 @@ namespace VstsDash.WebApp.TagHelpers
             var value = Value.StartsWith("fa-") ? Value : $"fa-{Value}";
 
             var cssClass = $"fa {value} {(IsFixedWidth ? "fa-fw" : null)}";
-            ;
+            
             output.Attributes.SetAttribute("class", cssClass);
 
             output.Attributes.RemoveAll(nameof(IsFixedWidth));

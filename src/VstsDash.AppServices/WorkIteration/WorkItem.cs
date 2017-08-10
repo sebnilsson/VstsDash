@@ -9,10 +9,8 @@ namespace VstsDash.AppServices.WorkIteration
     {
         public WorkItem(WorkItemApiResponse workItem, IReadOnlyCollection<TeamMemberApiResponse> teamMembers)
         {
-            if (workItem == null)
-                throw new ArgumentNullException(nameof(workItem));
-            if (teamMembers == null)
-                throw new ArgumentNullException(nameof(teamMembers));
+            if (workItem == null) throw new ArgumentNullException(nameof(workItem));
+            if (teamMembers == null) throw new ArgumentNullException(nameof(teamMembers));
 
             ChildItems = new List<WorkItem>();
 
@@ -45,10 +43,7 @@ namespace VstsDash.AppServices.WorkIteration
                 ChangedByMember = GetMemberFromString(ChangedBy, teamMembers);
                 CreatedByMember = GetMemberFromString(CreatedBy, teamMembers);
             }
-            else
-            {
-                Tags = Enumerable.Empty<string>();
-            }
+            else Tags = Enumerable.Empty<string>();
 
             if (workItem.Relations != null)
             {
@@ -56,8 +51,6 @@ namespace VstsDash.AppServices.WorkIteration
                 ParentId = parentRelation?.UrlId ?? 0;
             }
         }
-
-        public long Id { get; set; }
 
         public string AreaPath { get; set; }
 
@@ -71,9 +64,9 @@ namespace VstsDash.AppServices.WorkIteration
 
         public string ChangedBy { get; set; }
 
-        public DateTime? ChangedDate { get; set; }
-
         public TeamMember ChangedByMember { get; set; }
+
+        public DateTime? ChangedDate { get; set; }
 
         public IList<WorkItem> ChildItems { get; set; }
 
@@ -93,20 +86,23 @@ namespace VstsDash.AppServices.WorkIteration
 
         public bool HasChildren => ChildItems?.Any() ?? false;
 
-        public bool IsTopLevel { get; set; }
+        public long Id { get; set; }
 
         public bool IsStateCommitted => WorkItemState.IsCommited(State);
 
         public bool IsStateDone => WorkItemState.IsDone(State);
 
+        public bool IsStateInProgress => WorkItemState.IsInProgress(State);
+
         public bool IsStateToDo => WorkItemState.IsToDo(State);
 
-        public bool IsStateInProgress => WorkItemState.IsInProgress(State);
+        public bool IsTopLevel { get; set; }
 
         public bool IsTypeBug => "Bug".Equals(WorkItemType, StringComparison.OrdinalIgnoreCase);
 
-        public bool IsTypeProductBacklogItem
-            => "Product Backlog Item".Equals(WorkItemType, StringComparison.OrdinalIgnoreCase);
+        public bool IsTypeProductBacklogItem => "Product Backlog Item".Equals(
+            WorkItemType,
+            StringComparison.OrdinalIgnoreCase);
 
         public bool IsTypeTask => "Task".Equals(WorkItemType, StringComparison.OrdinalIgnoreCase);
 
@@ -136,15 +132,13 @@ namespace VstsDash.AppServices.WorkIteration
         {
             var matchValue = value?.ToLowerInvariant() ?? string.Empty;
 
-            if (string.IsNullOrWhiteSpace(matchValue))
-                return null;
+            if (string.IsNullOrWhiteSpace(matchValue)) return null;
 
             foreach (var member in teamMembers)
             {
                 var matchUniqueName = $"<{member.UniqueName}>".ToLowerInvariant();
 
-                if (matchValue.Contains(matchUniqueName))
-                    return new TeamMember(member);
+                if (matchValue.Contains(matchUniqueName)) return new TeamMember(member);
             }
 
             return null;

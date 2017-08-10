@@ -8,11 +8,11 @@ namespace VstsDash.RestApi.ApiResponses
 
         public string Name { get; set; }
 
-        public string Url { get; set; }
+        public GitRepositoriesListResponseProject Project { get; set; }
 
         public string RemoteUrl { get; set; }
 
-        public GitRepositoriesListResponseProject Project { get; set; }
+        public string Url { get; set; }
 
         public class GitRepositoriesListResponseProject
         {
@@ -20,9 +20,9 @@ namespace VstsDash.RestApi.ApiResponses
 
             public string Name { get; set; }
 
-            public string Url { get; set; }
-
             public string State { get; set; }
+
+            public string Url { get; set; }
         }
     }
 }

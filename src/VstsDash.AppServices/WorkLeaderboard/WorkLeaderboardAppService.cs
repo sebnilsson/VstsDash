@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using VstsDash.AppServices.WorkIteration;
 using VstsDash.RestApi;
@@ -21,8 +20,8 @@ namespace VstsDash.AppServices.WorkLeaderboard
         {
             _iterationsApi = iterationsApi ?? throw new ArgumentNullException(nameof(iterationsApi));
             _teamsApi = teamsApi ?? throw new ArgumentNullException(nameof(teamsApi));
-            _workIterationAppService = workIterationAppService ??
-                                       throw new ArgumentNullException(nameof(workIterationAppService));
+            _workIterationAppService = workIterationAppService
+                                       ?? throw new ArgumentNullException(nameof(workIterationAppService));
         }
 
         public async Task<Leaderboard> GetLeaderboard(string projectId, string teamId, string iterationId)

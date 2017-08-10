@@ -44,17 +44,18 @@ namespace VstsDash.RestApi
             params long[] workItemIds)
         {
             if (!workItemIds.Any())
+            {
                 return new WorkItemListApiResponse
-                {
-                    Value = new List<WorkItemApiResponse>(0)
-                };
+                       {
+                           Value = new List<WorkItemApiResponse>(0)
+                       };
+            }
 
             var fieldsList = fields?.ToList() ?? new List<string>(0);
 
             var pagedWorkItemIds = GetPagedWorkItemIds(workItemIds).ToList();
 
-            var tasks =
-                pagedWorkItemIds.Select(async x => await GetWorkItemListInternal(asOf, fieldsList, x)).ToList();
+            var tasks = pagedWorkItemIds.Select(async x => await GetWorkItemListInternal(asOf, fieldsList, x)).ToList();
 
             await Task.WhenAll(tasks);
 
@@ -66,6 +67,24 @@ namespace VstsDash.RestApi
             model.Value = new ReadOnlyCollection<WorkItemApiResponse>(values);
 
             return model;
+        }
+
+        private static IEnumerable<ICollection<long>> GetPagedWorkItemIds(ICollection<long> workItemIds)
+        {
+            ICollection<long> pagedWorkItemIds;
+
+            var index = 0;
+            do
+            {
+                var skipCount = index * WorkItemListMaxCount;
+
+                pagedWorkItemIds = workItemIds.Skip(skipCount).Take(WorkItemListMaxCount).ToList();
+
+                if (pagedWorkItemIds.Any()) yield return pagedWorkItemIds;
+
+                index++;
+            }
+            while (pagedWorkItemIds.Any());
         }
 
         private async Task<WorkItemListApiResponse> GetWorkItemListInternal(
@@ -81,24 +100,6 @@ namespace VstsDash.RestApi
                 $"DefaultCollection/_apis/wit/workitems?api-version=3.0{idsQuery}{asOfQuery}{fieldsQuery}&$expand=relations";
 
             return await _apiClient.Get<WorkItemListApiResponse>(url, CacheDuration.Short);
-        }
-
-        private static IEnumerable<ICollection<long>> GetPagedWorkItemIds(ICollection<long> workItemIds)
-        {
-            ICollection<long> pagedWorkItemIds;
-
-            var index = 0;
-            do
-            {
-                var skipCount = index * WorkItemListMaxCount;
-
-                pagedWorkItemIds = workItemIds.Skip(skipCount).Take(WorkItemListMaxCount).ToList();
-
-                if (pagedWorkItemIds.Any())
-                    yield return pagedWorkItemIds;
-
-                index++;
-            } while (pagedWorkItemIds.Any());
         }
     }
 }

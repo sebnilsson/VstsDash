@@ -14,10 +14,10 @@ namespace VstsDash.AppServices.WorkActivity
             MemberImageUrl = member.ImageUrl;
             MemberUniqueName = member.UniqueName;
         }
-        
-        public Guid MemberId { get; }
 
         public string MemberDisplayName { get; }
+
+        public Guid MemberId { get; }
 
         public string MemberImageUrl { get; }
 

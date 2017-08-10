@@ -7,8 +7,7 @@ namespace VstsDash.AppServices.WorkActivity
     {
         public Repo(GitRepositoryApiResponse repository)
         {
-            if (repository == null)
-                throw new ArgumentNullException(nameof(repository));
+            if (repository == null) throw new ArgumentNullException(nameof(repository));
 
             RepositoryId = repository.Id;
             RepositoryName = repository.Name;

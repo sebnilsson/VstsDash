@@ -51,11 +51,11 @@ namespace VstsDash.AppServices.WorkLeaderboard
             TotalWorkDayCount = Players.Sum(x => x.Capacity.TotalWorkDayCount);
         }
 
-        public TeamCapacity TeamCapacity { get; }
-
         public string IterationName { get; }
 
         public IReadOnlyCollection<Player> Players { get; }
+
+        public TeamCapacity TeamCapacity { get; }
 
         public double TotalHoursTotalCount { get; }
 
@@ -92,23 +92,20 @@ namespace VstsDash.AppServices.WorkLeaderboard
             IDictionary<Guid, Score> scores)
         {
             return from teamMember in teamMembers
-                let memberCapacity = teamCapacity.Members.FirstOrDefault(x => x.MemberId == teamMember.Id)
-                let memberScore = scores.Where(x => x.Key == teamMember.Id).Select(x => x.Value).FirstOrDefault()
-                select new Player(
-                    teamMember, teamCapacity,
-                    memberCapacity,
-                    memberScore);
+                   let memberCapacity = teamCapacity.Members.FirstOrDefault(x => x.MemberId == teamMember.Id)
+                   let memberScore = scores.Where(x => x.Key == teamMember.Id).Select(x => x.Value).FirstOrDefault()
+                   select new Player(teamMember, teamCapacity, memberCapacity, memberScore);
         }
 
         private static IEnumerable<WorkItem> GetWorkItems(Iteration workIteration)
         {
-            var workItems = workIteration.Items
-                .Where(x => !x.Tags.Contains(WorkItemExcludeTagName, StringComparer.OrdinalIgnoreCase))
+            var workItems = workIteration.Items.Where(
+                    x => !x.Tags.Contains(WorkItemExcludeTagName, StringComparer.OrdinalIgnoreCase))
                 .ToList();
 
             foreach (var item in workItems)
-                item.ChildItems = item.ChildItems
-                    .Where(c => !c.Tags.Contains(WorkItemExcludeTagName, StringComparer.OrdinalIgnoreCase))
+                item.ChildItems = item.ChildItems.Where(
+                        c => !c.Tags.Contains(WorkItemExcludeTagName, StringComparer.OrdinalIgnoreCase))
                     .ToList();
 
             return workItems;

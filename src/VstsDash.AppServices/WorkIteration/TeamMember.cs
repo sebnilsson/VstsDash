@@ -7,8 +7,7 @@ namespace VstsDash.AppServices.WorkIteration
     {
         public TeamMember(TeamMemberApiResponse teamMember)
         {
-            if (teamMember == null)
-                throw new ArgumentNullException(nameof(teamMember));
+            if (teamMember == null) throw new ArgumentNullException(nameof(teamMember));
 
             DisplayName = teamMember.DisplayName;
             Id = teamMember.Id;
@@ -16,9 +15,9 @@ namespace VstsDash.AppServices.WorkIteration
             UniqueName = teamMember.UniqueName;
         }
 
-        public Guid Id { get; }
-
         public string DisplayName { get; set; }
+
+        public Guid Id { get; }
 
         public string ImageUrl { get; set; }
 

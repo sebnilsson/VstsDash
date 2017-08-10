@@ -34,26 +34,20 @@ namespace VstsDash.WebApp.Controllers.Api
 
             _iterationsApi = iterationsApi ?? throw new ArgumentNullException(nameof(iterationsApi));
             _teamsApi = teamsApi ?? throw new ArgumentNullException(nameof(teamsApi));
-            _workActivityAppService = workActivityAppService ??
-                                      throw new ArgumentNullException(nameof(workActivityAppService));
-            _workIterationAppService = workIterationAppService ??
-                                       throw new ArgumentNullException(nameof(workIterationAppService));
+            _workActivityAppService = workActivityAppService
+                                      ?? throw new ArgumentNullException(nameof(workActivityAppService));
+            _workIterationAppService = workIterationAppService
+                                       ?? throw new ArgumentNullException(nameof(workIterationAppService));
         }
 
-        [HttpGet("teamdoneefforts")]
-        public async Task<IActionResult> TeamDoneEfforts(
+        [HttpGet("memberactivities/{memberId}")]
+        public async Task<IActionResult> MemberActivities(
+            Guid memberId,
             string projectId = null,
             string teamId = null,
             string iterationId = null)
         {
-            var idParams = await GetEnsuredIdParams(projectId, teamId, iterationId);
-
-            var efforts = await _workIterationAppService.GetWorkIterationDoneEffortsPerDay(
-                idParams.ProjectId,
-                idParams.TeamId,
-                idParams.IterationId);
-
-            var jsonData = efforts.Select(x => new object[] {x.Key, x.Value}).ToList();
+            var jsonData = await GetWorkActivityJsonData(projectId, teamId, iterationId, memberId);
 
             return Json(jsonData);
         }
@@ -69,14 +63,20 @@ namespace VstsDash.WebApp.Controllers.Api
             return Json(jsonData);
         }
 
-        [HttpGet("memberactivities/{memberId}")]
-        public async Task<IActionResult> MemberActivities(
-            Guid memberId,
+        [HttpGet("teamdoneefforts")]
+        public async Task<IActionResult> TeamDoneEfforts(
             string projectId = null,
             string teamId = null,
             string iterationId = null)
         {
-            var jsonData = await GetWorkActivityJsonData(projectId, teamId, iterationId, memberId);
+            var idParams = await GetEnsuredIdParams(projectId, teamId, iterationId);
+
+            var efforts = await _workIterationAppService.GetWorkIterationDoneEffortsPerDay(
+                              idParams.ProjectId,
+                              idParams.TeamId,
+                              idParams.IterationId);
+
+            var jsonData = efforts.Select(x => new object[] { x.Key, x.Value }).ToList();
 
             return Json(jsonData);
         }
@@ -89,10 +89,8 @@ namespace VstsDash.WebApp.Controllers.Api
         {
             var idParams = await GetEnsuredIdParams(projectId, teamId, iterationId);
 
-            var activity = await _workActivityAppService.GetActivity(
-                idParams.ProjectId,
-                idParams.TeamId,
-                idParams.IterationId);
+            var activity =
+                await _workActivityAppService.GetActivity(idParams.ProjectId, idParams.TeamId, idParams.IterationId);
 
             var iterationTask = _iterationsApi.Get(idParams.ProjectId, idParams.TeamId, idParams.IterationId);
             var teamDaysOffTask =
@@ -129,19 +127,16 @@ namespace VstsDash.WebApp.Controllers.Api
             var isMemberWithWorkCapacity = memberCapacity != null && memberCapacity.TotalWorkDayCount > 0;
 
             return (from date in dates
-                    let dayCommits = commits
-                        .Where(x => (x.Commit.AuthorDate ?? DateTimeOffset.MinValue).Date == date)
-                        .ToList()
+                    let dayCommits =
+                    commits.Where(x => (x.Commit.AuthorDate ?? DateTimeOffset.MinValue).Date == date).ToList()
                     let hasCommits = dayCommits.Any()
                     let isWorkDay = !daysOff.Contains(date)
                     let isPastWorkDay = isWorkDay && date <= DateTime.UtcNow.Date
                     let shouldIncludeData = hasCommits || isPastWorkDay && isMemberWithWorkCapacity
-                    let commitCount = shouldIncludeData ? dayCommits.Count : (int?) null
-                    let totalChangeCount = shouldIncludeData
-                        ? dayCommits.Sum(c => c.Commit.TotalChangeCount)
-                        : (int?) null
-                    select new object[] {date, commitCount, totalChangeCount})
-                .ToList();
+                    let commitCount = shouldIncludeData ? dayCommits.Count : (int?)null
+                    let totalChangeCount =
+                    shouldIncludeData ? dayCommits.Sum(c => c.Commit.TotalChangeCount) : (int?)null
+                    select new object[] { date, commitCount, totalChangeCount }).ToList();
         }
     }
 }

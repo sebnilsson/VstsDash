@@ -1,8 +1,8 @@
 ﻿@{
     var isDashboard = Context.Request.IsDashboard();
 
-    string title = ViewData["Title"] as string;
-    string htmlTitle = !string.IsNullOrWhiteSpace(title) ? $"{title} - VSTS Dash" : "VSTS Dash";
+    var title = ViewData["Title"] as string;
+    var htmlTitle = !string.IsNullOrWhiteSpace(title) ? $"{title} - VSTS Dash" : "VSTS Dash";
 }
 <!DOCTYPE html>
 <html>

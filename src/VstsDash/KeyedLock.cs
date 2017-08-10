@@ -16,6 +16,12 @@ namespace VstsDash
             return locks.GetOrAdd(key, _ => new object());
         }
 
+        public void RemoveLock(T key)
+        {
+            object o;
+            locks.TryRemove(key, out o);
+        }
+
         public TResult RunWithLock<TResult>(T key, Func<TResult> body)
         {
             lock (locks.GetOrAdd(key, _ => new object()))
@@ -30,12 +36,6 @@ namespace VstsDash
             {
                 body();
             }
-        }
-
-        public void RemoveLock(T key)
-        {
-            object o;
-            locks.TryRemove(key, out o);
         }
     }
 }

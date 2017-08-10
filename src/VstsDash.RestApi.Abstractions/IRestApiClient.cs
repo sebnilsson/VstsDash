@@ -12,7 +12,8 @@ namespace VstsDash.RestApi
             string url,
             CacheDuration cacheDuration = CacheDuration.None,
             int? maxResultCount = null,
-            int takeCount = 500) where T : ListApiResponseBase<TValue>;
+            int takeCount = 500)
+            where T : ListApiResponseBase<TValue>;
 
         Task<T> Post<T>(string url, object json = null);
     }

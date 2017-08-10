@@ -40,9 +40,9 @@ namespace VstsDash.AppServices.WorkActivity
 
         public IReadOnlyCollection<AuthorCommits> Authors { get; }
 
-        public int AuthorsCommitsTotalChangeCountSum => Authors.Sum(ac => ac.CommitsTotalChangeCountSum);
-
         public int AuthorsCommitCountSum => Authors.Sum(ac => ac.CommitCount);
+
+        public int AuthorsCommitsTotalChangeCountSum => Authors.Sum(ac => ac.CommitsTotalChangeCountSum);
 
         public IReadOnlyCollection<CommitInfo> Commits { get; }
 
@@ -50,11 +50,11 @@ namespace VstsDash.AppServices.WorkActivity
 
         public DateTime FromDate { get; }
 
-        public TeamCapacity TeamCapacity { get; }
-
         public string IterationName { get; }
 
         public IReadOnlyCollection<RepoAuthors> Repos { get; }
+
+        public TeamCapacity TeamCapacity { get; }
 
         public DateTime ToDate { get; }
 
@@ -64,8 +64,7 @@ namespace VstsDash.AppServices.WorkActivity
 
             foreach (var author in authors)
             {
-                var commits = commitInfo
-                    .Where(x => x.Author.MemberId == author.MemberId)
+                var commits = commitInfo.Where(x => x.Author.MemberId == author.MemberId)
                     .Distinct(x => x.Commit.CommitId)
                     .ToList();
 
@@ -79,19 +78,19 @@ namespace VstsDash.AppServices.WorkActivity
 
             foreach (var repository in repositories)
             {
-                var authors = commitInfo
-                    .Where(x => x.Repository.RepositoryId == repository.RepositoryId)
+                var authors = commitInfo.Where(x => x.Repository.RepositoryId == repository.RepositoryId)
                     .Select(x => x.Author)
                     .Distinct(x => x.MemberId)
                     .ToList();
 
                 var authorCommits = (from author in authors
-                    let commits = commitInfo
-                        .Where(x => x.Repository.RepositoryId == repository.RepositoryId
-                                    && x.Author.MemberId == author.MemberId)
-                        .Distinct(x => x.Commit.CommitId)
-                        .ToList()
-                    select new AuthorCommits(author, commits)).ToList();
+                                     let commits =
+                                     commitInfo.Where(
+                                             x => x.Repository.RepositoryId == repository.RepositoryId
+                                                  && x.Author.MemberId == author.MemberId)
+                                         .Distinct(x => x.Commit.CommitId)
+                                         .ToList()
+                                     select new AuthorCommits(author, commits)).ToList();
 
                 yield return new RepoAuthors(repository, authorCommits);
             }

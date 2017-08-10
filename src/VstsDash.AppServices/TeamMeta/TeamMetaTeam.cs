@@ -38,25 +38,25 @@ namespace VstsDash.AppServices.TeamMeta
             Iterations = new ReadOnlyCollection<TeamMetaIteration>(iterations.ToList());
         }
 
-        public IReadOnlyCollection<Board> Boards { get; }
-
-        public string Description { get; }
-
-        public string Name { get; }
-
-        public Guid Id { get; }
-
         public Guid? BacklogIterationId { get; }
 
         public string BacklogIterationName { get; }
+
+        public IReadOnlyCollection<Board> Boards { get; }
 
         public Guid? DefaultIterationId { get; }
 
         public string DefaultIterationName { get; }
 
+        public string Description { get; }
+
+        public Guid Id { get; }
+
         public IReadOnlyCollection<TeamMetaIteration> Iterations { get; }
 
         public IReadOnlyCollection<TeamMetaMember> Members { get; }
+
+        public string Name { get; }
 
         public string Url { get; }
 

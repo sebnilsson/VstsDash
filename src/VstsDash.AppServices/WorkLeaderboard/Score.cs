@@ -18,18 +18,17 @@ namespace VstsDash.AppServices.WorkLeaderboard
             Points = GetPointsCollection(pointList);
         }
 
+        public static Score Empty => new Score(Enumerable.Empty<Point>());
+
         public IReadOnlyCollection<Point> Assists { get; }
 
         public IReadOnlyCollection<Point> Goals { get; }
 
         public IReadOnlyCollection<Point> Points { get; }
 
-        public static Score Empty => new Score(Enumerable.Empty<Point>());
-
         private static IReadOnlyCollection<Point> GetPointsCollection(IEnumerable<Point> points)
         {
-            var ordered = points
-                .OrderByDescending(x => x.EarnedAt)
+            var ordered = points.OrderByDescending(x => x.EarnedAt)
                 .ThenByDescending(x => x.Value)
                 .ThenBy(x => x.Description)
                 .ToList();

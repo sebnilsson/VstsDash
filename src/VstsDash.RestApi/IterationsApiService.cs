@@ -35,13 +35,14 @@ namespace VstsDash.RestApi
 
         public async Task<IterationListApiResponse> GetList(string projectId, string teamId)
         {
-            var url =
-                $"DefaultCollection/{projectId}/{teamId}/_apis/work/TeamSettings/Iterations?api-version=3.0";
+            var url = $"DefaultCollection/{projectId}/{teamId}/_apis/work/TeamSettings/Iterations?api-version=3.0";
 
             return await _apiClient.Get<IterationListApiResponse>(url, CacheDuration.Medium);
         }
 
-        public async Task<IterationDaysOffApiResponse> GetTeamDaysOff(string projectId, string teamId,
+        public async Task<IterationDaysOffApiResponse> GetTeamDaysOff(
+            string projectId,
+            string teamId,
             string iterationId)
         {
             var url =

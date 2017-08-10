@@ -6,11 +6,11 @@ namespace VstsDash.WebApp.ViewModels
 {
     public class WorkLeaderboardViewModel
     {
-        public LeaderboardTeamCapacity TeamCapacity { get; set; }
-
         public string IterationName { get; set; }
 
         public IReadOnlyCollection<Player> Players { get; set; }
+
+        public LeaderboardTeamCapacity TeamCapacity { get; set; }
 
         public double TotalHoursTotalCount { get; set; }
 
@@ -36,9 +36,9 @@ namespace VstsDash.WebApp.ViewModels
 
             public IReadOnlyCollection<DateTime> TeamDaysOff { get; set; }
 
-            public IReadOnlyCollection<DateTime> WorkDays { get; set; }
-
             public double TotalWorkDayCount { get; set; }
+
+            public IReadOnlyCollection<DateTime> WorkDays { get; set; }
         }
 
         public class Player
@@ -57,9 +57,9 @@ namespace VstsDash.WebApp.ViewModels
 
             public double ScoreAssistsSum { get; set; }
 
-            public double ScorePointsSum { get; set; }
-
             public double ScoreGoalsSum { get; set; }
+
+            public double ScorePointsSum { get; set; }
 
             public string UniqueName { get; set; }
 
@@ -69,15 +69,15 @@ namespace VstsDash.WebApp.ViewModels
 
                 public double DailyPercent { get; set; }
 
-                public double HoursTotalCount { get; set; }
-
                 public IReadOnlyCollection<DateTime> DaysOff { get; set; }
+
+                public double HoursTotalCount { get; set; }
 
                 public IReadOnlyCollection<DateTime> MemberDaysOff { get; set; }
 
-                public IReadOnlyCollection<DateTime> WorkDays { get; set; }
-
                 public double TotalWorkDayCount { get; set; }
+
+                public IReadOnlyCollection<DateTime> WorkDays { get; set; }
             }
 
             public class PlayerScore
@@ -90,9 +90,9 @@ namespace VstsDash.WebApp.ViewModels
 
                 public class Point
                 {
-                    public DateTimeOffset EarnedAt { get; set; }
-
                     public string Description { get; set; }
+
+                    public DateTimeOffset EarnedAt { get; set; }
 
                     public string Id { get; set; }
 

@@ -11,9 +11,9 @@ namespace VstsDash.WebApp.ViewModels
 
         public IReadOnlyCollection<AuthorCommits> Authors { get; set; }
 
-        public int AuthorsCommitsTotalChangeCountSum => Authors.Sum(ac => ac.CommitsTotalChangeCountSum);
-
         public int AuthorsCommitCountSum => Authors.Sum(ac => ac.CommitCount);
+
+        public int AuthorsCommitsTotalChangeCountSum => Authors.Sum(ac => ac.CommitsTotalChangeCountSum);
 
         public IReadOnlyCollection<CommitInfo> Commits { get; set; }
 
@@ -23,14 +23,13 @@ namespace VstsDash.WebApp.ViewModels
 
         public double? EffortDonePerMember => GetEffortDonePerMember();
 
-        public double FullMemberCount => GetFullMemberCount();
-
         public DateTime FromDate { get; set; }
+
+        public double FullMemberCount => GetFullMemberCount();
 
         public string IterationName { get; set; }
 
-        public double? LastEffortDone => EffortDone
-            .Where(x => x.Value != null)
+        public double? LastEffortDone => EffortDone.Where(x => x.Value != null)
             .OrderByDescending(x => x.Key)
             .Select(x => x.Value)
             .FirstOrDefault();
@@ -45,20 +44,19 @@ namespace VstsDash.WebApp.ViewModels
 
         private double? GetEffortDonePerDay()
         {
-            if (LastEffortDone == null || LastEffortDone <= 0)
-                return LastEffortDone;
+            if (LastEffortDone == null || LastEffortDone <= 0) return LastEffortDone;
 
             var pastWorkDayCount = ActiveMemberCapacities.Any()
-                ? ActiveMemberCapacities.Sum(c => c.WorkDays.Count(w => w.Date <= DateTimeOffset.UtcNow.Date))
-                : 0;
+                                       ? ActiveMemberCapacities.Sum(
+                                           c => c.WorkDays.Count(w => w.Date <= DateTimeOffset.UtcNow.Date))
+                                       : 0;
 
             return pastWorkDayCount > 0 ? LastEffortDone / pastWorkDayCount : null;
         }
 
         private double? GetEffortDonePerMember()
         {
-            if (LastEffortDone == null || LastEffortDone <= 0)
-                return LastEffortDone;
+            if (LastEffortDone == null || LastEffortDone <= 0) return LastEffortDone;
 
             return FullMemberCount >= 0 ? LastEffortDone / FullMemberCount : null;
         }
@@ -72,55 +70,12 @@ namespace VstsDash.WebApp.ViewModels
 
         private double? GetMaxEffortDonePerDay()
         {
-            if (!EffortDone.Any())
-                return null;
+            if (!EffortDone.Any()) return null;
 
             var donePerDay = EffortDone
                 .Select((x, i) => (Value: x, Difference: i > 0 ? x.Value - EffortDone[i - 1].Value : -1))
                 .Where(x => x.Difference >= 0);
             return donePerDay.Max(x => x.Difference);
-        }
-
-        public class Author
-        {
-            public Guid MemberId { get; set; }
-
-            public string MemberDisplayName { get; set; }
-
-            public string MemberImageUrl { get; set; }
-
-            public string MemberUniqueName { get; set; }
-        }
-
-        public class AuthorCommits
-        {
-            public double? AverageChangePerCommit => CommitCount > 0
-                ? CommitsTotalChangeCountSum / (double) CommitCount
-                : (double?) null;
-
-            public Author Author { get; set; }
-
-            public int CommitCount => Commits.Count;
-
-            public IReadOnlyCollection<CommitInfo> Commits { get; set; }
-
-            public int CommitsTotalChangeCountSum => Commits.Sum(x => x.Commit.TotalChangeCount);
-
-            private IEnumerable<CommitInfo> KnownAuthorCommits => Commits.Where(x => x.Author.MemberId != Guid.Empty);
-
-            public int? MaxChangePerCommit => KnownAuthorCommits.Any()
-                ? KnownAuthorCommits.Max(x => x.Commit.TotalChangeCount)
-                : (int?) null;
-
-            public int? MaxChangePerDay => KnownAuthorCommits.Any()
-                ? KnownAuthorCommits
-                    .GroupBy(x => (x.Commit.AuthorDate ?? DateTime.MinValue).Date)
-                    .Max(g => g.Sum(x => x.Commit.TotalChangeCount))
-                : (int?) null;
-
-            public int? MaxCommitsPerDay => KnownAuthorCommits.Any()
-                ? KnownAuthorCommits.GroupBy(c => (c.Commit.AuthorDate ?? DateTime.MinValue).Date).Max(g => g.Count())
-                : (int?) null;
         }
 
         public class ActivityTeamCapacity
@@ -137,17 +92,17 @@ namespace VstsDash.WebApp.ViewModels
 
             public IReadOnlyCollection<DateTime> TeamDaysOff { get; set; }
 
-            public IReadOnlyCollection<DateTime> WorkDays { get; set; }
-
             public double TotalWorkDayCount { get; set; }
+
+            public IReadOnlyCollection<DateTime> WorkDays { get; set; }
 
             public class ActivityTeamMemberCapacity
             {
-                public IReadOnlyCollection<DateTime> DaysOff { get; set; }
-
                 public double DailyHourCount { get; set; }
 
                 public double DailyPercent { get; set; }
+
+                public IReadOnlyCollection<DateTime> DaysOff { get; set; }
 
                 public double HoursTotalCount { get; set; }
 
@@ -159,6 +114,50 @@ namespace VstsDash.WebApp.ViewModels
 
                 public IReadOnlyCollection<DateTime> WorkDays { get; set; }
             }
+        }
+
+        public class Author
+        {
+            public string MemberDisplayName { get; set; }
+
+            public Guid MemberId { get; set; }
+
+            public string MemberImageUrl { get; set; }
+
+            public string MemberUniqueName { get; set; }
+        }
+
+        public class AuthorCommits
+        {
+            public Author Author { get; set; }
+
+            public double? AverageChangePerCommit => CommitCount > 0
+                                                         ? CommitsTotalChangeCountSum / (double)CommitCount
+                                                         : (double?)null;
+
+            public int CommitCount => Commits.Count;
+
+            public IReadOnlyCollection<CommitInfo> Commits { get; set; }
+
+            public int CommitsTotalChangeCountSum => Commits.Sum(x => x.Commit.TotalChangeCount);
+
+            public int? MaxChangePerCommit => KnownAuthorCommits.Any()
+                                                  ? KnownAuthorCommits.Max(x => x.Commit.TotalChangeCount)
+                                                  : (int?)null;
+
+            public int? MaxChangePerDay => KnownAuthorCommits.Any()
+                                               ? KnownAuthorCommits
+                                                   .GroupBy(x => (x.Commit.AuthorDate ?? DateTime.MinValue).Date)
+                                                   .Max(g => g.Sum(x => x.Commit.TotalChangeCount))
+                                               : (int?)null;
+
+            public int? MaxCommitsPerDay => KnownAuthorCommits.Any()
+                                                ? KnownAuthorCommits
+                                                    .GroupBy(c => (c.Commit.AuthorDate ?? DateTime.MinValue).Date)
+                                                    .Max(g => g.Count())
+                                                : (int?)null;
+
+            private IEnumerable<CommitInfo> KnownAuthorCommits => Commits.Where(x => x.Author.MemberId != Guid.Empty);
         }
 
         public class Commit
@@ -208,9 +207,9 @@ namespace VstsDash.WebApp.ViewModels
         {
             public IReadOnlyCollection<AuthorCommits> AuthorCommits { get; set; }
 
-            public Repository Repository { get; set; }
-
             public int AuthorCommitsCountSum => AuthorCommits.Sum(x => x.CommitCount);
+
+            public Repository Repository { get; set; }
         }
     }
 }

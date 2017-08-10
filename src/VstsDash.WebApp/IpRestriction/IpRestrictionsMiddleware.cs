@@ -10,6 +10,7 @@ namespace VstsDash.WebApp.IpRestriction
     public class IpRestrictionsMiddleware
     {
         public readonly IReadOnlyCollection<string> IpWhiteList;
+
         public readonly RequestDelegate Next;
 
         public IpRestrictionsMiddleware(RequestDelegate next, IOptions<IpRestrictionsSettings> settings)

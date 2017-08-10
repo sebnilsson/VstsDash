@@ -53,17 +53,16 @@ namespace VstsDash.AppServices.WorkIteration
 
             HoursTotalCount = DailyHourCount * WorkDays.Count;
 
-            DailyPercent = (DailyHourCount > 0 ? DailyHourCount / FullCapacityDailyHourCount * 100 : 0)
-                .Clamp(0, 100);
+            DailyPercent = (DailyHourCount > 0 ? DailyHourCount / FullCapacityDailyHourCount * 100 : 0).Clamp(0, 100);
 
             TotalWorkDayCount = DailyPercent / 100 * WorkDays.Count;
         }
 
-        public IReadOnlyCollection<DateTime> DaysOff { get; }
-
         public double DailyHourCount { get; }
 
         public double DailyPercent { get; }
+
+        public IReadOnlyCollection<DateTime> DaysOff { get; }
 
         public double HoursTotalCount { get; }
 
@@ -75,17 +74,6 @@ namespace VstsDash.AppServices.WorkIteration
 
         public IReadOnlyCollection<DateTime> WorkDays { get; }
 
-        private static IEnumerable<double> GetMemberCapacityPerDay(IterationCapacityApiResponse capacity)
-        {
-            return capacity?.Activities?.Select(x => x.CapacityPerDay).ToList() ?? Enumerable.Empty<double>();
-        }
-
-        private static IEnumerable<DateTime> GetMemberDaysOff(IterationCapacityApiResponse capacity)
-        {
-            return capacity?.DaysOff?.SelectMany(x => x.Start.GetWorkDatesUntil(x.End)).ToList()
-                   ?? Enumerable.Empty<DateTime>();
-        }
-
         public static TeamMemberCapacity Default(Guid memberId, TeamCapacity teamCapacity)
         {
             if (teamCapacity == null) throw new ArgumentNullException(nameof(teamCapacity));
@@ -96,6 +84,17 @@ namespace VstsDash.AppServices.WorkIteration
                 Enumerable.Empty<DateTime>(),
                 teamCapacity.IterationWorkDays,
                 teamCapacity.TeamDaysOff);
+        }
+
+        private static IEnumerable<double> GetMemberCapacityPerDay(IterationCapacityApiResponse capacity)
+        {
+            return capacity?.Activities?.Select(x => x.CapacityPerDay).ToList() ?? Enumerable.Empty<double>();
+        }
+
+        private static IEnumerable<DateTime> GetMemberDaysOff(IterationCapacityApiResponse capacity)
+        {
+            return capacity?.DaysOff?.SelectMany(x => x.Start.GetWorkDatesUntil(x.End)).ToList()
+                   ?? Enumerable.Empty<DateTime>();
         }
     }
 }

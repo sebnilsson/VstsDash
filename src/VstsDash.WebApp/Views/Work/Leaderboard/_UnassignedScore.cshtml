@@ -12,8 +12,7 @@
         @foreach (var point in Model.Points)
         {
             <li class="list-group-item">
-                @Html.Partial("Leaderboard/_PlayerScorePoint", point,
-                    new ViewDataDictionary(ViewData) {{"IncludeEarnedAt", true}})
+                @Html.Partial("Leaderboard/_PlayerScorePoint", point, new ViewDataDictionary(ViewData) { { "IncludeEarnedAt", true } })
             </li>
         }
     </ul>

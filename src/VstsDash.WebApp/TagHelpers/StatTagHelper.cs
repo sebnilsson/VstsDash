@@ -21,14 +21,14 @@ namespace VstsDash.WebApp.TagHelpers
         [HtmlAttributeName("description-css")]
         public string DescriptionCss { get; set; }
 
-        [HtmlAttributeName("is-inverse")]
-        public bool IsInverse { get; set; }
+        [HtmlAttributeName("is-description-one-line")]
+        public bool IsDescriptionOneLine { get; set; } = true;
 
         [HtmlAttributeName("is-description-small")]
         public bool IsDescriptionSmall { get; set; } = true;
 
-        [HtmlAttributeName("is-description-one-line")]
-        public bool IsDescriptionOneLine { get; set; } = true;
+        [HtmlAttributeName("is-inverse")]
+        public bool IsInverse { get; set; }
 
         [HtmlAttributeName("value")]
         public string Value { get; set; }
@@ -45,8 +45,8 @@ namespace VstsDash.WebApp.TagHelpers
             output.TagMode = TagMode.StartTagAndEndTag;
 
             var cssClass = IsInverse
-                ? $"{DefaultCssClass} bg-inverse text-white border-white-1 {CssClass}".Trim()
-                : $"{DefaultCssClass} {CssClass}".Trim();
+                               ? $"{DefaultCssClass} bg-inverse text-white border-white-1 {CssClass}".Trim()
+                               : $"{DefaultCssClass} {CssClass}".Trim();
 
             output.Attributes.SetAttribute("class", cssClass);
 
@@ -61,24 +61,13 @@ namespace VstsDash.WebApp.TagHelpers
             output.Attributes.RemoveAll(nameof(ValueCss));
         }
 
-        private TagBuilder GetDtTag()
-        {
-            var dtTag = new TagBuilder("dt");
-            dtTag.InnerHtml.Append(Value);
-
-            var cssClass = $"{DefaultValueCss} {ValueCss}".Trim();
-            dtTag.AddCssClass(cssClass);
-
-            return dtTag;
-        }
-
         private async Task<TagBuilder> GetDdTag(TagHelperOutput output)
         {
             var description = !string.IsNullOrWhiteSpace(Description)
-                ? Description
-                : (output.Content.IsModified
-                    ? output.Content.GetContent()
-                    : (await output.GetChildContentAsync()).GetContent());
+                                  ? Description
+                                  : (output.Content.IsModified
+                                         ? output.Content.GetContent()
+                                         : (await output.GetChildContentAsync()).GetContent());
 
             var ddTag = new TagBuilder("dd");
             ddTag.InnerHtml.AppendHtml(description);
@@ -90,6 +79,17 @@ namespace VstsDash.WebApp.TagHelpers
             ddTag.AddCssClass(cssClass);
 
             return ddTag;
+        }
+
+        private TagBuilder GetDtTag()
+        {
+            var dtTag = new TagBuilder("dt");
+            dtTag.InnerHtml.Append(Value);
+
+            var cssClass = $"{DefaultValueCss} {ValueCss}".Trim();
+            dtTag.AddCssClass(cssClass);
+
+            return dtTag;
         }
     }
 }

@@ -17,44 +17,6 @@ namespace VstsDash.WebApp.Controllers
             WorkApi = workApi ?? throw new ArgumentNullException(nameof(workApi));
         }
 
-        protected async Task<string> GetIterationIdOrDefault(string projectId, string teamId, string iterationId)
-        {
-            if (!string.IsNullOrWhiteSpace(iterationId))
-                return iterationId;
-
-            var setting = await WorkApi.GetSetting(projectId, teamId);
-
-            var defaultIterationId = Convert.ToString(setting.DefaultIteration?.Id);
-
-            if (string.IsNullOrWhiteSpace(defaultIterationId))
-                throw new InvalidOperationException(
-                    $"Could not resolve default Iteration ID for Project ID '{projectId}' and Team ID '{teamId}'.");
-
-            return defaultIterationId;
-        }
-
-        protected string GetProjectIdOrDefault(string projectId)
-        {
-            var ensuredProjectId = !string.IsNullOrWhiteSpace(projectId)
-                ? projectId
-                : AppSettings.DefaultProjectId;
-            return ensuredProjectId;
-        }
-
-        protected string GetRepositoryIdOrDefault(string repositoryId)
-        {
-            var ensuredRepositoryId = !string.IsNullOrWhiteSpace(repositoryId)
-                ? repositoryId
-                : AppSettings.DefaultRepositoryId;
-            return ensuredRepositoryId;
-        }
-
-        protected string GetTeamIdOrDefault(string teamId)
-        {
-            var ensuredTeamId = !string.IsNullOrWhiteSpace(teamId) ? teamId : AppSettings.DefaultTeamId;
-            return ensuredTeamId;
-        }
-
         protected async Task<IdParams> GetEnsuredIdParams(
             string projectId = null,
             string teamId = null,
@@ -65,6 +27,43 @@ namespace VstsDash.WebApp.Controllers
             var ensuredIterationId = await GetIterationIdOrDefault(ensuredProjectId, ensuredTeamId, iterationId);
 
             return new IdParams(ensuredProjectId, ensuredTeamId, ensuredIterationId);
+        }
+
+        protected async Task<string> GetIterationIdOrDefault(string projectId, string teamId, string iterationId)
+        {
+            if (!string.IsNullOrWhiteSpace(iterationId)) return iterationId;
+
+            var setting = await WorkApi.GetSetting(projectId, teamId);
+
+            var defaultIterationId = Convert.ToString(setting.DefaultIteration?.Id);
+
+            if (string.IsNullOrWhiteSpace(defaultIterationId))
+            {
+                throw new InvalidOperationException(
+                    $"Could not resolve default Iteration ID for Project ID '{projectId}' and Team ID '{teamId}'.");
+            }
+
+            return defaultIterationId;
+        }
+
+        protected string GetProjectIdOrDefault(string projectId)
+        {
+            var ensuredProjectId = !string.IsNullOrWhiteSpace(projectId) ? projectId : AppSettings.DefaultProjectId;
+            return ensuredProjectId;
+        }
+
+        protected string GetRepositoryIdOrDefault(string repositoryId)
+        {
+            var ensuredRepositoryId = !string.IsNullOrWhiteSpace(repositoryId)
+                                          ? repositoryId
+                                          : AppSettings.DefaultRepositoryId;
+            return ensuredRepositoryId;
+        }
+
+        protected string GetTeamIdOrDefault(string teamId)
+        {
+            var ensuredTeamId = !string.IsNullOrWhiteSpace(teamId) ? teamId : AppSettings.DefaultTeamId;
+            return ensuredTeamId;
         }
 
         protected class IdParams

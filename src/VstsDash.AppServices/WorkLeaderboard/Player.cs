@@ -26,8 +26,9 @@ namespace VstsDash.AppServices.WorkLeaderboard
 
             Capacity = memberCapacity ?? TeamMemberCapacity.Default(teamMember.Id, teamCapacity);
             CapacityMultiplier =
-                (Capacity.DailyPercent > 0 ? 100 / Capacity.DailyPercent : MaxCapacityMultiplier)
-                .Clamp(1, MaxCapacityMultiplier);
+                (Capacity.DailyPercent > 0 ? 100 / Capacity.DailyPercent : MaxCapacityMultiplier).Clamp(
+                    1,
+                    MaxCapacityMultiplier);
 
             Score = score ?? Score.Empty;
 

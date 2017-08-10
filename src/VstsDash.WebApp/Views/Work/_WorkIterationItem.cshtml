@@ -10,6 +10,7 @@
     string CollapseShowClass => !Model.IsStateDone ? "show" : null;
 
     string ChildrenCollapseShowClass => Model.ChildItems.Any() && !Model.ChildItems.All(x => x.IsStateDone) ? "show" : null;
+
 }
 
 <work-iteration-item-card state="@Model.State" class="work-iteration-item-parent">
@@ -97,7 +98,7 @@
                             <div class="row">
                                 @foreach (var child in Model.ChildItems)
                                 {
-                                    @Html.PartialContent("_WorkIterationItemChild", child, new {isBacklog})
+                                    @Html.PartialContent("_WorkIterationItemChild", child, new { isBacklog })
                                 }
                             </div>
                         </div>

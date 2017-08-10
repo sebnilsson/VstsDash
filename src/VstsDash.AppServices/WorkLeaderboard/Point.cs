@@ -13,9 +13,9 @@ namespace VstsDash.AppServices.WorkLeaderboard
             EarnedAt = earnedAt;
         }
 
-        public DateTimeOffset EarnedAt { get; }
-
         public string Description { get; }
+
+        public DateTimeOffset EarnedAt { get; }
 
         public string Id { get; }
 

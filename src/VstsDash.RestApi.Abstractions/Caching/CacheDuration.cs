@@ -3,9 +3,13 @@
     public enum CacheDuration
     {
         None,
+
         Short,
+
         Medium,
+
         Long,
+
         VeryLong
     }
 }

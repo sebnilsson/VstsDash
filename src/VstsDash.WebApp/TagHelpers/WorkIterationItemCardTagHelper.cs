@@ -29,8 +29,8 @@ namespace VstsDash.WebApp.TagHelpers
             var isStateInProgress = WorkItemState.IsInProgress(State);
 
             var stateClass = isStateDone
-                ? "card-outline-success"
-                : (isStateCommit || isStateInProgress ? "card-outline-primary" : null);
+                                 ? "card-outline-success"
+                                 : (isStateCommit || isStateInProgress ? "card-outline-primary" : null);
 
             var cssClass = $"card work-iteration-item {stateClass}".Trim();
             return cssClass;

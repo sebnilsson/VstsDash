@@ -39,7 +39,8 @@ namespace VstsDash.RestApi
             string url,
             CacheDuration cacheDuration = CacheDuration.None,
             int? maxResultCount = null,
-            int takeCount = 500) where T : ListApiResponseBase<TValue>
+            int takeCount = 500)
+            where T : ListApiResponseBase<TValue>
         {
             if (url == null) throw new ArgumentNullException(nameof(url));
 

@@ -14,7 +14,7 @@ namespace VstsDash
             if (startDate > endDate)
                 throw new ArgumentOutOfRangeException(nameof(startDate), "Start-date cannot be after end-date.");
 
-            var dayDifferenceCount = (int) (endDate - startDate).TotalDays;
+            var dayDifferenceCount = (int)(endDate - startDate).TotalDays;
 
             var dates = Enumerable.Range(0, dayDifferenceCount + 1).Select(i => startDate.AddDays(i));
             return dates;

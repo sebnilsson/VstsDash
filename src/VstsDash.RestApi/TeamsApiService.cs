@@ -49,42 +49,42 @@ namespace VstsDash.RestApi
         {
             var projects = await _projectsApi.GetList();
 
-            var teams = projects.Value
-                .Select(x => Convert.ToString(x.Id))
-                .Select(x => new
-                {
-                    ProjectId = x,
-                    Task = GetList(x)
-                })
+            var teams = projects.Value.Select(x => Convert.ToString(x.Id))
+                .Select(
+                    x => new
+                         {
+                             ProjectId = x,
+                             Task = GetList(x)
+                         })
                 .ToList();
 
             var teamTasks = teams.Select(x => x.Task);
 
             await Task.WhenAll(teamTasks);
 
-            var teamIds = teams.SelectMany(x =>
-                x.Task.Result.Value.Select(t => new
-                {
-                    x.ProjectId,
-                    TeamId = Convert.ToString(t.Id)
-                }));
+            var teamIds = teams.SelectMany(
+                x => x.Task.Result.Value.Select(
+                    t => new
+                         {
+                             x.ProjectId,
+                             TeamId = Convert.ToString(t.Id)
+                         }));
 
             var teamMembersTasks = teamIds.Select(x => GetMembers(x.ProjectId, x.TeamId)).ToList();
 
             await Task.WhenAll(teamMembersTasks);
-            
-            var teamMembers = teamMembersTasks
-                .SelectMany(x => x.Result.Value)
+
+            var teamMembers = teamMembersTasks.SelectMany(x => x.Result.Value)
                 .Distinct(x => x.Id)
                 .OrderBy(x => x.DisplayName)
                 .ThenByDescending(x => x.UniqueName)
                 .ToList();
 
             return new TeamMemberListApiResponse
-            {
-                Count = teamMembers.Count,
-                Value = new ReadOnlyCollection<TeamMemberApiResponse>(teamMembers)
-            };
+                   {
+                       Count = teamMembers.Count,
+                       Value = new ReadOnlyCollection<TeamMemberApiResponse>(teamMembers)
+                   };
         }
     }
 }

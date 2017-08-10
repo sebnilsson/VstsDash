@@ -16,9 +16,8 @@ namespace VstsDash.RestApi
 
         public RestHttpClient(AppSettings appSettings)
         {
-            var basicAuthorizationHeaderValue =
-                Convert.ToBase64String(
-                    Encoding.ASCII.GetBytes(string.Format("{0}:{1}", string.Empty, appSettings.AccessToken)));
+            var basicAuthorizationHeaderValue = Convert.ToBase64String(
+                Encoding.ASCII.GetBytes(string.Format("{0}:{1}", string.Empty, appSettings.AccessToken)));
 
             _basicAuthorizationHeader = new AuthenticationHeaderValue("Basic", basicAuthorizationHeaderValue);
         }

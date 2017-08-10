@@ -57,8 +57,7 @@
 
             <div class="leaderboard-player-meta-block leaderboard-player-block align-self-center text-center">
                 <div class="d-flex flex-row">
-                    <dl class="w-100 @(Model.CapacityMultiplier > 2 ? "bg-danger text-white"
-                                           : (Model.CapacityMultiplier > 1 ? "bg-warning text-white" : null))">
+                    <dl class="w-100 @(Model.CapacityMultiplier > 2 ? "bg-danger text-white" : (Model.CapacityMultiplier > 1 ? "bg-warning text-white" : null))">
                         <dt>
                             @Model.CapacityMultiplier.ToString(Formats.NumberTwoDecimals)x
                         </dt>
@@ -66,9 +65,7 @@
                             Multiplier
                         </dd>
                     </dl>
-                    <dl class="w-100 @(Model.Capacity.DailyHourCount <= 0 ? "bg-faded text-danger"
-                                           : (Model.Capacity.DailyHourCount < 8 ? "bg-faded text-warning"
-                                               : (Model.Capacity.DailyHourCount >= 8 ? "text-success" : null)))">
+                    <dl class="w-100 @(Model.Capacity.DailyHourCount <= 0 ? "bg-faded text-danger" : (Model.Capacity.DailyHourCount < 8 ? "bg-faded text-warning" : (Model.Capacity.DailyHourCount >= 8 ? "text-success" : null)))">
                         <dt>
                             @Model.Capacity.DailyHourCount.ToString(Formats.NumberTwoDecimals)h
                             @if (Model.Capacity.DailyPercent > 0)
@@ -140,8 +137,7 @@
                         <li class="list-group-item">
                             <div class="w-100 d-inline-flex flex-row align-items-center"
                                  title="@($"[{point.Id}] {point.Description} ({point.EarnedAt:yyyy-MM-dd HH:mm:ss})")">
-                                @Html.Partial("Leaderboard/_PlayerScorePoint", point,
-                                    new ViewDataDictionary(ViewData) {{"OneLine", true}})
+                                @Html.Partial("Leaderboard/_PlayerScorePoint", point, new ViewDataDictionary(ViewData) { { "OneLine", true } })
                             </div>
                         </li>
                     }
