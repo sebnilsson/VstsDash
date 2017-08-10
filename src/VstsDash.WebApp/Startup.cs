@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using VstsDash.WebApp.Configuration;
+using VstsDash.WebApp.IpRestriction;
 
 namespace VstsDash.WebApp
 {
@@ -71,6 +72,9 @@ namespace VstsDash.WebApp
                     options.EnableForHttps = true;
                 });
 
+            if (!Environment.IsDevelopment())
+                services.AddIpRestrictions(Configuration);
+
             ApplicationContainer = services.AddContainer(Configuration, Environment);
 
             return new AutofacServiceProvider(ApplicationContainer);
@@ -93,6 +97,7 @@ namespace VstsDash.WebApp
             else
             {
                 app.UseExceptionHandler("/Home/Error");
+                app.UseIpRestrictions(Configuration);
             }
 
             app.UseResponseCompression();

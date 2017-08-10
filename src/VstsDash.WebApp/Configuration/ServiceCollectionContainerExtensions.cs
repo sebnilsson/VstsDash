@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace VstsDash.WebApp.Configuration
 {
-    public static class ContainerServiceCollectionExtensions
+    public static class ServiceCollectionContainerExtensions
     {
         public static IContainer AddContainer(
             this IServiceCollection services,
