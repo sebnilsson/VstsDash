@@ -27,7 +27,7 @@ namespace VstsDash.WebApp
             var builder =
                 new ConfigurationBuilder().SetBasePath(env.ContentRootPath)
                     .AddJsonFile("appsettings.json", false, true)
-                    .AddJsonFile("appsettings.secrets.json", false)
+                    .AddJsonFile("appsettings.secrets.json", true)
                     .AddJsonFile($"appsettings.{env.EnvironmentName}.json", true)
                     .AddEnvironmentVariables();
 
