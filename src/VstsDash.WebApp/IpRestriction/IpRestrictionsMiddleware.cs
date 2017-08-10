@@ -11,7 +11,6 @@ namespace VstsDash.WebApp.IpRestriction
     {
         public readonly IReadOnlyCollection<string> IpWhiteList;
         public readonly RequestDelegate Next;
-        public readonly IpRestrictionsSettings Settings;
 
         public IpRestrictionsMiddleware(RequestDelegate next, IOptions<IpRestrictionsSettings> settings)
         {
@@ -19,10 +18,7 @@ namespace VstsDash.WebApp.IpRestriction
 
             if (settings == null) throw new ArgumentNullException(nameof(settings));
 
-            Settings = settings.Value ??
-                       throw new ArgumentOutOfRangeException(nameof(settings), "Value of settings cannot be null.");
-
-            IpWhiteList = Settings.IpWhiteList ?? new List<string>(0);
+            IpWhiteList = settings.Value?.IpWhiteList ?? new string[0];
         }
 
         public async Task Invoke(HttpContext context)
