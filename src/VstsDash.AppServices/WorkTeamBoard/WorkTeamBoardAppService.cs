@@ -3,9 +3,9 @@ using System.Threading.Tasks;
 using VstsDash.AppServices.WorkIteration;
 using VstsDash.RestApi;
 
-namespace VstsDash.AppServices.WorkLeaderboard
+namespace VstsDash.AppServices.WorkTeamBoard
 {
-    public class WorkLeaderboardAppService : IAppService
+    public class WorkTeamBoardAppService : IAppService
     {
         private readonly IIterationsApiService _iterationsApi;
 
@@ -13,7 +13,7 @@ namespace VstsDash.AppServices.WorkLeaderboard
 
         private readonly WorkIterationAppService _workIterationAppService;
 
-        public WorkLeaderboardAppService(
+        public WorkTeamBoardAppService(
             IIterationsApiService iterationsApi,
             ITeamsApiService teamsApi,
             WorkIterationAppService workIterationAppService)
@@ -24,7 +24,7 @@ namespace VstsDash.AppServices.WorkLeaderboard
                                        ?? throw new ArgumentNullException(nameof(workIterationAppService));
         }
 
-        public async Task<Leaderboard> GetLeaderboard(string projectId, string teamId, string iterationId)
+        public async Task<TeamBoard> GetTeamBoard(string projectId, string teamId, string iterationId)
         {
             var capacitiesTask = _iterationsApi.GetCapacities(projectId, teamId, iterationId);
             var iterationTask = _iterationsApi.Get(projectId, teamId, iterationId);
@@ -40,7 +40,7 @@ namespace VstsDash.AppServices.WorkLeaderboard
             var teamMembers = teamMembersTask.Result;
             var workIteration = workIterationTask.Result;
 
-            return new Leaderboard(teamMembers, iteration, capaticies, teamDaysOff, workIteration);
+            return new TeamBoard(teamMembers, iteration, capaticies, teamDaysOff, workIteration);
         }
     }
 }

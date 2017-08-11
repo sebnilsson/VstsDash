@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
-namespace VstsDash.AppServices.WorkLeaderboard
+namespace VstsDash.AppServices.WorkTeamBoard
 {
     public class Score
     {

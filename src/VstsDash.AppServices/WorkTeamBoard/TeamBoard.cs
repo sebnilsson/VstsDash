@@ -5,15 +5,15 @@ using System.Linq;
 using VstsDash.AppServices.WorkIteration;
 using VstsDash.RestApi.ApiResponses;
 
-namespace VstsDash.AppServices.WorkLeaderboard
+namespace VstsDash.AppServices.WorkTeamBoard
 {
-    public class Leaderboard
+    public class TeamBoard
     {
         public const string WorkItemAssistTagName = "lb-assist";
 
         public const string WorkItemExcludeTagName = "lb-exclude";
 
-        public Leaderboard(
+        public TeamBoard(
             TeamMemberListApiResponse teamMembers,
             IterationApiResponse iteration,
             IterationCapacityListApiResponse capacities,
@@ -34,11 +34,11 @@ namespace VstsDash.AppServices.WorkLeaderboard
 
             var workItems = GetWorkItems(workIteration);
 
-            var scores = LeaderboardScoresHelper.GetScores(iteration, workItems, teamMemberList);
+            var scores = TeamBoardScoresHelper.GetScores(iteration, workItems, teamMemberList);
 
-            var leaderboardTeamMembers = GetPlayers(teamMemberList, teamCapacity, scores);
+            var teamBoardTeamMembers = GetPlayers(teamMemberList, teamCapacity, scores);
 
-            Players = new ReadOnlyCollection<Player>(leaderboardTeamMembers);
+            Players = new ReadOnlyCollection<Player>(teamBoardTeamMembers);
             TeamCapacity = teamCapacity;
 
             UnassignedScore = scores.Where(x => x.Key == Guid.Empty).Select(x => x.Value).FirstOrDefault();

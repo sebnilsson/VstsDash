@@ -11,9 +11,9 @@
 
         @if (!Model.Result.IsBacklog)
         {
-            <a href="@Url.WorkLeaderboard(Model.ProjectId, Model.TeamId, Model.IterationId)"
+            <a href="@Url.WorkTeamBoard(Model.ProjectId, Model.TeamId, Model.IterationId)"
                class="btn btn-outline-warning btn-sm">
-                Leaderboard
+                Team board
             </a>
             <a href="@Url.WorkActivity(Model.ProjectId, Model.TeamId, Model.IterationId)"
                class="btn btn-outline-info btn-sm">

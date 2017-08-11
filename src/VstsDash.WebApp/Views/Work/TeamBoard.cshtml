@@ -1,4 +1,4 @@
-﻿@model WorkLeaderboardViewModel
+﻿@model WorkTeamBoardViewModel
 @{
     var isDashboard = Context.Request.IsDashboard();
 
@@ -9,14 +9,14 @@
     var dateText = $"{Model.TeamCapacity.IterationWorkDays.First():yyyy-MM-dd} - {Model.TeamCapacity.IterationWorkDays.Last():yyyy-MM-dd}";
 }
 
-<div class="leaderboard-container main-container @(!isDashboard ? "container" : "container-fluid") pb-3">
+<div class="teamboard-container main-container @(!isDashboard ? "container" : "container-fluid") pb-3">
     <h1 class="h2 mb-2">
-        <icon value="@Icons.Leaderboard"/>
-        <strong>Leaderboard</strong>: @Model.IterationName
+        <icon value="@Icons.TeamBoard"/>
+        <strong>Team board</strong>: @Model.IterationName
 
         @if (!isDashboard)
         {
-            <a href="@Url.WorkLeaderboard(requestQuery["projectId"], requestQuery["teamId"], requestQuery["iterationId"], true)"
+            <a href="@Url.WorkTeamBoard(requestQuery["projectId"], requestQuery["teamId"], requestQuery["iterationId"], true)"
                class="btn btn-outline-success btn-sm">
                 @Html.Icon(Icons.Dashboard, "fa-fw")
                 Dashboard
@@ -38,14 +38,14 @@
         @if (Model.TeamCapacity.WorkDays.Any())
         {
             <div class="@(isDashboard ? "col-xl-6" : null) @(isDashboard && !hasAnyUnassignedScore ? "offset-xl-3" : null)">
-                @Html.Partial("Leaderboard/_Meta", Model)
+                @Html.Partial("TeamBoard/_Meta", Model)
             </div>
         }
 
         @if (hasAnyUnassignedScore)
         {
             <div class="@(isDashboard ? "col-xl-6" : null)">
-                @Html.Partial("Leaderboard/_UnassignedScore", Model.UnassignedScore)
+                @Html.Partial("TeamBoard/_UnassignedScore", Model.UnassignedScore)
             </div>
         }
     </div>
@@ -88,7 +88,7 @@
                 </div>
             }
 
-            <div class="leaderboard-players pt-2 pb-0">
+            <div class="teamboard-players pt-2 pb-0">
                 <div class="d-inline-flex flex-row flex-wrap align-items-stretch">
                     @foreach (var player in Model.Players)
                     {
@@ -96,7 +96,7 @@
                         var isSecond = Model.Players.ElementAtOrDefault(1) == player && player.ScorePointsSum > 0;
                         var isThird = Model.Players.ElementAtOrDefault(2) == player && player.ScorePointsSum > 0;
 
-                        @Html.Partial("Leaderboard/_Player", player, new ViewDataDictionary(ViewData) { { "IsFirst", isFirst }, { "IsSecond", isSecond }, { "IsThird", isThird }, { "TeamWorkDays", Model.TeamCapacity.WorkDays } })
+                        @Html.Partial("TeamBoard/_Player", player, new ViewDataDictionary(ViewData) { { "IsFirst", isFirst }, { "IsSecond", isSecond }, { "IsThird", isThird }, { "TeamWorkDays", Model.TeamCapacity.WorkDays } })
                     }
                 </div>
             </div>
@@ -106,21 +106,21 @@
     {
         <div class="card card-outline-danger">
             <div class="card-block">
-                <em>No players or scores found for leaderboard</em>
+                <em>No players or scores found for team board</em>
             </div>
         </div>
     }
 
     @if (!isDashboard && Model.Players.Any() && Model.TotalScorePointsSum > 0)
     {
-        <div class="leaderboard-all-scores card card-outline-info mt-2">
+        <div class="teamboard-all-scores card card-outline-info mt-2">
             <h2 class="card-header card-outline-secondary h6 pt-1 pb-1 pl-2 pr-2">All points</h2>
 
             <ul class="list-group list-group-flush">
                 @foreach (var point in Model.Players.SelectMany(x => x.Score.Points).OrderByDescending(x => x.EarnedAt))
                 {
                     <li class="list-group-item">
-                        @Html.Partial("Leaderboard/_PlayerScorePoint", point, new ViewDataDictionary(ViewData) { { "IncludeEarnedAt", true } })
+                        @Html.Partial("TeamBoard/_PlayerScorePoint", point, new ViewDataDictionary(ViewData) { { "IncludeEarnedAt", true } })
                     </li>
                 }
             </ul>

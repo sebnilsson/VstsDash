@@ -4,13 +4,13 @@ using VstsDash.AppServices;
 
 namespace VstsDash.WebApp.ViewModels
 {
-    public class WorkLeaderboardViewModel
+    public class WorkTeamBoardViewModel
     {
         public string IterationName { get; set; }
 
         public IReadOnlyCollection<Player> Players { get; set; }
 
-        public LeaderboardTeamCapacity TeamCapacity { get; set; }
+        public TeamBoardTeamCapacity TeamCapacity { get; set; }
 
         public double TotalHoursTotalCount { get; set; }
 
@@ -24,7 +24,7 @@ namespace VstsDash.WebApp.ViewModels
 
         public Player.PlayerScore UnassignedScore { get; set; }
 
-        public class LeaderboardTeamCapacity
+        public class TeamBoardTeamCapacity
         {
             public double DailyHourCount { get; set; }
 

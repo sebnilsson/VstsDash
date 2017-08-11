@@ -75,7 +75,20 @@ namespace VstsDash.WebApp
                 });
         }
 
-        public static string WorkLeaderboard(
+        public static string WorkSprint(this IUrlHelper urlHelper, string projectId = null, string teamId = null)
+        {
+            return urlHelper.RouteUrl(
+                RouteNames.Default,
+                new
+                {
+                    Controller = "Work",
+                    Action = "Sprint",
+                    projectId,
+                    teamId
+                });
+        }
+
+        public static string WorkTeamBoard(
             this IUrlHelper urlHelper,
             string projectId = null,
             string teamId = null,
@@ -87,24 +100,11 @@ namespace VstsDash.WebApp
                 new
                 {
                     Controller = "Work",
-                    Action = "Leaderboard",
+                    Action = "TeamBoard",
                     projectId,
                     teamId,
                     iterationId,
                     dashboard = isDashboard ? "1" : null
-                });
-        }
-
-        public static string WorkSprint(this IUrlHelper urlHelper, string projectId = null, string teamId = null)
-        {
-            return urlHelper.RouteUrl(
-                RouteNames.Default,
-                new
-                {
-                    Controller = "Work",
-                    Action = "Sprint",
-                    projectId,
-                    teamId
                 });
         }
     }

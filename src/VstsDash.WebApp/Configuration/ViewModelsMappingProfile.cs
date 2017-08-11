@@ -5,7 +5,7 @@ using AutoMapper;
 using VstsDash.AppServices.TeamMeta;
 using VstsDash.AppServices.WorkActivity;
 using VstsDash.AppServices.WorkIteration;
-using VstsDash.AppServices.WorkLeaderboard;
+using VstsDash.AppServices.WorkTeamBoard;
 using VstsDash.WebApp.ViewModels;
 
 namespace VstsDash.WebApp.Configuration
@@ -18,7 +18,7 @@ namespace VstsDash.WebApp.Configuration
 
             MapWorkActivityViewModel();
 
-            MapWorkLeaderboardViewModel();
+            MapWorkTeamBoardViewModel();
         }
 
         public override string ProfileName => nameof(ViewModelsMappingProfile);
@@ -86,14 +86,14 @@ namespace VstsDash.WebApp.Configuration
                     opt => opt.MapFrom(src => src.AuthorCommits.OrderByDescending(ac => ac.Commits.Count)));
         }
 
-        private void MapWorkLeaderboardViewModel()
+        private void MapWorkTeamBoardViewModel()
         {
-            CreateMap<Leaderboard, WorkLeaderboardViewModel>();
-            CreateMap<TeamCapacity, WorkLeaderboardViewModel.LeaderboardTeamCapacity>();
-            CreateMap<Player, WorkLeaderboardViewModel.Player>();
-            CreateMap<TeamMemberCapacity, WorkLeaderboardViewModel.Player.PlayerCapacity>();
-            CreateMap<Score, WorkLeaderboardViewModel.Player.PlayerScore>();
-            CreateMap<Point, WorkLeaderboardViewModel.Player.PlayerScore.Point>();
+            CreateMap<TeamBoard, WorkTeamBoardViewModel>();
+            CreateMap<TeamCapacity, WorkTeamBoardViewModel.TeamBoardTeamCapacity>();
+            CreateMap<Player, WorkTeamBoardViewModel.Player>();
+            CreateMap<TeamMemberCapacity, WorkTeamBoardViewModel.Player.PlayerCapacity>();
+            CreateMap<Score, WorkTeamBoardViewModel.Player.PlayerScore>();
+            CreateMap<Point, WorkTeamBoardViewModel.Player.PlayerScore.Point>();
         }
     }
 }

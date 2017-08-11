@@ -4,9 +4,9 @@ using System.Linq;
 using VstsDash.AppServices.WorkIteration;
 using VstsDash.RestApi.ApiResponses;
 
-namespace VstsDash.AppServices.WorkLeaderboard
+namespace VstsDash.AppServices.WorkTeamBoard
 {
-    internal static class LeaderboardScoresHelper
+    internal static class TeamBoardScoresHelper
     {
         private const double MaxGoalValue = 3;
 
@@ -56,7 +56,7 @@ namespace VstsDash.AppServices.WorkLeaderboard
                                          HasAssistTag =
                                          g.Any(
                                              x => x.Tags.Contains(
-                                                 Leaderboard.WorkItemAssistTagName,
+                                                 TeamBoard.WorkItemAssistTagName,
                                                  StringComparer.OrdinalIgnoreCase)),
                                          WorkItem = g.First()
                                      }).OrderByDescending(x => x.HasAssistTag)

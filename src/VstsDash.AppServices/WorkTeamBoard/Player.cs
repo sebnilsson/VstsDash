@@ -4,7 +4,7 @@ using System.Linq;
 using VstsDash.AppServices.WorkIteration;
 using VstsDash.RestApi.ApiResponses;
 
-namespace VstsDash.AppServices.WorkLeaderboard
+namespace VstsDash.AppServices.WorkTeamBoard
 {
     public class Player
     {

@@ -31,10 +31,10 @@
             <icon value="@Icons.Dashboard"/>
             Dashboard
         </a>
-        <a href="@Url.WorkLeaderboard(requestQuery["projectId"], requestQuery["teamId"], requestQuery["iterationId"])"
+        <a href="@Url.WorkTeamBoard(requestQuery["projectId"], requestQuery["teamId"], requestQuery["iterationId"])"
            class="btn btn-warning btn-sm">
-            <icon value="@Icons.Leaderboard"/>
-            Leaderboard
+            <icon value="@Icons.TeamBoard"/>
+            Team board
         </a>
     }
 
@@ -142,7 +142,7 @@
                                 <div class="d-inline-flex flex-row w-100" style="min-height: 44px;">
                                     @if (!string.IsNullOrWhiteSpace(author.MemberImageUrl))
                                     {
-                                        <img src="@Url.ApiFile(author.MemberImageUrl)" class="leaderboard-player-image rounded align-self-center mr-2"/>
+                                        <img src="@Url.ApiFile(author.MemberImageUrl)" class="teamboard-player-image rounded align-self-center mr-2"/>
                                     }
                                     <h2 class="m-0 align-self-center one-line" title="@author.MemberUniqueName">
                                         @author.MemberDisplayName

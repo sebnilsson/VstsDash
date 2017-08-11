@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace VstsDash.AppServices.WorkLeaderboard
+namespace VstsDash.AppServices.WorkTeamBoard
 {
     public class Point
     {

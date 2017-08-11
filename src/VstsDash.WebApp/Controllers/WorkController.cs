@@ -5,7 +5,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using VstsDash.AppServices.WorkActivity;
 using VstsDash.AppServices.WorkIteration;
-using VstsDash.AppServices.WorkLeaderboard;
+using VstsDash.AppServices.WorkTeamBoard;
 using VstsDash.RestApi;
 using VstsDash.WebApp.ViewModels;
 
@@ -21,7 +21,7 @@ namespace VstsDash.WebApp.Controllers
 
         private readonly WorkIterationAppService _workIterationAppService;
 
-        private readonly WorkLeaderboardAppService _workLeaderboardAppService;
+        private readonly WorkTeamBoardAppService _workTeamBoardAppService;
 
         public WorkController(
             AppSettings appSettings,
@@ -29,7 +29,7 @@ namespace VstsDash.WebApp.Controllers
             IWorkApiService workApi,
             WorkIterationAppService workIterationAppService,
             WorkActivityAppService workActivityAppService,
-            WorkLeaderboardAppService workLeaderboardAppService)
+            WorkTeamBoardAppService workTeamBoardAppService)
             : base(appSettings, workApi)
         {
             if (appSettings == null) throw new ArgumentNullException(nameof(appSettings));
@@ -40,8 +40,8 @@ namespace VstsDash.WebApp.Controllers
                                       ?? throw new ArgumentNullException(nameof(workActivityAppService));
             _workIterationAppService = workIterationAppService
                                        ?? throw new ArgumentNullException(nameof(workIterationAppService));
-            _workLeaderboardAppService = workLeaderboardAppService
-                                         ?? throw new ArgumentNullException(nameof(workLeaderboardAppService));
+            _workTeamBoardAppService = workTeamBoardAppService
+                                       ?? throw new ArgumentNullException(nameof(workTeamBoardAppService));
         }
 
         public async Task<IActionResult> Activity(
@@ -94,22 +94,6 @@ namespace VstsDash.WebApp.Controllers
             return View(model);
         }
 
-        public async Task<IActionResult> Leaderboard(
-            string projectId = null,
-            string teamId = null,
-            string iterationId = null)
-        {
-            var ensuredProjectId = GetProjectIdOrDefault(projectId);
-            var ensuredTeamId = GetTeamIdOrDefault(teamId);
-            var ensuredIterationId = await GetIterationIdOrDefault(ensuredProjectId, ensuredTeamId, iterationId);
-
-            var leaderboard =
-                await _workLeaderboardAppService.GetLeaderboard(ensuredProjectId, ensuredTeamId, ensuredIterationId);
-
-            var model = _mapper.Map<WorkLeaderboardViewModel>(leaderboard);
-            return View(model);
-        }
-
         public async Task<IActionResult> Sprint(string projectId = null, string teamId = null)
         {
             var ensuredProjectId = GetProjectIdOrDefault(projectId);
@@ -120,6 +104,22 @@ namespace VstsDash.WebApp.Controllers
 
             var redirectUrl = Url.WorkIteration(ensuredProjectId, ensuredTeamId, defaultIterationId);
             return Redirect(redirectUrl);
+        }
+
+        public async Task<IActionResult> TeamBoard(
+            string projectId = null,
+            string teamId = null,
+            string iterationId = null)
+        {
+            var ensuredProjectId = GetProjectIdOrDefault(projectId);
+            var ensuredTeamId = GetTeamIdOrDefault(teamId);
+            var ensuredIterationId = await GetIterationIdOrDefault(ensuredProjectId, ensuredTeamId, iterationId);
+
+            var teamBoard =
+                await _workTeamBoardAppService.GetTeamBoard(ensuredProjectId, ensuredTeamId, ensuredIterationId);
+
+            var model = _mapper.Map<WorkTeamBoardViewModel>(teamBoard);
+            return View(model);
         }
     }
 }

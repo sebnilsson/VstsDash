@@ -1,20 +1,20 @@
-﻿@model WorkLeaderboardViewModel.Player
+﻿@model WorkTeamBoardViewModel.Player
 @{
     var isFirst = ViewData["IsFirst"] as bool? ?? false;
     var isSecond = ViewData["IsSecond"] as bool? ?? false;
     var isThird = ViewData["IsThird"] as bool? ?? false;
     var teamWorkDays = ViewData["TeamWorkDays"] as IEnumerable<DateTime> ?? Enumerable.Empty<DateTime>();
 
-    var playerCssClass = isFirst ? "leaderboard-player-first" : (isSecond ? "leaderboard-player-second" : (isThird ? "leaderboard-player-third" : null));
+    var playerCssClass = isFirst ? "teamboard-player-first" : (isSecond ? "teamboard-player-second" : (isThird ? "teamboard-player-third" : null));
 }
 
-<div class="leaderboard-player-column @(Context.Request.IsDashboard() ? "col-xl-3" : null) col-lg-4 col-md-6 col-sm-12 mb-3">
-    <div class="leaderboard-player card @playerCssClass">
-        <div class="leaderboard-player-header card-header h3 pt-1 pb-1 pl-2 pr-2" title="@Model.UniqueName">
+<div class="teamboard-player-column @(Context.Request.IsDashboard() ? "col-xl-3" : null) col-lg-4 col-md-6 col-sm-12 mb-3">
+    <div class="teamboard-player card @playerCssClass">
+        <div class="teamboard-player-header card-header h3 pt-1 pb-1 pl-2 pr-2" title="@Model.UniqueName">
             <div class="d-inline-flex flex-row w-100">
                 @if (!string.IsNullOrWhiteSpace(Model.ImageUrl))
                 {
-                    <img src="@Url.ApiFile(Model.ImageUrl)" class="leaderboard-player-image rounded align-self-center mr-2"/>
+                    <img src="@Url.ApiFile(Model.ImageUrl)" class="teamboard-player-image rounded align-self-center mr-2"/>
                 }
                 <h2 class="m-0 align-self-center one-line">
                     @Model.DisplayName
@@ -23,7 +23,7 @@
         </div>
 
         <div>
-            <div class="leaderboard-player-score-block leaderboard-player-block d-flex flex-row text-center bg-inverse text-white">
+            <div class="teamboard-player-score-block teamboard-player-block d-flex flex-row text-center bg-inverse text-white">
                 <dl class="w-100 align-self-center" style="border-right: 1px solid #ccc;">
                     <dt class="h1 font-weight-bold monospace">
                         @Model.ScorePointsSum.ToString(Formats.NumberTwoDecimals)
@@ -55,7 +55,7 @@
                 </div>
             </div>
 
-            <div class="leaderboard-player-meta-block leaderboard-player-block align-self-center text-center">
+            <div class="teamboard-player-meta-block teamboard-player-block align-self-center text-center">
                 <div class="d-flex flex-row">
                     <dl class="w-100 @(Model.CapacityMultiplier > 2 ? "bg-danger text-white" : (Model.CapacityMultiplier > 1 ? "bg-warning text-white" : null))">
                         <dt>
@@ -129,15 +129,15 @@
 
         @if (Model.Score.Points.Any())
         {
-            <div class="leaderboard-player-points card card-outline-secondary pb-1">
+            <div class="teamboard-player-points card card-outline-secondary pb-1">
                 <h3 class="card-header h6 pt-1 pb-1 bg-inverse text-white">Recent points</h3>
-                <ul class="leaderboard-player-points-list list-group list-group-flush">
+                <ul class="teamboard-player-points-list list-group list-group-flush">
                     @foreach (var point in Model.Score.Points.Take(5))
                     {
                         <li class="list-group-item">
                             <div class="w-100 d-inline-flex flex-row align-items-center"
                                  title="@($"[{point.Id}] {point.Description} ({point.EarnedAt:yyyy-MM-dd HH:mm:ss})")">
-                                @Html.Partial("Leaderboard/_PlayerScorePoint", point, new ViewDataDictionary(ViewData) { { "OneLine", true } })
+                                @Html.Partial("TeamBoard/_PlayerScorePoint", point, new ViewDataDictionary(ViewData) { { "OneLine", true } })
                             </div>
                         </li>
                     }
