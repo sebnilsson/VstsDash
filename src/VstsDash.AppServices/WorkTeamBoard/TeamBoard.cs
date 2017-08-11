@@ -9,9 +9,9 @@ namespace VstsDash.AppServices.WorkTeamBoard
 {
     public class TeamBoard
     {
-        public const string WorkItemAssistTagName = "lb-assist";
+        public const string WorkItemAssistTagName = "dash-assist";
 
-        public const string WorkItemExcludeTagName = "lb-exclude";
+        public const string WorkItemExcludeTagName = "dash-exclude";
 
         public TeamBoard(
             TeamMemberListApiResponse teamMembers,
