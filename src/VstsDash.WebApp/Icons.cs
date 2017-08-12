@@ -6,6 +6,8 @@
 
         public const string Assist = "fa-hand-peace-o";
 
+        public const string Bonus = "fa-star";
+
         public const string Change = "fa-pencil";
 
         public const string Commit = "fa-envelope-o";

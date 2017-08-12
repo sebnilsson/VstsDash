@@ -94,6 +94,8 @@ namespace VstsDash.WebApp.ViewModels
 
                     public DateTimeOffset EarnedAt { get; set; }
 
+                    public bool HasBonus { get; set; }
+
                     public string Id { get; set; }
 
                     public TeamMemberPointType Type { get; set; }

@@ -114,7 +114,8 @@ namespace VstsDash.AppServices.WorkTeamBoard
 
             if (goalValue <= 1) return 0;
 
-            return goalValue >= 3 ? 1 : 0.5;
+            //return goalValue >= 3 ? 1 : 0.5;
+            return 1;
         }
 
         private static IEnumerable<(Guid Id, Point Point)> GetGoals(IEnumerable<WorkItem> doneWorkItems)
@@ -128,7 +129,9 @@ namespace VstsDash.AppServices.WorkTeamBoard
 
                 var assignedToId = (value > 0 ? workItem.AssignedToMember?.Id : null) ?? Guid.Empty;
 
-                yield return (assignedToId, new Point(TeamMemberPointType.Goal, value, id, description, earnedAt));
+                var hasBonus = workItem.Tags.Contains(TeamBoard.WorkItemBonusTagName, StringComparer.OrdinalIgnoreCase);
+
+                yield return (assignedToId, new Point(TeamMemberPointType.Goal, value, id, description, earnedAt, hasBonus));
             }
         }
 

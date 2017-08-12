@@ -15,6 +15,13 @@
     @Html.Icon(className, "fa-fw")
 
     <span class="badge badge-default monospace">@Model.Id</span>
+
+    @if (Model.HasBonus)
+    {
+        <span class="badge badge-success">
+            @Html.Icon(Icons.Bonus)
+        </span>
+    }
 </span>
 
 <span class="small @(oneLine ? "one-line" : null) ml-1">

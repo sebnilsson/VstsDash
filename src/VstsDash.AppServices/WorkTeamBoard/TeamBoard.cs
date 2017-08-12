@@ -11,6 +11,8 @@ namespace VstsDash.AppServices.WorkTeamBoard
     {
         public const string WorkItemAssistTagName = "dash-assist";
 
+        public const string WorkItemBonusTagName = "dash-bonus";
+
         public const string WorkItemExcludeTagName = "dash-exclude";
 
         public TeamBoard(
@@ -79,6 +81,7 @@ namespace VstsDash.AppServices.WorkTeamBoard
                 .OrderByDescending(x => x.ScorePointsSum)
                 .ThenByDescending(x => x.ScoreGoalsSum)
                 .ThenByDescending(x => x.ScoreAssistsSum)
+                .ThenByDescending(x => x.Score.Points.Count(s => s.HasBonus))
                 .ThenBy(x => x.ScorePointsSum > 0 ? x.Capacity.HoursTotalCount : 0)
                 .ThenBy(x => x.ScorePointsSum > 0 ? x.Capacity.DailyHourCount : 0)
                 .ThenBy(x => x.DisplayName)
