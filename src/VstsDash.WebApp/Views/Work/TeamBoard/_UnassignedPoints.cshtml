@@ -1,11 +1,17 @@
 ﻿@model WorkTeamBoardViewModel.Player.PlayerScore
+@{
+    var sumUnassignedPoints = Model.Points.Sum(x => x.Value);
+}
 
 <div class="teamboard-unassigned-score card card-outline-warning mb-2 pb-1">
     <h2 class="card-header card-warning h6 pt-1 pb-1 pl-2 pr-2">
-        @Html.Icon(Icons.Point) Unassigned Points
-        <span class="badge badge-primary monospace">
-            @Model.Points.Sum(x => x.Value).ToString(Formats.NumberTwoDecimals)
-        </span>
+        Unassigned Points
+        @if (sumUnassignedPoints > 0)
+        {
+            <span class="badge badge-primary monospace">
+                @sumUnassignedPoints.ToString(Formats.NumberTwoDecimals)
+            </span>
+        }
     </h2>
 
     <ul class="list-group list-group-flush">

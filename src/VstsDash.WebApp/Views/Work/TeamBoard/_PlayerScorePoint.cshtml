@@ -1,7 +1,8 @@
 ﻿@using VstsDash.AppServices
 @model WorkTeamBoardViewModel.Player.PlayerScore.Point
 @{
-    var includeEarnedAt = ViewData["IncludeEarnedAt"] as bool? ?? false;
+    var includeDetails = ViewData["IncludeDetails"] as bool? ?? false;
+    var displayName = ViewData["DisplayName"] as string;
     var oneLine = ViewData["OneLine"] as bool? ?? false;
 
     var isGoal = Model.Type == TeamMemberPointType.Goal;
@@ -22,13 +23,18 @@
             @Html.Icon(Icons.Bonus)
         </span>
     }
+    
+    @if (includeDetails && !string.IsNullOrWhiteSpace(displayName))
+    {
+        @:<strong>@displayName:</strong>
+    }
 </span>
 
 <span class="small @(oneLine ? "one-line" : null) ml-1">
     @Model.Description
 </span>
 
-@if (includeEarnedAt && Model.EarnedAt > DateTimeOffset.MinValue)
+@if (includeDetails && Model.EarnedAt > DateTimeOffset.MinValue)
 {
     @:<small class="badge badge-info monospace no-wrap ml-1">@Model.EarnedAt.ToString("yyyy-MM-dd HH:mm")</small>
 }

@@ -101,24 +101,27 @@
             </div>
         </div>
     }
-    
+
     @if (hasAnyUnassignedScore)
     {
         <div class="@(isDashboard ? "col-xl-8 offset-xl-2" : null)">
-            @Html.Partial("TeamBoard/_UnassignedScore", Model.UnassignedScore)
+            @Html.Partial("TeamBoard/_UnassignedPoints", Model.UnassignedScore)
         </div>
     }
 
     @if (!isDashboard && Model.Players.Any() && Model.TotalScorePointsSum > 0)
     {
         <div class="teamboard-all-scores card card-outline-info mt-2">
-            <h2 class="card-header card-outline-secondary h6 pt-1 pb-1 pl-2 pr-2">All points</h2>
+            <h2 class="card-header card-outline-secondary h6 pt-1 pb-1 pl-2 pr-2">
+                @Html.Icon(Icons.Point)
+                All points
+            </h2>
 
             <ul class="list-group list-group-flush">
-                @foreach (var point in Model.Players.SelectMany(x => x.Score.Points).OrderByDescending(x => x.EarnedAt))
+                @foreach (var point in Model.AllPoints)
                 {
                     <li class="list-group-item">
-                        @Html.Partial("TeamBoard/_PlayerScorePoint", point, new ViewDataDictionary(ViewData) { { "IncludeEarnedAt", true } })
+                        @Html.Partial("TeamBoard/_PlayerScorePoint", point.Item2, new ViewDataDictionary(ViewData) { { "IncludeDetails", true }, { "DisplayName", point.Item1.DisplayName } })
                     </li>
                 }
             </ul>

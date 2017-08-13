@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using VstsDash.AppServices;
 
 namespace VstsDash.WebApp.ViewModels
 {
     public class WorkTeamBoardViewModel
     {
+        public IReadOnlyCollection<(Player, Player.PlayerScore.Point)> AllPoints => GetAllPoints();
+
         public string IterationName { get; set; }
 
         public IReadOnlyCollection<Player> Players { get; set; }
@@ -24,21 +27,11 @@ namespace VstsDash.WebApp.ViewModels
 
         public Player.PlayerScore UnassignedScore { get; set; }
 
-        public class TeamBoardTeamCapacity
+        private IReadOnlyCollection<(Player Player, Player.PlayerScore.Point Point)> GetAllPoints()
         {
-            public double DailyHourCount { get; set; }
-
-            public double DailyPercent { get; set; }
-
-            public double HoursTotalCount { get; set; }
-
-            public IReadOnlyCollection<DateTime> IterationWorkDays { get; set; }
-
-            public IReadOnlyCollection<DateTime> TeamDaysOff { get; set; }
-
-            public double TotalWorkDayCount { get; set; }
-
-            public IReadOnlyCollection<DateTime> WorkDays { get; set; }
+            return Players.SelectMany(player => player.Score.Points, (player, point) => (Player: player, Point: point))
+                .OrderByDescending(x => x.Point.EarnedAt)
+                .ToList();
         }
 
         public class Player
@@ -103,6 +96,23 @@ namespace VstsDash.WebApp.ViewModels
                     public double Value { get; set; }
                 }
             }
+        }
+
+        public class TeamBoardTeamCapacity
+        {
+            public double DailyHourCount { get; set; }
+
+            public double DailyPercent { get; set; }
+
+            public double HoursTotalCount { get; set; }
+
+            public IReadOnlyCollection<DateTime> IterationWorkDays { get; set; }
+
+            public IReadOnlyCollection<DateTime> TeamDaysOff { get; set; }
+
+            public double TotalWorkDayCount { get; set; }
+
+            public IReadOnlyCollection<DateTime> WorkDays { get; set; }
         }
     }
 }
