@@ -34,21 +34,12 @@
         }
     </h1>
 
-    <div class="@(isDashboard ? "row" : null)">
-        @if (Model.TeamCapacity.WorkDays.Any())
-        {
-            <div class="@(isDashboard ? "col-xl-6" : null) @(isDashboard && !hasAnyUnassignedScore ? "offset-xl-3" : null)">
-                @Html.Partial("TeamBoard/_Meta", Model)
-            </div>
-        }
-
-        @if (hasAnyUnassignedScore)
-        {
-            <div class="@(isDashboard ? "col-xl-6" : null)">
-                @Html.Partial("TeamBoard/_UnassignedScore", Model.UnassignedScore)
-            </div>
-        }
-    </div>
+    @if (Model.TeamCapacity.WorkDays.Any())
+    {
+        <div class="@(isDashboard ? "col-xl-6 offset-xl-3" : null)">
+            @Html.Partial("TeamBoard/_Meta", Model)
+        </div>
+    }
 
     @if (Model.Players.Any())
     {
@@ -108,6 +99,13 @@
             <div class="card-block">
                 <em>No players or scores found for team board</em>
             </div>
+        </div>
+    }
+    
+    @if (hasAnyUnassignedScore)
+    {
+        <div class="@(isDashboard ? "col-xl-8 offset-xl-2" : null)">
+            @Html.Partial("TeamBoard/_UnassignedScore", Model.UnassignedScore)
         </div>
     }
 
