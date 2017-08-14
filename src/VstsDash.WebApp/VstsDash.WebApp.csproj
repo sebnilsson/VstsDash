@@ -38,4 +38,7 @@
   <ItemGroup>
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="1.0.0" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Views\Shared\Components\Navbar\Default.cshtml" />
+  </ItemGroup>
 </Project>

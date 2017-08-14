@@ -6,38 +6,8 @@
 {
     @RenderSection("scripts", false)
 }
-
-<nav class="navbar navbar-toggleable-md navbar-light bg-faded">
-    <button type="button" class="navbar-toggler navbar-toggler-right" data-toggle="collapse" data-target=".navbar-collapse">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <a href="@Url.Empty()" class="navbar-brand">
-        VSTS Dash
-    </a>
-
-    <div class="collapse navbar-collapse">
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item">
-                <a href="@Url.WorkActivity()" class="nav-link">Activity</a>
-            </li>
-            <li class="nav-item">
-                <a href="@Url.WorkTeamBoard()" class="nav-link">Team board</a>
-            </li>
-            @*<li class="nav-item">
-                <a href="@Url.WorkSprint()" class="nav-link">Sprint</a>
-            </li>
-            <li class="nav-item">
-                <a href="@Url.WorkBacklog()" class="nav-link">Backlog</a>
-            </li>*@
-        </ul>
-    </div>
-</nav>
-
-@*<div class="navbar navbar-toggleable-md navbar-light bg-faded">
-    <div class="container">
-            
-    </div>
-</div>*@
+    
+@await Component.InvokeAsync(nameof(Navbar))
 
 <div class="body-content">
     @RenderBody()

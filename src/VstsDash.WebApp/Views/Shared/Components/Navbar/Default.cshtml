@@ -1,0 +1,24 @@
+﻿@model IReadOnlyCollection<ValueTuple<string, string, bool>>
+
+<nav class="navbar navbar-toggleable-md navbar-light bg-faded">
+    <button type="button" class="navbar-toggler navbar-toggler-right" data-toggle="collapse" data-target=".navbar-collapse">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <a href="@Url.Empty()" class="navbar-brand">
+        VSTS Dash
+    </a>
+
+    <div class="collapse navbar-collapse">
+        <ul class="navbar-nav mr-auto">
+            @foreach (var item in Model)
+            {
+                <li class="nav-item @(item.Item3 ? "active" : null)">
+                    <a href="@item.Item2" class="nav-link">
+                        @item.Item1
+                    </a>
+                </li>
+            }
+        </ul>
+    </div>
+</nav>
