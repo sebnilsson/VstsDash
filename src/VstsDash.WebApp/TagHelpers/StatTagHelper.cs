@@ -30,6 +30,9 @@ namespace VstsDash.WebApp.TagHelpers
         [HtmlAttributeName("is-inverse")]
         public bool IsInverse { get; set; }
 
+        [HtmlAttributeName("title")]
+        public string Title { get; set; }
+
         [HtmlAttributeName("value")]
         public string Value { get; set; }
 
@@ -50,15 +53,13 @@ namespace VstsDash.WebApp.TagHelpers
 
             output.Attributes.SetAttribute("class", cssClass);
 
+            if (!string.IsNullOrWhiteSpace(Title)) output.Attributes.SetAttribute("title", Title);
+
             var dt = GetDtTag();
             var dd = await GetDdTag(output);
 
             output.Content.AppendHtml(dt);
             output.Content.AppendHtml(dd);
-
-            output.Attributes.RemoveAll(nameof(Description));
-            output.Attributes.RemoveAll(nameof(DescriptionCss));
-            output.Attributes.RemoveAll(nameof(ValueCss));
         }
 
         private async Task<TagBuilder> GetDdTag(TagHelperOutput output)

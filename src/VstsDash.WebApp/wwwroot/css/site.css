@@ -12,14 +12,32 @@
 .flex-noshrink {
     flex-shrink: 0;
 }
+.flex-nowrap {
+    flex-wrap: nowrap;
+}
 .one-line {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+.flex-0 {
+    flex: 0;
+}
+.flex-1 {
+    flex: 1;
+}
+.flex-2 {
+    flex: 2;
+}
 
 .border-white-1 {
     border: 1px solid #ccc;
+}
+.border-gray-1 {
+    border: 1px solid #555;
+}
+.border-black-1 {
+    border: 1px solid #000;
 }
 .border-left-1 {
     border-left: 1px solid #000;
@@ -44,6 +62,14 @@ body.dashboard .body-content-dashboard > .main-container > h1 {
 .card-header dl, .card-header dt, .card-header dd {
     margin: 0;
     padding: 0;
+}
+.teamboard-meta dl {
+    flex-basis: 100px;
+    margin: 0.25rem 0.25rem;
+}
+.teamboard-meta-score dl {
+    flex-basis: 130px;
+    margin: 0.25rem 0.25rem;
 }
 .teamboard-unassigned-score .list-group-item, .teamboard-all-scores .list-group-item {
     padding: 0.25rem 0.5rem;

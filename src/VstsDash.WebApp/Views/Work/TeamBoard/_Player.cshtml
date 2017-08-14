@@ -11,7 +11,7 @@
 <div class="teamboard-player-column @(Context.Request.IsDashboard() ? "col-xl-3" : null) col-lg-4 col-md-6 col-sm-12 mb-3">
     <div class="teamboard-player card @playerCssClass">
         <div class="teamboard-player-header card-header h3 pt-1 pb-1 pl-2 pr-2" title="@Model.UniqueName">
-            <div class="d-inline-flex flex-row w-100">
+            <div class="d-inline-flex flex-row">
                 @if (!string.IsNullOrWhiteSpace(Model.ImageUrl))
                 {
                     <img src="@Url.ApiFile(Model.ImageUrl)" class="teamboard-player-image rounded align-self-center mr-2"/>
@@ -23,8 +23,8 @@
         </div>
 
         <div>
-            <div class="teamboard-player-score-block teamboard-player-block d-flex flex-row text-center bg-inverse text-white">
-                <dl class="w-100 align-self-center" style="border-right: 1px solid #ccc;">
+            <div class="teamboard-player-score-block teamboard-player-block d-flex flex-row flex-wrap text-center bg-inverse text-white">
+                <dl class="col align-self-center" style="border-right: 1px solid #ccc;">
                     <dt class="h1 font-weight-bold monospace">
                         @Model.ScorePointsSum.ToString(Formats.NumberTwoDecimals)
                     </dt>
@@ -33,21 +33,21 @@
                         Points
                     </dd>
                 </dl>
-                <div class="d-flex flex-column align-self-center w-100">
+                <div class="col d-flex flex-column align-self-center">
                     <dl class="d-flex flex-row">
-                        <dt class="w-50 font-weight-bold monospace text-right">
+                        <dt class="flex-1 font-weight-bold monospace text-right">
                             @Model.ScoreGoalsSum.ToString(Formats.NumberTwoDecimals)
                         </dt>
-                        <dd class="w-100">
+                        <dd class="flex-2">
                             @Html.Icon(Icons.Goal, "fa-fw")
                             Goals
                         </dd>
                     </dl>
                     <dl class="d-flex flex-row">
-                        <dt class="w-50 font-weight-bold monospace text-right">
+                        <dt class="flex-1 font-weight-bold monospace text-right">
                             @Model.ScoreAssistsSum.ToString(Formats.NumberTwoDecimals)
                         </dt>
-                        <dd class="w-100">
+                        <dd class="flex-2">
                             @Html.Icon(Icons.Assist, "fa-fw")
                             Assists
                         </dd>
@@ -56,8 +56,8 @@
             </div>
 
             <div class="teamboard-player-meta-block teamboard-player-block align-self-center text-center">
-                <div class="d-flex flex-row">
-                    <dl class="w-100 @(Model.CapacityMultiplier > 2 ? "bg-danger text-white" : (Model.CapacityMultiplier > 1 ? "bg-warning text-white" : null))">
+                <div class="d-flex flex-row flex-wrap">
+                    <dl class="col @(Model.CapacityMultiplier > 2 ? "bg-danger text-white" : (Model.CapacityMultiplier > 1 ? "bg-warning text-white" : null))">
                         <dt>
                             @Model.CapacityMultiplier.ToString(Formats.NumberTwoDecimals)x
                         </dt>
@@ -65,7 +65,7 @@
                             Multiplier
                         </dd>
                     </dl>
-                    <dl class="w-100 @(Model.Capacity.DailyHourCount <= 0 ? "bg-faded text-danger" : (Model.Capacity.DailyHourCount < 8 ? "bg-faded text-warning" : (Model.Capacity.DailyHourCount >= 8 ? "text-success" : null)))">
+                    <dl class="col @(Model.Capacity.DailyHourCount <= 0 ? "bg-faded text-danger" : (Model.Capacity.DailyHourCount < 8 ? "bg-faded text-warning" : (Model.Capacity.DailyHourCount >= 8 ? "text-success" : null)))">
                         <dt>
                             @Model.Capacity.DailyHourCount.ToString(Formats.NumberTwoDecimals)h
                             @if (Model.Capacity.DailyPercent > 0)
@@ -79,7 +79,7 @@
                     </dl>
                     @if (Model.Capacity.MemberDaysOff.Any())
                     {
-                        <dl class="w-100 bg-info text-white"
+                        <dl class="col bg-info text-white"
                             title="@string.Join("\n", Model.Capacity.DaysOff.Select(x => x.ToString("yyyy-MM-dd")))">
                             <dt>
                                 @Model.Capacity.DaysOff.Count.ToString(Formats.NumberTwoDecimals)d
@@ -94,7 +94,7 @@
                 @if (Model.Capacity.TotalWorkDayCount > 0 || Model.Capacity.HoursTotalCount > 0)
                 {
                     <div class="d-flex flex-row">
-                        <dl class="w-100 bg-faded">
+                        <dl class="col bg-faded">
                             <dt>
                                 @Model.Capacity.TotalWorkDayCount.ToString(Formats.NumberTwoDecimals)d
                             </dt>
@@ -102,7 +102,7 @@
                                 Days capacity
                             </dd>
                         </dl>
-                        <dl class="w-100 bg-faded">
+                        <dl class="col bg-faded">
                             <dt>
                                 @Model.Capacity.HoursTotalCount.ToString(Formats.NumberTwoDecimals)h
                             </dt>
@@ -112,7 +112,7 @@
                         </dl>
                         @if (!Model.Capacity.WorkDays.SequenceEqual(teamWorkDays) && Model.Capacity.TotalWorkDayCount > 0)
                         {
-                            <dl class="w-100 bg-info text-white"
+                            <dl class="col bg-info text-white"
                                 title="@string.Join("\n", Model.Capacity.WorkDays.Select(x => x.ToString("yyyy-MM-dd")))">
                                 <dt>
                                     @(Model.Capacity.WorkDays.Count)d
@@ -135,10 +135,10 @@
                     @foreach (var point in Model.Score.Points.Take(5))
                     {
                         <li class="list-group-item">
-                            <div class="w-100 d-inline-flex flex-row align-items-center"
+                            <span class="d-inline-flex flex-row align-items-center one-line"
                                  title="@($"[{point.Id}] {point.Description} ({point.EarnedAt:yyyy-MM-dd HH:mm:ss})")">
-                                @Html.Partial("TeamBoard/_PlayerScorePoint", point, new ViewDataDictionary(ViewData) { { "OneLine", true } })
-                            </div>
+                                @Html.Partial("TeamBoard/_PlayerScorePoint", point)
+                            </span>
                         </li>
                     }
                 </ul>

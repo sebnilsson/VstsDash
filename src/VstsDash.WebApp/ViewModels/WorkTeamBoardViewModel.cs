@@ -13,6 +13,10 @@ namespace VstsDash.WebApp.ViewModels
 
         public IReadOnlyCollection<Player> Players { get; set; }
 
+        public IReadOnlyCollection<Player> PlayersWithCapacity => Players.Where(x => x.Capacity.TotalWorkDayCount > 0)
+            .OrderBy(x => x.DisplayName)
+            .ToList();
+
         public TeamBoardTeamCapacity TeamCapacity { get; set; }
 
         public double TotalHoursTotalCount { get; set; }

@@ -36,49 +36,12 @@
 
     @if (Model.TeamCapacity.WorkDays.Any())
     {
-        <div class="@(isDashboard ? "col-xl-6 offset-xl-3" : null)">
-            @Html.Partial("TeamBoard/_Meta", Model)
-        </div>
+        @Html.Partial("TeamBoard/_Meta", Model)
     }
 
     @if (Model.Players.Any())
     {
         <div class="card card-outline-primary mt-2 mb-2">
-            @if (Model.TotalScorePointsSum > 0)
-            {
-                <div class="card-header pt-1 pb-1 pl-2 pr-2">
-                    <dl class="row mt-0 mb-0">
-                        <dt class="col-sm-3">
-                            @Html.Icon(Icons.Point, "fa-fw fa-lg")
-                            Total Points
-                        </dt>
-                        <dd class="col-sm-1">
-                            <span class="badge badge-primary monospace">
-                                @Model.TotalScorePointsSum.ToString(Formats.NumberTwoDecimals)
-                            </span>
-                        </dd>
-                        <dt class="col-sm-3">
-                            @Html.Icon(Icons.Goal, "fa-fw fa-lg")
-                            Total Goals
-                        </dt>
-                        <dd class="col-sm-1">
-                            <span class="badge badge-primary monospace">
-                                @Model.TotalScoreGoalsSum.ToString(Formats.NumberTwoDecimals)
-                            </span>
-                        </dd>
-                        <dt class="col-sm-3">
-                            @Html.Icon(Icons.Assist, "fa-fw fa-lg")
-                            Total Assists
-                        </dt>
-                        <dd class="col-sm-1">
-                            <span class="badge badge-primary monospace">
-                                @Model.TotalScoreAssistsSum.ToString(Formats.NumberTwoDecimals)
-                            </span>
-                        </dd>
-                    </dl>
-                </div>
-            }
-
             <div class="teamboard-players pt-2 pb-0">
                 <div class="d-inline-flex flex-row flex-wrap align-items-stretch">
                     @foreach (var player in Model.Players)
@@ -121,7 +84,7 @@
                 @foreach (var point in Model.AllPoints)
                 {
                     <li class="list-group-item">
-                        @Html.Partial("TeamBoard/_PlayerScorePoint", point.Item2, new ViewDataDictionary(ViewData) { { "IncludeDetails", true }, { "DisplayName", point.Item1.DisplayName } })
+                        @Html.Partial("TeamBoard/_PlayerScorePoint", point.Item2, new ViewDataDictionary(ViewData) { { "DisplayName", point.Item1.DisplayName } })
                     </li>
                 }
             </ul>

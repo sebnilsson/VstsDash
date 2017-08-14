@@ -3,38 +3,39 @@
 @{
     var includeDetails = ViewData["IncludeDetails"] as bool? ?? false;
     var displayName = ViewData["DisplayName"] as string;
-    var oneLine = ViewData["OneLine"] as bool? ?? false;
 
     var isGoal = Model.Type == TeamMemberPointType.Goal;
     var isAssist = Model.Type == TeamMemberPointType.Assist;
     var className = isGoal ? Icons.Goal : (isAssist ? Icons.Assist : Icons.Point);
 }
 
-<span class="flex-noshrink">
-    <span class="badge badge-primary monospace">@(Model.Value > 0 ? Model.Value.ToString(Formats.NumberTwoDecimals) : "?")</span>
+<span class="one-line">
+    <span class="flex-noshrink">
+        <span class="badge badge-primary monospace">@(Model.Value > 0 ? Model.Value.ToString(Formats.NumberTwoDecimals) : "?")</span>
 
-    @Html.Icon(className, "fa-fw")
+        @Html.Icon(className, "fa-fw")
 
-    <span class="badge badge-default monospace">@Model.Id</span>
+        <span class="badge badge-default monospace">@Model.Id</span>
 
-    @if (Model.HasBonus)
-    {
-        <span class="badge badge-success">
-            @Html.Icon(Icons.Bonus)
-        </span>
+        @if (Model.HasBonus)
+        {
+            <span class="badge badge-success">
+                @Html.Icon(Icons.Bonus)
+            </span>
+        }
+
+        @if (!string.IsNullOrWhiteSpace(displayName))
+        {
+            @:<strong>@displayName:</strong>
     }
-    
-    @if (includeDetails && !string.IsNullOrWhiteSpace(displayName))
+    </span>
+
+    <span class="small ml-1">
+        @Model.Description
+    </span>
+
+    @if (includeDetails && Model.EarnedAt > DateTimeOffset.MinValue)
     {
-        @:<strong>@displayName:</strong>
-    }
-</span>
-
-<span class="small @(oneLine ? "one-line" : null) ml-1">
-    @Model.Description
-</span>
-
-@if (includeDetails && Model.EarnedAt > DateTimeOffset.MinValue)
-{
-    @:<small class="badge badge-info monospace no-wrap ml-1">@Model.EarnedAt.ToString("yyyy-MM-dd HH:mm")</small>
+        @:<small class="badge badge-info monospace no-wrap ml-1">@Model.EarnedAt.ToString("yyyy-MM-dd HH:mm")</small>
 }
+</span>
