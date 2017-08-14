@@ -98,7 +98,7 @@
                             <div class="row">
                                 @foreach (var child in Model.ChildItems)
                                 {
-                                    @Html.PartialContent("_WorkIterationItemChild", child, new { isBacklog })
+                                    @Html.PartialContent("Iteration/_ItemChild", child, new { isBacklog })
                                 }
                             </div>
                         </div>

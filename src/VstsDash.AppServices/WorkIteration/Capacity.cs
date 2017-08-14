@@ -5,6 +5,7 @@ using VstsDash.RestApi.ApiResponses;
 
 namespace VstsDash.AppServices.WorkIteration
 {
+    [Obsolete("Use 'TeamCapacity' or 'TeamMemberCapacity' instead.")]
     public class Capacity
     {
         public Capacity(
