@@ -6,8 +6,9 @@
 {
     @RenderSection("scripts", false)
 }
-    
+
 @await Component.InvokeAsync(nameof(Navbar))
+@*<vc:navbar />*@
 
 <div class="body-content">
     @RenderBody()

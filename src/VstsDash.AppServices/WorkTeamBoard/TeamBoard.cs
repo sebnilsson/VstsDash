@@ -76,6 +76,8 @@ namespace VstsDash.AppServices.WorkTeamBoard
             TeamCapacity teamCapacity,
             IDictionary<Guid, Score> scores)
         {
+            var random = new Random();
+
             return GetPlayersInternal(teamMembers, teamCapacity, scores)
                 .Where(x => x.Capacity.DailyHourCount > 0 || x.ScorePointsSum > 0)
                 .OrderByDescending(x => x.ScorePointsSum)
@@ -84,8 +86,7 @@ namespace VstsDash.AppServices.WorkTeamBoard
                 .ThenByDescending(x => x.Score.Points.Count(s => s.HasBonus))
                 .ThenBy(x => x.ScorePointsSum > 0 ? x.Capacity.HoursTotalCount : 0)
                 .ThenBy(x => x.ScorePointsSum > 0 ? x.Capacity.DailyHourCount : 0)
-                .ThenBy(x => x.DisplayName)
-                .ThenBy(x => x.UniqueName)
+                .ThenBy(_ => random.Next())
                 .ToList();
         }
 

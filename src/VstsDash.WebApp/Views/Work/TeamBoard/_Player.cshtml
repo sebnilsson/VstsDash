@@ -11,7 +11,7 @@
 <div class="teamboard-player-column @(Context.Request.IsDashboard() ? "col-xl-3" : null) col-lg-4 col-md-6 col-sm-12 mb-3">
     <div class="teamboard-player card @playerCssClass">
         <div class="teamboard-player-header card-header h3 pt-1 pb-1 pl-2 pr-2" title="@Model.UniqueName">
-            <div class="d-inline-flex flex-row">
+            <div class="d-inline-flex flex-row w-100">
                 @if (!string.IsNullOrWhiteSpace(Model.ImageUrl))
                 {
                     <img src="@Url.ApiFile(Model.ImageUrl)" class="teamboard-player-image rounded align-self-center mr-2"/>
@@ -26,7 +26,7 @@
             <div class="teamboard-player-score-block teamboard-player-block d-flex flex-row flex-wrap text-center bg-inverse text-white">
                 <dl class="col align-self-center" style="border-right: 1px solid #ccc;">
                     <dt class="h1 font-weight-bold monospace">
-                        @Model.ScorePointsSum.ToString(Formats.NumberTwoDecimals)
+                        @Model.ScorePointsSum.ToString(Formats.NumberNoDecimals)
                     </dt>
                     <dd>
                         @Html.Icon(Icons.Point, "fa-fw")
@@ -36,7 +36,7 @@
                 <div class="col d-flex flex-column align-self-center">
                     <dl class="d-flex flex-row">
                         <dt class="flex-1 font-weight-bold monospace text-right">
-                            @Model.ScoreGoalsSum.ToString(Formats.NumberTwoDecimals)
+                            @Model.ScoreGoalsSum.ToString(Formats.NumberNoDecimals)
                         </dt>
                         <dd class="flex-2">
                             @Html.Icon(Icons.Goal, "fa-fw")
@@ -45,7 +45,7 @@
                     </dl>
                     <dl class="d-flex flex-row">
                         <dt class="flex-1 font-weight-bold monospace text-right">
-                            @Model.ScoreAssistsSum.ToString(Formats.NumberTwoDecimals)
+                            @Model.ScoreAssistsSum.ToString(Formats.NumberNoDecimals)
                         </dt>
                         <dd class="flex-2">
                             @Html.Icon(Icons.Assist, "fa-fw")
@@ -70,7 +70,9 @@
                             @Model.Capacity.DailyHourCount.ToString(Formats.NumberTwoDecimals)h
                             @if (Model.Capacity.DailyPercent > 0)
                             {
-                                @:(@(Model.Capacity.DailyPercent.ToString(Formats.NumberTwoDecimals))%)
+                                <small>
+                                    (@(Model.Capacity.DailyPercent.ToString(Formats.NumberTwoDecimals))%)
+                                </small>
                             }
                         </dt>
                         <dd class="small">
@@ -116,6 +118,9 @@
                                 title="@string.Join("\n", Model.Capacity.WorkDays.Select(x => x.ToString("yyyy-MM-dd")))">
                                 <dt>
                                     @(Model.Capacity.WorkDays.Count)d
+                                    <small>
+                                        (@Model.Capacity.WorkDayPercent.ToString(Formats.NumberNoDecimals)%)
+                                    </small>
                                 </dt>
                                 <dd class="small">
                                     Work days

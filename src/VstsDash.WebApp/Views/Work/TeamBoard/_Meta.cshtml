@@ -1,6 +1,6 @@
 ﻿@model WorkTeamBoardViewModel
 @{
-    var isDashboard = Context.Request.IsDashboard();
+    var topStatsInfoCssClass = "border-white-1 rounded bg-info text-white";
 
     var topStatsCssClass = "border-white-1 rounded";
 
@@ -10,46 +10,45 @@
 <div class="teamboard-meta mt-0 mb-2 p-1 text-center">
     <div class="d-flex flex-wrap align-items-start">
         <div class="flex-1 d-flex flex-row flex-wrap justify-content-start">
-            <stat value="@Model.PlayersWithCapacity.Count.ToString(Formats.NumberTwoDecimals)"
+            <stat value="@Model.PlayersWithCapacity.Count.ToString(Formats.NumberOneDecimal)"
                   title="@string.Join("\n", Model.PlayersWithCapacity.Select(x => x.DisplayName))"
                   value-css="h4 mb-0"
                   description="Team members"
                   is-inverse="true"
                   class="@topStatsCssClass"/>
 
-            <stat value="@Model.TeamCapacity.IterationWorkDays.Count.ToString(Formats.NumberTwoDecimals)d"
-                  title="@string.Join("\n", Model.TeamCapacity.IterationWorkDays.Select(x => x.ToString("yyyy-MM-dd")))"
-                  value-css="h4 mb-0"
-                  description="Iteration days"
-                  is-inverse="true"
-                  class="@topStatsCssClass"/>
+            @if (Model.TeamCapacity.TeamDaysOff.Any())
+            {
+                <stat value="@Model.TeamCapacity.IterationWorkDays.Count.ToString(Formats.NumberOneDecimal)d"
+                      title="@string.Join("\n", Model.TeamCapacity.IterationWorkDays.Select(x => x.ToString("yyyy-MM-dd")))"
+                      value-css="h4 mb-0"
+                      description="Iteration days"
+                      class="@topStatsInfoCssClass"/>
+            }
 
             @if (Model.TeamCapacity.TeamDaysOff.Any())
             {
-                <stat value="@Model.TeamCapacity.TeamDaysOff.Count.ToString(Formats.NumberTwoDecimals)d"
+                <stat value="@Model.TeamCapacity.TeamDaysOff.Count.ToString(Formats.NumberOneDecimal)d"
                       title="@string.Join("\n", Model.TeamCapacity.TeamDaysOff.Select(x => x.ToString("yyyy-MM-dd")))"
                       value-css="h4 mb-0"
                       description="Team days off"
-                      is-inverse="true"
-                      class="@topStatsCssClass"/>
-            }
-            @if (Model.TeamCapacity.TeamDaysOff.Any())
-            {
-                <stat value="@Model.TeamCapacity.WorkDays.Count.ToString(Formats.NumberTwoDecimals)d"
-                      title="@string.Join("\n", Model.TeamCapacity.WorkDays.Select(x => x.ToString("yyyy-MM-dd")))"
-                      value-css="h4 mb-0"
-                      description="Work days"
-                      is-inverse="true"
-                      class="@topStatsCssClass"/>
+                      class="@topStatsInfoCssClass"/>
             }
 
-            <stat value="@Model.TotalWorkDayCount.ToString(Formats.NumberTwoDecimals)d"
+            <stat value="@Model.TeamCapacity.WorkDays.Count.ToString(Formats.NumberOneDecimal)d"
+                  title="@string.Join("\n", Model.TeamCapacity.WorkDays.Select(x => x.ToString("yyyy-MM-dd")))"
+                  value-css="h4 mb-0"
+                  description="Work days"
+                  is-inverse="true"
+                  class="@topStatsCssClass"/>
+
+            <stat value="@Model.TotalWorkDayCount.ToString(Formats.NumberOneDecimal)d"
                   value-css="h4 mb-0"
                   description="Days capacity"
                   is-inverse="true"
                   class="@topStatsCssClass"/>
 
-            <stat value="@Model.TotalHoursTotalCount.ToString(Formats.NumberTwoDecimals)h"
+            <stat value="@Model.TotalHoursTotalCount.ToString(Formats.NumberOneDecimal)h"
                   value-css="h4 mb-0"
                   description="Hours capacity"
                   is-inverse="true"
@@ -57,21 +56,21 @@
         </div>
 
         <div class="teamboard-meta-score d-flex flex-row justify-content-end ml-5">
-            <stat value="@Model.TotalScorePointsSum.ToString(Formats.NumberTwoDecimals)"
+            <stat value="@Model.TotalScorePointsSum.ToString(Formats.NumberNoDecimals)"
                   value-css="h1 mb-0"
                   is-description-small="false"
                   class="@scoreStatsCssClass">
                 @Html.Icon(Icons.Point, "fa-fw fa-lg")
                 Total Points
             </stat>
-            <stat value="@Model.TotalScoreGoalsSum.ToString(Formats.NumberTwoDecimals)"
+            <stat value="@Model.TotalScoreGoalsSum.ToString(Formats.NumberNoDecimals)"
                   value-css="h1 mb-0"
                   is-description-small="false"
                   class="@scoreStatsCssClass">
                 @Html.Icon(Icons.Goal, "fa-fw fa-lg")
                 Total Goals
             </stat>
-            <stat value="@Model.TotalScoreAssistsSum.ToString(Formats.NumberTwoDecimals)"
+            <stat value="@Model.TotalScoreAssistsSum.ToString(Formats.NumberNoDecimals)"
                   value-css="h1 mb-0"
                   is-description-small="false"
                   class="@scoreStatsCssClass">

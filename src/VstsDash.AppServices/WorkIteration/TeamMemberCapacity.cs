@@ -14,13 +14,15 @@ namespace VstsDash.AppServices.WorkIteration
             Guid memberId,
             IterationCapacityApiResponse capacity,
             IEnumerable<DateTime> iterationWorkDays,
-            IEnumerable<DateTime> teamDaysOff)
+            IEnumerable<DateTime> teamDaysOff,
+            IEnumerable<DateTime> teamWorkDays)
             : this(
                 memberId,
                 GetMemberCapacityPerDay(capacity),
                 GetMemberDaysOff(capacity),
                 iterationWorkDays,
-                teamDaysOff)
+                teamDaysOff,
+                teamWorkDays)
         {
         }
 
@@ -29,12 +31,14 @@ namespace VstsDash.AppServices.WorkIteration
             IEnumerable<double> memberCapacityPerDay,
             IEnumerable<DateTime> memberDaysOff,
             IEnumerable<DateTime> iterationWorkDays,
-            IEnumerable<DateTime> teamDaysOff)
+            IEnumerable<DateTime> teamDaysOff,
+            IEnumerable<DateTime> teamWorkDays)
         {
             if (iterationWorkDays == null) throw new ArgumentNullException(nameof(iterationWorkDays));
             if (memberCapacityPerDay == null) throw new ArgumentNullException(nameof(memberCapacityPerDay));
             if (memberDaysOff == null) throw new ArgumentNullException(nameof(memberDaysOff));
             if (teamDaysOff == null) throw new ArgumentNullException(nameof(teamDaysOff));
+            if (teamWorkDays == null) throw new ArgumentNullException(nameof(teamWorkDays));
 
             MemberId = memberId;
 
@@ -56,6 +60,9 @@ namespace VstsDash.AppServices.WorkIteration
             DailyPercent = (DailyHourCount > 0 ? DailyHourCount / FullCapacityDailyHourCount * 100 : 0).Clamp(0, 100);
 
             TotalWorkDayCount = DailyPercent / 100 * WorkDays.Count;
+
+            WorkDayPercent =
+                (workDays.Count > 0 ? workDays.Count / (double)teamWorkDays.Count() * 100 : 0).Clamp(0, 100);
         }
 
         public double DailyHourCount { get; }
@@ -72,6 +79,8 @@ namespace VstsDash.AppServices.WorkIteration
 
         public double TotalWorkDayCount { get; }
 
+        public double WorkDayPercent { get; }
+
         public IReadOnlyCollection<DateTime> WorkDays { get; }
 
         public static TeamMemberCapacity Default(Guid memberId, TeamCapacity teamCapacity)
@@ -83,7 +92,8 @@ namespace VstsDash.AppServices.WorkIteration
                 Enumerable.Empty<double>(),
                 Enumerable.Empty<DateTime>(),
                 teamCapacity.IterationWorkDays,
-                teamCapacity.TeamDaysOff);
+                teamCapacity.TeamDaysOff,
+                teamCapacity.WorkDays);
         }
 
         private static IEnumerable<double> GetMemberCapacityPerDay(IterationCapacityApiResponse capacity)

@@ -75,6 +75,8 @@ namespace VstsDash.WebApp.ViewModels
                 public double TotalWorkDayCount { get; set; }
 
                 public IReadOnlyCollection<DateTime> WorkDays { get; set; }
+
+                public double WorkDayPercent { get; set; }
             }
 
             public class PlayerScore

@@ -25,10 +25,8 @@ namespace VstsDash.AppServices.WorkTeamBoard
             UniqueName = teamMember.UniqueName;
 
             Capacity = memberCapacity ?? TeamMemberCapacity.Default(teamMember.Id, teamCapacity);
-            CapacityMultiplier =
-                (Capacity.DailyPercent > 0 ? 100 / Capacity.DailyPercent : MaxCapacityMultiplier).Clamp(
-                    1,
-                    MaxCapacityMultiplier);
+
+            CapacityMultiplier = GetCapacityMultiplier(teamCapacity, memberCapacity);
 
             Score = score ?? Score.Empty;
 
@@ -56,6 +54,15 @@ namespace VstsDash.AppServices.WorkTeamBoard
         public double ScorePointsSum { get; }
 
         public string UniqueName { get; }
+
+        private static double GetCapacityMultiplier(TeamCapacity teamCapacity, TeamMemberCapacity memberCapacity)
+        {
+            var fullCapacityHours = teamCapacity.WorkDays.Count * 8D;
+
+            var memberCapcityHours = memberCapacity.WorkDays.Count * (memberCapacity.DailyPercent / 100D * 8D);
+
+            return (fullCapacityHours / memberCapcityHours).Clamp(1, MaxCapacityMultiplier);
+        }
 
         private double GetScoreSum(IEnumerable<Point> points)
         {
