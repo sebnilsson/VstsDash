@@ -14,8 +14,7 @@
                   title="@string.Join("\n", Model.PlayersWithCapacity.Select(x => x.DisplayName))"
                   value-css="h4 mb-0"
                   description="Team members"
-                  is-inverse="true"
-                  class="@topStatsCssClass"/>
+                  class="@topStatsCssClass bg-faded"/>
 
             @if (Model.TeamCapacity.TeamDaysOff.Any())
             {
@@ -56,21 +55,30 @@
         </div>
 
         <div class="teamboard-meta-score d-flex flex-row justify-content-end ml-5">
-            <stat value="@Model.TotalScorePointsSum.ToString(Formats.NumberNoDecimals)"
+            @if (Model.UnassignedScore.Points.Any())
+            {
+                <stat value="@Model.UnassignedScore.Points.Count.ToString(Formats.NumberNoDecimals)"
+                      value-css="h4 mb-0"
+                      description="Unassigned"
+                      is-description-one-line="false"
+                      class="small bg-warning text-white border-white-1 rounded align-self-center pl-2 pr-2"/>
+            }
+
+            <stat value="@Model.TotalScorePointsSumDisplay"
                   value-css="h1 mb-0"
                   is-description-small="false"
                   class="@scoreStatsCssClass">
                 @Html.Icon(Icons.Point, "fa-fw fa-lg")
                 Total Points
             </stat>
-            <stat value="@Model.TotalScoreGoalsSum.ToString(Formats.NumberNoDecimals)"
+            <stat value="@Model.TotalScoreGoalsSumDisplay"
                   value-css="h1 mb-0"
                   is-description-small="false"
                   class="@scoreStatsCssClass">
                 @Html.Icon(Icons.Goal, "fa-fw fa-lg")
                 Total Goals
             </stat>
-            <stat value="@Model.TotalScoreAssistsSum.ToString(Formats.NumberNoDecimals)"
+            <stat value="@Model.TotalScoreAssistsSumDisplay"
                   value-css="h1 mb-0"
                   is-description-small="false"
                   class="@scoreStatsCssClass">

@@ -23,13 +23,24 @@ namespace VstsDash.WebApp.ViewModels
 
         public double TotalScoreAssistsSum { get; set; }
 
+        public string TotalScoreAssistsSumDisplay => GetPointDisplay(TotalScoreAssistsSum);
+
         public double TotalScoreGoalsSum { get; set; }
 
+        public string TotalScoreGoalsSumDisplay => GetPointDisplay(TotalScoreGoalsSum);
+
         public double TotalScorePointsSum { get; set; }
+
+        public string TotalScorePointsSumDisplay => GetPointDisplay(TotalScorePointsSum);
 
         public double TotalWorkDayCount { get; set; }
 
         public Player.PlayerScore UnassignedScore { get; set; }
+        
+        internal static string GetPointDisplay(double point)
+        {
+            return point.ToString(Formats.NumberOneDecimal);
+        }
 
         private IReadOnlyCollection<(Player Player, Player.PlayerScore.Point Point)> GetAllPoints()
         {
@@ -54,9 +65,15 @@ namespace VstsDash.WebApp.ViewModels
 
             public double ScoreAssistsSum { get; set; }
 
+            public string ScoreAssistsSumDisplay => GetPointDisplay(ScoreAssistsSum);
+
             public double ScoreGoalsSum { get; set; }
 
+            public string ScoreGoalsSumDisplay => GetPointDisplay(ScoreGoalsSum);
+
             public double ScorePointsSum { get; set; }
+
+            public string ScorePointsSumDisplay => GetPointDisplay(ScorePointsSum);
 
             public string UniqueName { get; set; }
 
@@ -74,9 +91,9 @@ namespace VstsDash.WebApp.ViewModels
 
                 public double TotalWorkDayCount { get; set; }
 
-                public IReadOnlyCollection<DateTime> WorkDays { get; set; }
-
                 public double WorkDayPercent { get; set; }
+
+                public IReadOnlyCollection<DateTime> WorkDays { get; set; }
             }
 
             public class PlayerScore

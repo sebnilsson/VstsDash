@@ -24,9 +24,10 @@
 
         <div>
             <div class="teamboard-player-score-block teamboard-player-block d-flex flex-row flex-wrap text-center bg-inverse text-white">
-                <dl class="col align-self-center" style="border-right: 1px solid #ccc;">
+                <dl class="col align-self-center" style="border-right: 1px solid #ccc;"
+                    title="@Model.ScorePointsSum.ToString(Formats.NumberTwoDecimals)">
                     <dt class="h1 font-weight-bold monospace">
-                        @Model.ScorePointsSum.ToString(Formats.NumberNoDecimals)
+                        @Model.ScorePointsSumDisplay
                     </dt>
                     <dd>
                         @Html.Icon(Icons.Point, "fa-fw")
@@ -34,18 +35,20 @@
                     </dd>
                 </dl>
                 <div class="col d-flex flex-column align-self-center">
-                    <dl class="d-flex flex-row">
+                    <dl class="d-flex flex-row"
+                        title="@Model.ScoreGoalsSum.ToString(Formats.NumberTwoDecimals)">
                         <dt class="flex-1 font-weight-bold monospace text-right">
-                            @Model.ScoreGoalsSum.ToString(Formats.NumberNoDecimals)
+                            @Model.ScoreGoalsSumDisplay
                         </dt>
                         <dd class="flex-2">
                             @Html.Icon(Icons.Goal, "fa-fw")
                             Goals
                         </dd>
                     </dl>
-                    <dl class="d-flex flex-row">
+                    <dl class="d-flex flex-row"
+                        title="@Model.ScoreAssistsSum.ToString(Formats.NumberTwoDecimals)">
                         <dt class="flex-1 font-weight-bold monospace text-right">
-                            @Model.ScoreAssistsSum.ToString(Formats.NumberNoDecimals)
+                            @Model.ScoreAssistsSumDisplay
                         </dt>
                         <dd class="flex-2">
                             @Html.Icon(Icons.Assist, "fa-fw")
@@ -84,7 +87,7 @@
                         <dl class="col bg-info text-white"
                             title="@string.Join("\n", Model.Capacity.DaysOff.Select(x => x.ToString("yyyy-MM-dd")))">
                             <dt>
-                                @Model.Capacity.DaysOff.Count.ToString(Formats.NumberTwoDecimals)d
+                                @Model.Capacity.MemberDaysOff.Count.ToString(Formats.NumberTwoDecimals)d
                             </dt>
                             <dd class="small">
                                 Days off
