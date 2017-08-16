@@ -67,7 +67,8 @@
                     </dl>
                     <dl class="col @(Model.Capacity.DailyHourCount <= 0 ? "bg-faded text-danger" : (Model.Capacity.DailyHourCount < 8 ? "bg-faded text-warning" : (Model.Capacity.DailyHourCount >= 8 ? "text-success" : null)))">
                         <dt>
-                            @(Model.Capacity.DailyHourCount > 0 ? Model.Capacity.DailyHourCount.ToString(Formats.NumberTwoDecimals) + "h" : "-")
+                            @(Model.CapacityDailyHourCountDisplay)
+
                             @if (Model.Capacity.DailyPercent > 0)
                             {
                                 <small>

@@ -46,7 +46,12 @@ namespace VstsDash.WebApp.ViewModels
         
         internal static string GetPointDisplay(double point)
         {
-            return point.ToString(Formats.NumberOneDecimal);
+            return GetPositiveNumberDisplay(point);
+        }
+
+        internal static string GetPositiveNumberDisplay(double value, string suffix = null)
+        {
+            return value > 0 ? value.ToString(Formats.NumberOneDecimal) + suffix : "-";
         }
 
         private IReadOnlyCollection<(Player Player, Player.PlayerScore.Point Point)> GetAllPoints()
@@ -59,6 +64,8 @@ namespace VstsDash.WebApp.ViewModels
         public class Player
         {
             public PlayerCapacity Capacity { get; set; }
+
+            public string CapacityDailyHourCountDisplay => GetPositiveNumberDisplay(Capacity.DailyHourCount, "h");
 
             public double CapacityMultiplier { get; set; }
 
