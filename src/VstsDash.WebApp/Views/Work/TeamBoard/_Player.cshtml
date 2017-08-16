@@ -24,8 +24,7 @@
 
         <div>
             <div class="teamboard-player-score-block teamboard-player-block d-flex flex-row flex-wrap text-center bg-inverse text-white">
-                <dl class="col align-self-center" style="border-right: 1px solid #ccc;"
-                    title="@Model.ScorePointsSum.ToString(Formats.NumberTwoDecimals)">
+                <dl class="col align-self-center" style="border-right: 1px solid #ccc;">
                     <dt class="h1 font-weight-bold monospace">
                         @Model.ScorePointsSumDisplay
                     </dt>
@@ -35,8 +34,7 @@
                     </dd>
                 </dl>
                 <div class="col d-flex flex-column align-self-center">
-                    <dl class="d-flex flex-row"
-                        title="@Model.ScoreGoalsSum.ToString(Formats.NumberTwoDecimals)">
+                    <dl class="d-flex flex-row">
                         <dt class="flex-1 font-weight-bold monospace text-right">
                             @Model.ScoreGoalsSumDisplay
                         </dt>
@@ -45,8 +43,7 @@
                             Goals
                         </dd>
                     </dl>
-                    <dl class="d-flex flex-row"
-                        title="@Model.ScoreAssistsSum.ToString(Formats.NumberTwoDecimals)">
+                    <dl class="d-flex flex-row">
                         <dt class="flex-1 font-weight-bold monospace text-right">
                             @Model.ScoreAssistsSumDisplay
                         </dt>
@@ -70,7 +67,7 @@
                     </dl>
                     <dl class="col @(Model.Capacity.DailyHourCount <= 0 ? "bg-faded text-danger" : (Model.Capacity.DailyHourCount < 8 ? "bg-faded text-warning" : (Model.Capacity.DailyHourCount >= 8 ? "text-success" : null)))">
                         <dt>
-                            @Model.Capacity.DailyHourCount.ToString(Formats.NumberTwoDecimals)h
+                            @(Model.Capacity.DailyHourCount > 0 ? Model.Capacity.DailyHourCount.ToString(Formats.NumberTwoDecimals) + "h" : "-")
                             @if (Model.Capacity.DailyPercent > 0)
                             {
                                 <small>

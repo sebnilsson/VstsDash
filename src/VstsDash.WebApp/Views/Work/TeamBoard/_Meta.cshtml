@@ -34,20 +34,20 @@
                       class="@topStatsInfoCssClass"/>
             }
 
-            <stat value="@Model.TeamCapacity.WorkDays.Count.ToString(Formats.NumberOneDecimal)d"
+            <stat value="@(Model.TeamCapacityWorkDaysCountDisplay)d"
                   title="@string.Join("\n", Model.TeamCapacity.WorkDays.Select(x => x.ToString("yyyy-MM-dd")))"
                   value-css="h4 mb-0"
                   description="Work days"
                   is-inverse="true"
                   class="@topStatsCssClass"/>
 
-            <stat value="@Model.TotalWorkDayCount.ToString(Formats.NumberOneDecimal)d"
+            <stat value="@(Model.TotalWorkDayCountDisplay)d"
                   value-css="h4 mb-0"
                   description="Days capacity"
                   is-inverse="true"
                   class="@topStatsCssClass"/>
 
-            <stat value="@Model.TotalHoursTotalCount.ToString(Formats.NumberOneDecimal)h"
+            <stat value="@(Model.TotalHoursTotalCountDisplay)h"
                   value-css="h4 mb-0"
                   description="Hours capacity"
                   is-inverse="true"

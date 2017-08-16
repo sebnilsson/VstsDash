@@ -79,7 +79,7 @@ namespace VstsDash.AppServices.WorkTeamBoard
             var random = new Random();
 
             return GetPlayersInternal(teamMembers, teamCapacity, scores)
-                .Where(x => x.Capacity.DailyHourCount > 0 || x.ScorePointsSum > 0)
+                .Where(x => x.Capacity.HasAnyActivities || x.ScorePointsSum > 0)
                 .OrderByDescending(x => x.ScorePointsSum)
                 .ThenByDescending(x => x.ScoreGoalsSum)
                 .ThenByDescending(x => x.ScoreAssistsSum)

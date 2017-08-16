@@ -19,7 +19,12 @@ namespace VstsDash.WebApp.ViewModels
 
         public TeamBoardTeamCapacity TeamCapacity { get; set; }
 
+        public string TeamCapacityWorkDaysCountDisplay =>
+            TeamCapacity.WorkDays.Count.ToString(Formats.NumberNoDecimals);
+
         public double TotalHoursTotalCount { get; set; }
+
+        public string TotalHoursTotalCountDisplay => TotalHoursTotalCount.ToString(Formats.NumberNoDecimals);
 
         public double TotalScoreAssistsSum { get; set; }
 
@@ -34,6 +39,8 @@ namespace VstsDash.WebApp.ViewModels
         public string TotalScorePointsSumDisplay => GetPointDisplay(TotalScorePointsSum);
 
         public double TotalWorkDayCount { get; set; }
+
+        public string TotalWorkDayCountDisplay => TotalWorkDayCount.ToString(Formats.NumberNoDecimals);
 
         public Player.PlayerScore UnassignedScore { get; set; }
         

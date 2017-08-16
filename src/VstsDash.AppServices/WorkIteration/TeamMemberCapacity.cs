@@ -16,31 +16,27 @@ namespace VstsDash.AppServices.WorkIteration
             IEnumerable<DateTime> iterationWorkDays,
             IEnumerable<DateTime> teamDaysOff,
             IEnumerable<DateTime> teamWorkDays)
-            : this(
-                memberId,
-                GetMemberCapacityPerDay(capacity),
-                GetMemberDaysOff(capacity),
-                iterationWorkDays,
-                teamDaysOff,
-                teamWorkDays)
+            : this(memberId, iterationWorkDays, teamDaysOff, teamWorkDays, capacity)
         {
         }
 
-        public TeamMemberCapacity(
+        private TeamMemberCapacity(
             Guid memberId,
-            IEnumerable<double> memberCapacityPerDay,
-            IEnumerable<DateTime> memberDaysOff,
             IEnumerable<DateTime> iterationWorkDays,
             IEnumerable<DateTime> teamDaysOff,
-            IEnumerable<DateTime> teamWorkDays)
+            IEnumerable<DateTime> teamWorkDays,
+            IterationCapacityApiResponse capacity = null)
         {
             if (iterationWorkDays == null) throw new ArgumentNullException(nameof(iterationWorkDays));
-            if (memberCapacityPerDay == null) throw new ArgumentNullException(nameof(memberCapacityPerDay));
-            if (memberDaysOff == null) throw new ArgumentNullException(nameof(memberDaysOff));
             if (teamDaysOff == null) throw new ArgumentNullException(nameof(teamDaysOff));
             if (teamWorkDays == null) throw new ArgumentNullException(nameof(teamWorkDays));
 
             MemberId = memberId;
+
+            HasAnyActivities = capacity?.Activities?.Any() ?? false;
+
+            var memberCapacityPerDay = GetMemberCapacityPerDay(capacity);
+            var memberDaysOff = GetMemberDaysOff(capacity);
 
             var memberDaysOffList = memberDaysOff.ToList();
 
@@ -71,6 +67,8 @@ namespace VstsDash.AppServices.WorkIteration
 
         public IReadOnlyCollection<DateTime> DaysOff { get; }
 
+        public bool HasAnyActivities { get; }
+
         public double HoursTotalCount { get; }
 
         public IReadOnlyCollection<DateTime> MemberDaysOff { get; }
@@ -89,8 +87,6 @@ namespace VstsDash.AppServices.WorkIteration
 
             return new TeamMemberCapacity(
                 memberId,
-                Enumerable.Empty<double>(),
-                Enumerable.Empty<DateTime>(),
                 teamCapacity.IterationWorkDays,
                 teamCapacity.TeamDaysOff,
                 teamCapacity.WorkDays);
