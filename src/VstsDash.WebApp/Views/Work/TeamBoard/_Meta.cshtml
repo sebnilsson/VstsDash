@@ -55,7 +55,7 @@
         </div>
 
         <div class="teamboard-meta-score d-flex flex-row justify-content-end ml-5">
-            @if (Model.UnassignedScore.Points.Any())
+            @if (Model.UnassignedScore?.Points?.Any() ?? false)
             {
                 <stat value="@Model.UnassignedScore.Points.Count.ToString(Formats.NumberNoDecimals)"
                       value-css="h4 mb-0"
