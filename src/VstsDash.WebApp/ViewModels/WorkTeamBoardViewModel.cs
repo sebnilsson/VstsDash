@@ -1,10 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using VstsDash.AppServices;
-
-namespace VstsDash.WebApp.ViewModels
+﻿namespace VstsDash.WebApp.ViewModels
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
+    using VstsDash.AppServices;
+
     public class WorkTeamBoardViewModel
     {
         public IReadOnlyCollection<(Player, Player.PlayerScore.Point)> AllPoints => GetAllPoints();
@@ -19,12 +20,11 @@ namespace VstsDash.WebApp.ViewModels
 
         public TeamBoardTeamCapacity TeamCapacity { get; set; }
 
-        public string TeamCapacityWorkDaysCountDisplay =>
-            TeamCapacity.WorkDays.Count.ToString(Formats.NumberNoDecimals);
+        public string TeamWorkDaysCountDisplay => GetTeamWorkDaysCountDisplay();
 
         public double TotalHoursTotalCount { get; set; }
 
-        public string TotalHoursTotalCountDisplay => TotalHoursTotalCount.ToString(Formats.NumberNoDecimals);
+        public string TotalHoursTotalCountDisplay => GetTotalHoursTotalCountDisplay();
 
         public double TotalScoreAssistsSum { get; set; }
 
@@ -40,10 +40,10 @@ namespace VstsDash.WebApp.ViewModels
 
         public double TotalWorkDayCount { get; set; }
 
-        public string TotalWorkDayCountDisplay => TotalWorkDayCount.ToString(Formats.NumberNoDecimals);
+        public string TotalWorkDayCountDisplay => GetTotalWorkDayCountDisplay();
 
         public Player.PlayerScore UnassignedScore { get; set; }
-        
+
         internal static string GetPointDisplay(double point)
         {
             return GetPositiveNumberDisplay(point);
@@ -59,6 +59,68 @@ namespace VstsDash.WebApp.ViewModels
             return Players.SelectMany(player => player.Score.Points, (player, point) => (Player: player, Point: point))
                 .OrderByDescending(x => x.Point.EarnedAt)
                 .ToList();
+        }
+
+        private string GetTeamWorkDaysCountDisplay()
+        {
+            var workDays = TeamCapacity.WorkDays.ToList();
+
+            var workDaysCount = workDays.Count;
+            var workDaysCountDisplay = workDaysCount.ToString(Formats.NumberNoDecimals);
+
+            var remainingCount = workDays.Count(x => x.Date >= DateTime.UtcNow.Date);
+            if (remainingCount <= 0 || remainingCount == workDaysCount)
+            {
+                return $"{workDaysCountDisplay}d";
+            }
+
+            var remainingCountDisplay = remainingCount.ToString(Formats.NumberNoDecimals);
+
+            return $"{remainingCountDisplay}/{workDaysCountDisplay}d";
+        }
+
+        private string GetTotalHoursTotalCountDisplay()
+        {
+            var capacityWorkDaysAndHours = (from player in Players
+                                            from workDay in player.Capacity.WorkDays
+                                            select (WorkDay: workDay, DailyHourCount: player.Capacity.DailyHourCount))
+                .ToList();
+
+            var capacityHoursTotalCount = capacityWorkDaysAndHours.Sum(x => x.DailyHourCount);
+            var capacityHoursTotalCountDisplay = capacityHoursTotalCount.ToString(Formats.NumberNoDecimals);
+
+            var remainingCount = capacityWorkDaysAndHours.Where(x => x.WorkDay.Date >= DateTime.UtcNow.Date)
+                .Sum(x => x.DailyHourCount);
+            if (remainingCount <= 0 || remainingCount == capacityHoursTotalCount)
+            {
+                return $"{capacityHoursTotalCountDisplay}h";
+            }
+
+            var remainingCountDisplay = remainingCount.ToString(Formats.NumberNoDecimals);
+
+            return $"{remainingCountDisplay}/{capacityHoursTotalCountDisplay}h";
+        }
+
+        private string GetTotalWorkDayCountDisplay()
+        {
+            var capacityWorkDays = (from player in Players
+                                    from workDay in player.Capacity.WorkDays
+                                    select (WorkDay: workDay, DailyPercentMultiplier: player.Capacity.DailyPercent
+                                                                                      / 100D)).ToList();
+
+            var capacityWorkDaysCount = capacityWorkDays.Sum(x => x.DailyPercentMultiplier);
+            var capacityWorkDaysCountDisplay = capacityWorkDaysCount.ToString(Formats.NumberNoDecimals);
+
+            var remainingCount = capacityWorkDays.Where(x => x.WorkDay.Date >= DateTime.UtcNow.Date)
+                .Sum(x => x.DailyPercentMultiplier);
+            if (remainingCount <= 0 || remainingCount == capacityWorkDaysCount)
+            {
+                return $"{capacityWorkDaysCountDisplay}d";
+            }
+
+            var remainingCountDisplay = remainingCount.ToString(Formats.NumberNoDecimals);
+
+            return $"{remainingCountDisplay}/{capacityWorkDaysCountDisplay}d";
         }
 
         public class Player
