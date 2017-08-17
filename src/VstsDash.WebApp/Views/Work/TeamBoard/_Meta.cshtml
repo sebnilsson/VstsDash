@@ -1,8 +1,10 @@
 ﻿@model WorkTeamBoardViewModel
 @{
+    var topStatsCssClass = "border-white-1 rounded";
+
     var topStatsInfoCssClass = "border-white-1 rounded bg-info text-white";
 
-    var topStatsCssClass = "border-white-1 rounded";
+    var topStatsPrimaryCssClass = "border-white-1 rounded bg-primary text-white";
 
     var scoreStatsCssClass = "flex-noshrink border-black-1 bg-faded rounded";
 }
@@ -23,10 +25,7 @@
                       value-css="h4 mb-0"
                       description="Iteration days"
                       class="@topStatsInfoCssClass"/>
-            }
 
-            @if (Model.TeamCapacity.TeamDaysOff.Any())
-            {
                 <stat value="@Model.TeamCapacity.TeamDaysOff.Count.ToString(Formats.NumberOneDecimal)d"
                       title="@string.Join("\n", Model.TeamCapacity.TeamDaysOff.Select(x => x.ToString("yyyy-MM-dd")))"
                       value-css="h4 mb-0"
@@ -44,14 +43,14 @@
             <stat value="@(Model.TotalWorkDayCountDisplay)d"
                   value-css="h4 mb-0"
                   description="Days capacity"
-                  is-inverse="true"
-                  class="@topStatsCssClass"/>
+                  title="@Model.TotalWorkDayCount.ToString(Formats.NumberTwoDecimals)"
+                  class="@topStatsPrimaryCssClass"/>
 
             <stat value="@(Model.TotalHoursTotalCountDisplay)h"
                   value-css="h4 mb-0"
                   description="Hours capacity"
-                  is-inverse="true"
-                  class="@topStatsCssClass"/>
+                  title="@Model.TotalHoursTotalCount.ToString(Formats.NumberTwoDecimals)"
+                  class="@topStatsPrimaryCssClass"/>
         </div>
 
         <div class="teamboard-meta-score d-flex flex-row justify-content-end ml-5">

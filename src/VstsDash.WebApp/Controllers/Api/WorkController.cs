@@ -124,7 +124,8 @@ namespace VstsDash.WebApp.Controllers.Api
 
             var dates = teamCapacity.IterationWorkDays;
 
-            var isMemberWithWorkCapacity = memberCapacity != null && memberCapacity.TotalWorkDayCount > 0;
+            var isMember = memberId != null;
+            var hasMemberActivities = memberCapacity?.HasAnyActivities ?? false;
 
             return (from date in dates
                     let dayCommits =
@@ -132,7 +133,7 @@ namespace VstsDash.WebApp.Controllers.Api
                     let hasCommits = dayCommits.Any()
                     let isWorkDay = !daysOff.Contains(date)
                     let isPastWorkDay = isWorkDay && date <= DateTime.UtcNow.Date
-                    let shouldIncludeData = hasCommits || isPastWorkDay && isMemberWithWorkCapacity
+                    let shouldIncludeData = hasCommits || isPastWorkDay && (!isMember || hasMemberActivities)
                     let commitCount = shouldIncludeData ? dayCommits.Count : (int?)null
                     let totalChangeCount =
                     shouldIncludeData ? dayCommits.Sum(c => c.Commit.TotalChangeCount) : (int?)null
