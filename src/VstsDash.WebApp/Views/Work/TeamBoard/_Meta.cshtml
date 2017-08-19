@@ -14,43 +14,49 @@
         <div class="flex-1 d-flex flex-row flex-wrap justify-content-start">
             <stat value="@Model.PlayersWithCapacity.Count.ToString(Formats.NumberOneDecimal)"
                   title="@string.Join("\n", Model.PlayersWithCapacity.Select(x => x.DisplayName))"
-                  value-css="h4 mb-0"
                   description="Team members"
-                  class="@topStatsCssClass bg-faded"/>
+                  class="@topStatsCssClass bg-faded"
+                  value-css="h4 mb-0"/>
 
             @if (Model.TeamCapacity.TeamDaysOff.Any())
             {
                 <stat value="@Model.TeamCapacity.IterationWorkDays.Count.ToString(Formats.NumberOneDecimal)d"
                       title="@string.Join("\n", Model.TeamCapacity.IterationWorkDays.Select(x => x.ToString("yyyy-MM-dd")))"
-                      value-css="h4 mb-0"
                       description="Iteration days"
-                      class="@topStatsInfoCssClass"/>
+                      class="@topStatsInfoCssClass"
+                      value-css="h4 mb-0"/>
 
                 <stat value="@Model.TeamCapacity.TeamDaysOff.Count.ToString(Formats.NumberOneDecimal)d"
                       title="@string.Join("\n", Model.TeamCapacity.TeamDaysOff.Select(x => x.ToString("yyyy-MM-dd")))"
-                      value-css="h4 mb-0"
                       description="Team days off"
-                      class="@topStatsInfoCssClass"/>
+                      class="@topStatsInfoCssClass"
+                      value-css="h4 mb-0"/>
             }
 
-            <stat value="@(Model.TeamWorkDaysCountDisplay)"
+            <stat value="@Model.TeamWorkDaysCountDisplay"
+                  value-prefix="@Model.TeamWorkDaysCountRemainingDisplay"
+                  value-suffix="d"
                   title="@string.Join("\n", Model.TeamCapacity.WorkDays.Select(x => x.ToString("yyyy-MM-dd")))"
-                  value-css="h4 mb-0 ml-1 mr-1"
                   description="Work days"
                   is-inverse="true"
-                  class="@topStatsCssClass"/>
+                  class="@topStatsCssClass"
+                  value-css="h4 mb-0 ml-1 mr-1"/>
 
-            <stat value="@(Model.TotalWorkDayCountDisplay)"
-                  value-css="h4 mb-0 ml-1 mr-1"
+            <stat value="@Model.TotalWorkDayCountDisplay"
+                  value-prefix="@Model.TotalWorkDayCountRemainingDisplay"
+                  value-suffix="d"
                   description="Days capacity"
                   title="@Model.TotalWorkDayCount.ToString(Formats.NumberTwoDecimals)"
-                  class="@topStatsPrimaryCssClass"/>
+                  class="@topStatsPrimaryCssClass"
+                  value-css="h4 mb-0 ml-1 mr-1"/>
 
-            <stat value="@(Model.TotalHoursTotalCountDisplay)"
-                  value-css="h4 mb-0 ml-1 mr-1"
+            <stat value="@Model.TotalHoursTotalCountDisplay"
+                  value-prefix="@Model.TotalHoursTotalCountRemainingDisplay"
+                  value-suffix="h"
                   description="Hours capacity"
                   title="@Model.TotalHoursTotalCount.ToString(Formats.NumberTwoDecimals)"
-                  class="@topStatsPrimaryCssClass"/>
+                  class="@topStatsPrimaryCssClass"
+                  value-css="h4 mb-0 ml-1 mr-1"/>
         </div>
 
         <div class="teamboard-meta-score d-flex flex-row justify-content-end ml-5">

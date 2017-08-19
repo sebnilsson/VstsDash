@@ -5,9 +5,11 @@ using Microsoft.AspNetCore.Razor.TagHelpers;
 
 namespace VstsDash.WebApp.TagHelpers
 {
-    [HtmlTargetElement("stat", TagStructure = TagStructure.NormalOrSelfClosing)]
+    [HtmlTargetElement(TagName, TagStructure = TagStructure.NormalOrSelfClosing)]
     public class StatTagHelper : TagHelper
     {
+        public const string TagName = "stat";
+
         private const string DefaultCssClass = "mb-0";
 
         private const string DefaultValueCss = "font-weight-bold monospace";
@@ -38,6 +40,12 @@ namespace VstsDash.WebApp.TagHelpers
 
         [HtmlAttributeName("value-css")]
         public string ValueCss { get; set; }
+
+        [HtmlAttributeName("value-prefix")]
+        public string ValuePrefix { get; set; }
+
+        [HtmlAttributeName("value-suffix")]
+        public string ValueSuffix { get; set; }
 
         public override async Task ProcessAsync(TagHelperContext context, TagHelperOutput output)
         {
@@ -85,7 +93,24 @@ namespace VstsDash.WebApp.TagHelpers
         private TagBuilder GetDtTag()
         {
             var dtTag = new TagBuilder("dt");
-            dtTag.InnerHtml.Append(Value);
+
+            if (!string.IsNullOrWhiteSpace(ValuePrefix))
+            {
+                var smallTag = new TagBuilder("small");
+                smallTag.InnerHtml.Append(ValuePrefix);
+
+                dtTag.InnerHtml.AppendHtml(smallTag);
+            }
+
+            dtTag.InnerHtml.Append(Value ?? string.Empty);
+            
+            if (!string.IsNullOrWhiteSpace(ValueSuffix))
+            {
+                var smallTag = new TagBuilder("small");
+                smallTag.InnerHtml.Append(ValueSuffix);
+
+                dtTag.InnerHtml.AppendHtml(smallTag);
+            }
 
             var cssClass = $"{DefaultValueCss} {ValueCss}".Trim();
             dtTag.AddCssClass(cssClass);
