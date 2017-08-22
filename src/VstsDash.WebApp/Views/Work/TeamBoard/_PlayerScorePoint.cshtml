@@ -1,9 +1,8 @@
 ﻿@using VstsDash.AppServices
 @model WorkTeamBoardViewModel.Player.PlayerScore.Point
 @{
-    var includeDetails = ViewData["IncludeDetails"] as bool? ?? false;
     var displayName = ViewData["DisplayName"] as string;
-    var displayDates = ViewData["DisplayDates"] as bool? ?? false;
+    var isRecentMode = ViewData["IsRecentMode"] as bool? ?? false;
 
     var isGoal = Model.Type == TeamMemberPointType.Goal;
     var isAssist = Model.Type == TeamMemberPointType.Assist;
@@ -12,13 +11,15 @@
 
 <span class="one-line">
     <span class="flex-noshrink">
-        <span class="badge badge-success monospace">@(Model.Value > 0 ? Model.Value.ToString(Formats.NumberTwoDecimals) : "?")</span>
+        <span class="badge badge-success monospace">
+            @(Model.Value > 0 ? Model.Value.ToString(Formats.NumberTwoDecimals) : "?")
+        </span>
         
         <icon value="@className"/>
 
         <span class="badge badge-default monospace">@Model.Id</span>
 
-        @if (displayDates)
+        @if (!isRecentMode)
         {
             <span class="badge badge-primary monospace" title="@Model.EarnedAt.ToString("yyyy-MM-dd HH:mm")">
                 @Model.EarnedAt.ToString("yyyy-MM-dd")
@@ -32,7 +33,7 @@
             </span>
         }
 
-        @if (!string.IsNullOrWhiteSpace(displayName))
+        @if (!isRecentMode && !string.IsNullOrWhiteSpace(displayName))
         {
             @:<strong>@displayName:</strong>
         }
@@ -41,9 +42,4 @@
     <span class="small ml-1">
         @Model.Description
     </span>
-
-    @if (includeDetails && Model.EarnedAt > DateTimeOffset.MinValue)
-    {
-        @:<small class="badge badge-info monospace no-wrap ml-1">@Model.EarnedAt.ToString("yyyy-MM-dd HH:mm")</small>
-}
 </span>

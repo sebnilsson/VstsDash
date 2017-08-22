@@ -39,7 +39,7 @@
                         <li class="list-group-item">
                             <span class="d-inline-flex flex-row align-items-center one-line"
                                  title="@($"[{point.Id}] {point.Description} ({point.EarnedAt:yyyy-MM-dd HH:mm:ss})")">
-                                @Html.Partial("TeamBoard/_PlayerScorePoint", point)
+                                @Html.Partial("TeamBoard/_PlayerScorePoint", point, new ViewDataDictionary(ViewData) { {"IsRecentMode", true } })
                             </span>
                         </li>
                     }
