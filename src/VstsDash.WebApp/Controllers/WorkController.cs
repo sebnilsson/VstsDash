@@ -55,15 +55,6 @@ namespace VstsDash.WebApp.Controllers
                 await _workActivityAppService.GetActivity(idParams.ProjectId, idParams.TeamId, idParams.IterationId);
 
             var model = _mapper.Map<WorkActivityViewModel>(workActivity);
-
-            var test = model.Authors
-                .Select(
-                    r => (Item: r, Score: r.CommitCount / (double)model.AuthorsCommitCountSum
-                                          + r.CommitsTotalChangeCountSum
-                                          / (double)model.AuthorsCommitsTotalChangeCountSum))
-                .OrderByDescending(x => x.Score)
-                .ToList();
-
             return View(model);
         }
 
@@ -119,6 +110,25 @@ namespace VstsDash.WebApp.Controllers
                 await _workTeamBoardAppService.GetTeamBoard(ensuredProjectId, ensuredTeamId, ensuredIterationId);
 
             var model = _mapper.Map<WorkTeamBoardViewModel>(teamBoard);
+            return View(model);
+        }
+
+        public async Task<IActionResult> TeamBoardMember(
+            Guid id,
+            string projectId = null,
+            string teamId = null,
+            string iterationId = null)
+        {
+            var ensuredProjectId = GetProjectIdOrDefault(projectId);
+            var ensuredTeamId = GetTeamIdOrDefault(teamId);
+            var ensuredIterationId = await GetIterationIdOrDefault(ensuredProjectId, ensuredTeamId, iterationId);
+
+            var teamBoard =
+                await _workTeamBoardAppService.GetTeamBoard(ensuredProjectId, ensuredTeamId, ensuredIterationId);
+
+            var teamBoardModel = _mapper.Map<WorkTeamBoardViewModel>(teamBoard);
+
+            var model = teamBoardModel.Players.FirstOrDefault(x => x.Id == id);
             return View(model);
         }
     }

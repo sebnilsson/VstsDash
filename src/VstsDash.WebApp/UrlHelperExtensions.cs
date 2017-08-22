@@ -107,5 +107,25 @@ namespace VstsDash.WebApp
                     dashboard = isDashboard ? "1" : null
                 });
         }
+
+        public static string WorkTeamBoardMember(
+            this IUrlHelper urlHelper,
+            Guid memberId,
+            string projectId = null,
+            string teamId = null,
+            string iterationId = null)
+        {
+            return urlHelper.RouteUrl(
+                RouteNames.Default,
+                new
+                {
+                    Controller = "Work",
+                    Action = "TeamBoardMember",
+                    Id = memberId,
+                    projectId,
+                    teamId,
+                    iterationId
+                });
+        }
     }
 }

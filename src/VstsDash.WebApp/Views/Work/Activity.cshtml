@@ -3,6 +3,9 @@
     var isDashboard = Context.Request.IsDashboard();
 
     var requestQuery = Context.Request.Query;
+    var projectId = requestQuery["projectId"];
+    var teamId = requestQuery["teamId"];
+    var iterationId = requestQuery["iterationId"];
 
     var dateText = $"{Model.FromDate:yyyy-MM-dd} - {Model.ToDate:yyyy-MM-dd}";
 }
@@ -26,12 +29,12 @@
 
     @if (!isDashboard)
     {
-        <a href="@Url.WorkActivity(requestQuery["projectId"], requestQuery["teamId"], requestQuery["iterationId"], true)"
+        <a href="@Url.WorkActivity(projectId, teamId, iterationId, true)"
            class="btn btn-outline-success btn-sm">
             <icon value="@Icons.Dashboard"/>
             Dashboard
         </a>
-        <a href="@Url.WorkTeamBoard(requestQuery["projectId"], requestQuery["teamId"], requestQuery["iterationId"])"
+        <a href="@Url.WorkTeamBoard(projectId, teamId, iterationId)"
            class="btn btn-warning btn-sm">
             <icon value="@Icons.TeamBoard"/>
             Team board

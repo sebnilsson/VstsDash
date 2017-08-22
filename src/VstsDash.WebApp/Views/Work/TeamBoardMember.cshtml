@@ -1,0 +1,39 @@
+@model WorkTeamBoardViewModel.Player
+@{
+    var requestQuery = Context.Request.Query;
+    var projectId = requestQuery["projectId"];
+    var teamId = requestQuery["teamId"];
+    var iterationId = requestQuery["iterationId"];
+}
+
+<div class="teamboard-member-container main-container container pb-3">
+    <h1 class="h2 mb-2">
+        <strong>Team board member</strong>
+
+        <a href="@Url.WorkTeamBoard(projectId, teamId, iterationId)"
+           class="btn btn-warning btn-sm">
+            <icon value="@Icons.TeamBoard" />
+            Team board
+        </a>
+    </h1>
+    
+    <div class="teamboard-member-card card">
+        @Html.Partial("TeamBoard/_PlayerMeta", Model)
+    </div>
+
+    <div class="teamboard-all-scores card card-outline-info mt-2">
+        <h2 class="card-header card-outline-secondary h6 pt-1 pb-1 pl-2 pr-2">
+            <icon value="@Icons.Point"/>
+            All points
+        </h2>
+
+        <ul class="list-group list-group-flush">
+            @foreach (var point in Model.Score.Points)
+            {
+                <li class="list-group-item">
+                    @Html.Partial("TeamBoard/_PlayerScorePoint", point, new ViewDataDictionary(ViewData) { { "DisplayDates", true } })
+                </li>
+            }
+        </ul>
+    </div>
+</div>

@@ -3,6 +3,9 @@
     var isDashboard = Context.Request.IsDashboard();
 
     var requestQuery = Context.Request.Query;
+    var projectId = requestQuery["projectId"];
+    var teamId = requestQuery["teamId"];
+    var iterationId = requestQuery["iterationId"];
 
     var hasAnyUnassignedScore = Model.UnassignedScore?.Points.Any() ?? false;
 
@@ -16,18 +19,18 @@
 
         @if (!isDashboard)
         {
-            <a href="@Url.WorkTeamBoard(requestQuery["projectId"], requestQuery["teamId"], requestQuery["iterationId"], true)"
+            <a href="@Url.WorkTeamBoard(projectId, teamId, iterationId, true)"
                class="btn btn-outline-success btn-sm">
-                @Html.Icon(Icons.Dashboard, "fa-fw")
+                <icon value="@Icons.Dashboard"/>
                 Dashboard
             </a>
-            <a href="@Url.WorkActivity(requestQuery["projectId"], requestQuery["teamId"], requestQuery["iterationId"])"
+            <a href="@Url.WorkActivity(projectId, teamId, iterationId)"
                class="btn btn-info btn-sm">
-                @Html.Icon(Icons.Activity, "fa-fw")
+                <icon value="@Icons.Activity"/>
                 Activity
             </a>
         }
-
+        
         @if (!string.IsNullOrWhiteSpace(dateText))
         {
             <small>@dateText</small>
@@ -76,7 +79,7 @@
     {
         <div class="teamboard-all-scores card card-outline-info mt-2">
             <h2 class="card-header card-outline-secondary h6 pt-1 pb-1 pl-2 pr-2">
-                @Html.Icon(Icons.Point)
+                <icon value="@Icons.Point"/>
                 All points
             </h2>
 

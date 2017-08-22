@@ -6,6 +6,9 @@ namespace VstsDash.WebApp.TagHelpers
     [HtmlTargetElement("icon", TagStructure = TagStructure.WithoutEndTag)]
     public class IconTagHelper : TagHelper
     {
+        [HtmlAttributeName("class")]
+        public string CssClass { get; set; }
+
         [HtmlAttributeName("is-fixed-width")]
         public bool IsFixedWidth { get; set; } = true;
 
@@ -22,12 +25,9 @@ namespace VstsDash.WebApp.TagHelpers
 
             var value = Value.StartsWith("fa-") ? Value : $"fa-{Value}";
 
-            var cssClass = $"fa {value} {(IsFixedWidth ? "fa-fw" : null)}";
+            var cssClass = $"fa {value} {(IsFixedWidth ? "fa-fw" : null)} {CssClass}".Trim();
             
             output.Attributes.SetAttribute("class", cssClass);
-
-            output.Attributes.RemoveAll(nameof(IsFixedWidth));
-            output.Attributes.RemoveAll(nameof(Value));
         }
     }
 }

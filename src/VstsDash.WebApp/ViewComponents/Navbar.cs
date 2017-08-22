@@ -17,7 +17,7 @@ namespace VstsDash.WebApp.ViewComponents
             var model = Items.Select(x => (Name: x.Key, Url: x.Value, IsActive: UrlEquals(requestUrl, x.Value)))
                 .ToList();
 
-            return View(model);
+            return await Task.FromResult(View(model));
         }
 
         private static bool UrlEquals(string url1, string url2)

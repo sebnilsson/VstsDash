@@ -3,6 +3,7 @@
 @{
     var includeDetails = ViewData["IncludeDetails"] as bool? ?? false;
     var displayName = ViewData["DisplayName"] as string;
+    var displayDates = ViewData["DisplayDates"] as bool? ?? false;
 
     var isGoal = Model.Type == TeamMemberPointType.Goal;
     var isAssist = Model.Type == TeamMemberPointType.Assist;
@@ -11,23 +12,30 @@
 
 <span class="one-line">
     <span class="flex-noshrink">
-        <span class="badge badge-primary monospace">@(Model.Value > 0 ? Model.Value.ToString(Formats.NumberTwoDecimals) : "?")</span>
-
-        @Html.Icon(className, "fa-fw")
+        <span class="badge badge-success monospace">@(Model.Value > 0 ? Model.Value.ToString(Formats.NumberTwoDecimals) : "?")</span>
+        
+        <icon value="@className"/>
 
         <span class="badge badge-default monospace">@Model.Id</span>
+
+        @if (displayDates)
+        {
+            <span class="badge badge-primary monospace" title="@Model.EarnedAt.ToString("yyyy-MM-dd HH:mm")">
+                @Model.EarnedAt.ToString("yyyy-MM-dd")
+            </span>
+        }
 
         @if (Model.HasBonus)
         {
             <span class="badge badge-success">
-                @Html.Icon(Icons.Bonus)
+                <icon value="@Icons.Bonus"/>
             </span>
         }
 
         @if (!string.IsNullOrWhiteSpace(displayName))
         {
             @:<strong>@displayName:</strong>
-    }
+        }
     </span>
 
     <span class="small ml-1">

@@ -1,0 +1,127 @@
+@model WorkTeamBoardViewModel.Player
+@{
+    var teamWorkDays = ViewData["TeamWorkDays"] as IEnumerable<DateTime> ?? Enumerable.Empty<DateTime>();
+}
+
+<div class="teamboard-player-header card-header h3 pt-1 pb-1 pl-2 pr-2" title="@Model.UniqueName">
+    <div class="d-inline-flex flex-row w-100">
+        @if (!string.IsNullOrWhiteSpace(Model.ImageUrl))
+        {
+            <img src="@Url.ApiFile(Model.ImageUrl)" class="teamboard-player-image rounded align-self-center mr-2"/>
+        }
+        <h2 class="m-0 align-self-center one-line">
+            @Model.DisplayName
+        </h2>
+    </div>
+</div>
+
+<div>
+    <div class="teamboard-player-score-block teamboard-player-block d-flex flex-row flex-wrap text-center bg-inverse text-white">
+        <dl class="col align-self-center" style="border-right: 1px solid #ccc;">
+            <dt class="h1 font-weight-bold monospace">
+                @Model.ScorePointsSumDisplay
+            </dt>
+            <dd>
+                @Html.Icon(Icons.Point, "fa-fw")
+                Points
+            </dd>
+        </dl>
+        <div class="col d-flex flex-column align-self-center">
+            <dl class="d-flex flex-row">
+                <dt class="flex-1 font-weight-bold monospace text-right">
+                    @Model.ScoreGoalsSumDisplay
+                </dt>
+                <dd class="flex-2">
+                    @Html.Icon(Icons.Goal, "fa-fw")
+                    Goals
+                </dd>
+            </dl>
+            <dl class="d-flex flex-row">
+                <dt class="flex-1 font-weight-bold monospace text-right">
+                    @Model.ScoreAssistsSumDisplay
+                </dt>
+                <dd class="flex-2">
+                    @Html.Icon(Icons.Assist, "fa-fw")
+                    Assists
+                </dd>
+            </dl>
+        </div>
+    </div>
+
+    <div class="teamboard-player-meta-block teamboard-player-block align-self-center text-center">
+        <div class="d-flex flex-row flex-wrap">
+            <dl class="col @(Model.CapacityMultiplier > 2 ? "bg-danger text-white" : (Model.CapacityMultiplier > 1 ? "bg-warning text-white" : null))">
+                <dt>
+                    @Model.CapacityMultiplier.ToString(Formats.NumberTwoDecimals)x
+                </dt>
+                <dd class="small">
+                    Multiplier
+                </dd>
+            </dl>
+            <dl class="col @(Model.Capacity.DailyHourCount <= 0 ? "bg-faded text-danger" : (Model.Capacity.DailyHourCount < 8 ? "bg-faded text-warning" : (Model.Capacity.DailyHourCount >= 8 ? "text-success" : null)))">
+                <dt>
+                    @(Model.CapacityDailyHourCountDisplay)
+
+                    @if (Model.Capacity.DailyPercent > 0)
+                    {
+                        <small>
+                            (@(Model.Capacity.DailyPercent.ToString(Formats.NumberTwoDecimals))%)
+                        </small>
+                    }
+                </dt>
+                <dd class="small">
+                    Daily capacity
+                </dd>
+            </dl>
+            @if (Model.Capacity.MemberDaysOff.Any())
+            {
+                <dl class="col bg-info text-white"
+                    title="@string.Join("\n", Model.Capacity.DaysOff.Select(x => x.ToString("yyyy-MM-dd")))">
+                    <dt>
+                        @Model.Capacity.MemberDaysOff.Count.ToString(Formats.NumberTwoDecimals)d
+                    </dt>
+                    <dd class="small">
+                        Days off
+                    </dd>
+                </dl>
+            }
+        </div>
+
+        @if (Model.Capacity.TotalWorkDayCount > 0 || Model.Capacity.HoursTotalCount > 0)
+        {
+            <div class="d-flex flex-row">
+                <dl class="col bg-faded">
+                    <dt>
+                        @Model.Capacity.TotalWorkDayCount.ToString(Formats.NumberTwoDecimals)d
+                    </dt>
+                    <dd class="small">
+                        Days capacity
+                    </dd>
+                </dl>
+                <dl class="col bg-faded">
+                    <dt>
+                        @Model.Capacity.HoursTotalCount.ToString(Formats.NumberTwoDecimals)h
+                    </dt>
+                    <dd class="small">
+                        Hours capacity
+                    </dd>
+                </dl>
+                @if (!Model.Capacity.WorkDays.SequenceEqual(teamWorkDays) && Model.Capacity.TotalWorkDayCount > 0)
+                {
+                    <dl class="col bg-info text-white"
+                        title="@string.Join("\n", Model.Capacity.WorkDays.Select(x => x.ToString("yyyy-MM-dd")))">
+                        <dt>
+                            @(Model.Capacity.WorkDays.Count)d
+                            <small>
+                                (@Model.Capacity.WorkDayPercent.ToString(Formats.NumberNoDecimals)%)
+                            </small>
+                        </dt>
+                        <dd class="small">
+                            Work days
+                        </dd>
+                    </dl>
+                }
+            </div>
+        }
+    </div>
+</div>

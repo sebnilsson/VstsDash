@@ -29,6 +29,11 @@
 .flex-2 {
     flex: 2;
 }
+.btn-xs {
+    padding: 0.25rem 0.25rem;
+    font-size: 0.75rem;
+    border-radius: 0.15rem;
+}
 
 .border-white-1 {
     border: 1px solid #ccc;
@@ -119,6 +124,12 @@ body.dashboard .body-content-dashboard > .main-container > h1 {
 /*.teamboard-player-points-list li:nth-child(odd) {
     background-color: #ccc;
 }*/
+
+.teamboard-member-card {
+    max-width: 420px;
+    margin-left: auto;
+    margin-right: auto;
+}
 
 /* Work iterations */
 
