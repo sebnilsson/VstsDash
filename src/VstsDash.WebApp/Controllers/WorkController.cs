@@ -44,6 +44,7 @@ namespace VstsDash.WebApp.Controllers
                                        ?? throw new ArgumentNullException(nameof(workTeamBoardAppService));
         }
 
+        [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> Activity(
             string projectId = null,
             string teamId = null,
@@ -84,7 +85,7 @@ namespace VstsDash.WebApp.Controllers
 
             return View(model);
         }
-
+        
         public async Task<IActionResult> Sprint(string projectId = null, string teamId = null)
         {
             var ensuredProjectId = GetProjectIdOrDefault(projectId);
@@ -97,6 +98,7 @@ namespace VstsDash.WebApp.Controllers
             return Redirect(redirectUrl);
         }
 
+        [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> TeamBoard(
             string projectId = null,
             string teamId = null,
@@ -113,6 +115,7 @@ namespace VstsDash.WebApp.Controllers
             return View(model);
         }
 
+        [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> TeamBoardMember(
             Guid id,
             string projectId = null,
