@@ -184,7 +184,7 @@
                                             </small>
                                         </stat>
 
-                                        <stat value="@(authorCommit.AverageChangePerCommit != null ? authorCommit.AverageChangePerCommit.Value.ToString(Formats.NumberTwoDecimals) : "-")"
+                                        <stat value="@(authorCommit.MaxChangePerCommit != null ? authorCommit.MaxChangePerCommit.Value.ToString(Formats.NumberTwoDecimals) : "-")"
                                               description-css="mb-0" is-inverse="true">
                                             <small>
                                                 Most <icon value="@Icons.Change"/>/<icon value="@Icons.Commit"/>
