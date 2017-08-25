@@ -13,7 +13,7 @@ namespace VstsDash.AppServices.WorkTeamBoard
             bool hasBonus = false)
         {
             Type = type;
-            Value = !hasBonus ? value : (value + 1);
+            Value = value;
             Id = id;
             Description = description ?? throw new ArgumentNullException(nameof(description));
             EarnedAt = earnedAt;

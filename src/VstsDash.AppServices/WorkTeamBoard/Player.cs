@@ -16,8 +16,10 @@ namespace VstsDash.AppServices.WorkTeamBoard
             TeamMemberCapacity memberCapacity = null,
             Score score = null)
         {
-            if (teamMember == null) throw new ArgumentNullException(nameof(teamMember));
-            if (teamCapacity == null) throw new ArgumentNullException(nameof(teamCapacity));
+            if (teamMember == null)
+                throw new ArgumentNullException(nameof(teamMember));
+            if (teamCapacity == null)
+                throw new ArgumentNullException(nameof(teamCapacity));
 
             DisplayName = teamMember.DisplayName;
             Id = teamMember.Id;
@@ -69,7 +71,8 @@ namespace VstsDash.AppServices.WorkTeamBoard
             return points.Sum(
                 x =>
                 {
-                    var multipliedValue = x.Value * CapacityMultiplier;
+                    var value = x.HasBonus ? (x.Value + 1) : x.Value;
+                    var multipliedValue = value * CapacityMultiplier;
 
                     var roundedValue = Math.Floor(multipliedValue * 2) / 2;
                     return roundedValue;
