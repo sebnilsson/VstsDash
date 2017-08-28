@@ -100,21 +100,30 @@ namespace VstsDash.AppServices.WorkIteration
             TeamCapacity teamCapacity,
             ICollection<WorkItem> workIterationItems)
         {
-            foreach (var workDay in teamCapacity.IterationWorkDays)
-            {
-                var isWorkDay = !teamCapacity.TeamDaysOff.Contains(workDay);
-                var isPastWorkDay = isWorkDay && workDay <= DateTime.UtcNow.Date;
+            var doneWorkIterationItems = workIterationItems
+                .Where(x => x.IsStateDone && x.Effort > 0 )
+                .ToList();
 
-                var doneWorkIterationItems = workIterationItems
-                    .Where(
-                        x => x.IsStateDone && x.Effort > 0 && (x.ClosedDate ?? x.ChangedDate ?? DateTime.MaxValue).Date
-                             <= workDay.Date)
+            var doneWorkIterationItemDates = doneWorkIterationItems
+                .Select(x => (x.ClosedDate ?? x.ChangedDate ?? DateTime.MinValue).Date)
+                .Where(x => x > DateTime.MinValue)
+                .OrderBy(x => x)
+                .Distinct();
+            var dates = teamCapacity.IterationWorkDays.Union(doneWorkIterationItemDates).OrderBy(x => x).ToList();
+
+            foreach (var date in dates)
+            {
+                var isWorkDay = !teamCapacity.TeamDaysOff.Contains(date);
+                var isPastWorkDay = isWorkDay && date <= DateTime.UtcNow.Date;
+
+                var doneWorkDayItems = doneWorkIterationItems
+                    .Where(x => (x.ClosedDate ?? x.ChangedDate ?? DateTime.MinValue).Date <= date.Date)
                     .ToList();
 
                 var doneEffortSum = isPastWorkDay
-                                        ? (doneWorkIterationItems.Any() ? doneWorkIterationItems.Sum(x => x.Effort) : 0)
+                                        ? (doneWorkDayItems.Any() ? doneWorkDayItems.Sum(x => x.Effort) : 0)
                                         : (double?)null;
-                yield return new KeyValuePair<DateTime, double?>(workDay, doneEffortSum);
+                yield return new KeyValuePair<DateTime, double?>(date, doneEffortSum);
             }
         }
     }

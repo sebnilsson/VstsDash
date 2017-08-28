@@ -122,7 +122,12 @@ namespace VstsDash.WebApp.Controllers.Api
 
             var daysOff = memberCapacity?.DaysOff ?? teamCapacity.TeamDaysOff;
 
-            var dates = teamCapacity.IterationWorkDays;
+            var commitDates = commits
+                .Select(x => (x.Commit.AuthorDate ?? DateTime.MinValue).Date)
+                .Where(x => x > DateTime.MinValue)
+                .OrderBy(x => x)
+                .Distinct();
+            var dates = teamCapacity.IterationWorkDays.Union(commitDates).OrderBy(x => x).ToList();
 
             var isMember = memberId != null;
             var hasMemberActivities = memberCapacity?.HasAnyActivities ?? false;
