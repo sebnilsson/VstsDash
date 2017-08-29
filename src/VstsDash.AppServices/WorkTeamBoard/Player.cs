@@ -68,15 +68,15 @@ namespace VstsDash.AppServices.WorkTeamBoard
 
         private double GetScoreSum(IEnumerable<Point> points)
         {
-            return points.Sum(
+            var score = points.Sum(
                 x =>
                 {
                     var value = x.HasBonus ? (x.Value + 1) : x.Value;
-                    var multipliedValue = value * CapacityMultiplier;
-
-                    var roundedValue = Math.Floor(multipliedValue * 2) / 2;
-                    return roundedValue;
+                    return value * CapacityMultiplier;
                 });
+
+            var roundedScore = score.RoundToHalfs();
+            return roundedScore;
         }
     }
 }
