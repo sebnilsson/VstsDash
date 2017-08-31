@@ -23,6 +23,12 @@
 .flex-0 {
     flex: 0;
 }
+.flex-0-5 {
+    flex: 0.5;
+}
+.flex-0-25 {
+    flex: 0.25;
+}
 .flex-1 {
     flex: 1;
 }
