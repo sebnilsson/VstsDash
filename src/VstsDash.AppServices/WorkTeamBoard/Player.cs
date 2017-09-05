@@ -32,8 +32,8 @@ namespace VstsDash.AppServices.WorkTeamBoard
 
             Score = score ?? Score.Empty;
 
-            ScoreAssistsSum = GetScoreSum(Score.Assists);
-            ScoreGoalsSum = GetScoreSum(Score.Goals);
+            ScoreAssistsSum = Score.Assists.Sum(x => x.Value);
+            ScoreGoalsSum = Score.Goals.Sum(x => x.Value);
             ScorePointsSum = GetScoreSum(Score.Points);
         }
 
