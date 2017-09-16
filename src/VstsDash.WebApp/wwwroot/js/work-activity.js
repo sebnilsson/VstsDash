@@ -61,6 +61,16 @@
                     };
                     options.vAxes[0].minValue = 10;
 
+                    options.trendlines = {
+                        0: {
+                            type: 'polynomial', // 'linear'
+                            color: '#000000',
+                            opacity: 0.5,
+                            pointsVisible: false,
+                            showR2: true
+                        }
+                    };
+
                     charts.googleCharts.drawLineChart(dataTable, options, element);
                 });
             },
@@ -104,7 +114,7 @@
                                 options.vAxes[1].minValue = 0;
                                 options.vAxes[1].maxValue = params.memberMaxChanges;
                             }
-
+                            
                             charts.googleCharts.drawLineChart(dataTable, options, element);
                         });
                 }
@@ -145,10 +155,6 @@
         },
         googleCharts: {
             getOptions: function(data) {
-                //var hAxisTicks = data.map(function(x) {
-                //    return x[0];
-                //});
-
                 var hAxisMinValue = params.fromDate ? new Date(params.fromDate) : data[0][0];
                 var hAxisMaxValue = params.toDate ? new Date(params.toDate) : data[data.length - 1][0];
 
@@ -162,8 +168,7 @@
                     hAxis: {
                         format: "yyyy-MM-dd",
                         minValue: hAxisMinValue,
-                        maxValue: hAxisMaxValue,
-                        //ticks: hAxisTicks
+                        maxValue: hAxisMaxValue
                     },
                     vAxes: {
                         0: { title: "Commits" },
