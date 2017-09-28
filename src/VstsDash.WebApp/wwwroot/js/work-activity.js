@@ -63,7 +63,7 @@
 
                     options.trendlines = {
                         0: {
-                            type: 'polynomial', // 'linear'
+                            type: 'linear',
                             color: '#000000',
                             opacity: 0.5,
                             pointsVisible: false,
