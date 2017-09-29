@@ -64,7 +64,7 @@
                     options.trendlines = {
                         0: {
                             type: 'linear',
-                            color: '#000000',
+                            color: '#c240aa',
                             opacity: 0.5,
                             pointsVisible: false,
                             showR2: true
