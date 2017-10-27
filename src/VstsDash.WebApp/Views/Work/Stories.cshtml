@@ -12,6 +12,10 @@
     const string topStatsCssClass = "border-white-1 rounded ml-1 mr-1 pl-2 pr-2";
 
     const string topStatsCssStyle = "flex-basis: 100px;";
+
+    const int StoriesDoneTakeCount = 8;
+
+    const int StoriesInProgressTakeCount = 8;
 }
 
 <div class="activity-container main-container @(!isDashboard ? "container" : "container-fluid")">
@@ -67,14 +71,14 @@
                         <div class="card-block pl-1 pr-1 pt-0 pb-1">
                             <div class="progress mt-2">
                                 <div class="progress-bar bg-success" role="progressbar"
-                                     style="height: 20px; width: @(Model.StoryEffortsDonePercent)%;">
+                                     style="height: 24px; width: @(Model.StoryEffortsDonePercent)%;">
                                     @if (!isDashboard && Model.StoryEffortsDonePercent > 0)
                                     {
                                         @:@(Model.StoryEffortsDonePercent)%
                                     }
                                 </div>
                                 <div class="progress-bar bg-warning" role="progressbar"
-                                     style="height: 20px; width: @(Model.StoryEffortsInProgressPercent)%;">
+                                     style="height: 24px; width: @(Model.StoryEffortsInProgressPercent)%;">
                                     @if (!isDashboard && Model.StoryEffortsInProgressPercent > 0)
                                     {
                                         @:@(Model.StoryEffortsInProgressPercent)%
@@ -111,7 +115,7 @@
                         <div class="card-block pl-1 pr-1 pt-0 pb-1">
                             <div class="progress mt-2">
                                 <div class="progress-bar progress-bar-striped" role="progressbar"
-                                     style="height: 20px; width: @(Model.CapacityRemainingPercent)%;">
+                                     style="height: 24px; width: @(Model.CapacityRemainingPercent)%;">
                                     @if (!isDashboard && Model.CapacityRemainingPercent >= 0)
                                     {
                                         @:@(Model.CapacityRemainingPercent)%
@@ -129,17 +133,33 @@
         <h2 class="card-header card-success text-white h4 pl-2 pr-2 pt-1 pb-1">
             <icon value="check" />
             Stories done
+
+            @if (Model.StoriesDone.Any())
+            {
+                @:(@Model.StoriesDone.Count)
+            }
         </h2>
 
         <div class="card-block p-2">
             @if (Model.StoriesDone.Any())
             {
                 <div class="d-inline-flex flex-row flex-wrap align-items-stretch">
-                    @foreach (var story in Model.StoriesDone)
+                    @foreach (var story in Model.StoriesDone.Take(StoriesDoneTakeCount))
                     {
                         @Html.Partial("Stories/_Story", story)
                     }
                 </div>
+
+                if (Model.StoriesDone.Count > StoriesDoneTakeCount)
+                {
+                    <div class="ml-2 mr-2 mt-1 text-center">
+                        <div class="card card-outline-secondary col-lg-4 offset-lg-4 col-md-6 offset-md-3 col-sm-8 offset-sm-2">
+                            <div class="card-block pl-2 pr-2 pt-0 pb-0">
+                                ...
+                            </div>
+                        </div>
+                    </div>
+                }
             }
             else
             {
@@ -152,17 +172,33 @@
         <h2 class="card-header card-warning text-white h4 pt-1 pb-1 pl-2 pr-2">
             <icon value="code" />
             Stories in progress
+
+            @if (Model.StoriesInProgress.Any())
+            {
+                @:(@Model.StoriesInProgress.Count)
+            }
         </h2>
 
         <div class="card-block bg-faded p-2">
             @if (Model.StoriesInProgress.Any())
             {
                 <div class="d-flex d-inline-flex flex-wrap align-items-stretch">
-                    @foreach (var story in Model.StoriesDone)
+                    @foreach (var story in Model.StoriesInProgress.Take(StoriesInProgressTakeCount))
                     {
                         @Html.Partial("Stories/_Story", story, new ViewDataDictionary(ViewData) {{"IsInProgress", true}})
                     }
                 </div>
+
+                if (Model.StoriesInProgress.Count > StoriesInProgressTakeCount)
+                {
+                    <div class="ml-2 mr-2 mt-1 bg-faded text-center">
+                        <div class="card card-outline-secondary col-lg-4 offset-lg-4 col-md-6 offset-md-3 col-sm-8 offset-sm-2">
+                            <div class="card-block pl-2 pr-2 pt-0 pb-0">
+                                ...
+                            </div>
+                        </div>
+                    </div>
+                }
             }
             else
             {

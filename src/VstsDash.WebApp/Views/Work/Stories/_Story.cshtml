@@ -4,58 +4,64 @@
 
     var isInProgress = ViewData["IsInProgress"] as bool? ?? false;
 
-    const string storyCssClass = "col-lg-6 col-md-12";
+    const string storyCssClass = "col-lg-6 pl-2 pr-2 pt-1 pb-1";
 }
 
-<div class="@storyCssClass p-2">
+<div class="@storyCssClass">
     <div class="card @(!isInProgress ? "card-outline-success" : "card-outline-secondary") h-100">
-        <h3 class="card-header @(!isInProgress ? "h5 bg-inverse text-white" : "h6") pl-2 pr-2 pb-2 pt-1">
-            <small>
+        <h3 class="card-header d-flex h6 @(!isInProgress ? "bg-inverse text-white" : "small") p-2">
+            <small class="align-self-center">
                 <code>@Model.Id</code>
             </small>
-
-            @Model.Title
+            
+            <span class="flex-1 pl-2">
+                @Model.Title
+            </span>
         </h3>
 
-        <div class="card-block pl-2 pr-2 pt-1 pb-1 @(isInProgress ? "bg-faded" : null)" title="@Model.MemberId">
+        <div class="card-block pl-2 pr-2 pt-1 pb-1 @(isInProgress ? "bg-faded" : null)">
             <div class="d-flex">
-                @if (!string.IsNullOrWhiteSpace(Model.MemberImageUrl))
-                {
-                    <img src="@Url.ApiFile(Model.MemberImageUrl)" class="teamboard-player-image rounded align-self-center mr-2"/>
-                }
-                <div class="align-self-center">
-                    <h4 class="m-0 align-self-center one-line  @(!isInProgress ? "h5" : "h6")">
-                        @Model.MemberDisplayName
-                        
+                <div class="d-flex flex-1">
+                    @if (!string.IsNullOrWhiteSpace(Model.MemberImageUrl))
+                    {
+                        <img src="@Url.ApiFile(Model.MemberImageUrl)" class="teamboard-player-image rounded align-self-center mr-2"/>
+                    }
+                    <div class="align-self-center">
+                        <h4 class="m-0 align-self-center one-line h6" title="@Model.MemberId">
+                            @Model.MemberDisplayName
+                        </h4>
+
                         @if (Model.ClosedDate != null)
                         {
-                            <small>@Model.ClosedDate.Value.ToString("yyyy-MM-dd")</small>
+                            @Model.ClosedDate.Value.ToString("yyyy-MM-dd")
                         }
-                    </h4>
+                    </div>
                 </div>
+
+                @if (!isInProgress && Model.Assists.Any())
+                {
+                    <div class="align-self-start text-muted">
+                        @foreach (var assist in Model.Assists)
+                        {
+                            var isFirst = assist.Name == Model.Assists.Select(x => x.Name).First();
+
+                            <div class="d-flex flex-row bg-faded border-gray-1 rounded p-1 @(!isFirst ? "mt-1" : null)">
+                                @if (!string.IsNullOrWhiteSpace(assist.MemberImageUrl))
+                                {
+                                    <img src="@Url.ApiFile(assist.MemberImageUrl)"
+                                         class="teamboard-player-image rounded align-self-center mr-2"
+                                         style="max-height: 22px; max-width: 22px;"/>
+                                }
+                                <div class="align-self-center">
+                                    <h4 class="m-0 align-self-center one-line h6 small">
+                                        @assist.Name
+                                    </h4>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
             </div>
         </div>
-
-        @if (!isInProgress && Model.Assists.Any())
-        {
-            <div class="card-footer pl-0 pr-2 pt-1 pb-1 text-muted small">
-                <div class="d-flex">
-                    @foreach (var assist in Model.Assists)
-                    {
-                        if (!string.IsNullOrWhiteSpace(assist.MemberImageUrl))
-                        {
-                            <img src="@Url.ApiFile(assist.MemberImageUrl)"
-                                 class="teamboard-player-image rounded align-self-center ml-2 mr-2"
-                                 style="max-height: 22px; max-width: 22px;"/>
-                        }
-                        <div class="align-self-center">
-                            <h4 class="m-0 align-self-center one-line h6">
-                                @assist.Name
-                            </h4>
-                        </div>
-                    }
-                </div>
-                </div>
-        }
     </div>
 </div>

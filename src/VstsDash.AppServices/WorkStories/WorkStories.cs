@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using VstsDash.AppServices.WorkIteration;
+using VstsDash.AppServices.WorkTeamBoard;
 using VstsDash.RestApi.ApiResponses;
 
 namespace VstsDash.AppServices.WorkStories
@@ -43,7 +44,9 @@ namespace VstsDash.AppServices.WorkStories
         {
             var items = workIteration.Items ?? Enumerable.Empty<WorkItem>();
 
-            return items.Where(x => x.IsTypeProductBacklogItem && x.AssignedToMember != null)
+            return items
+                .Where(x => x.IsTypeProductBacklogItem && x.AssignedToMember != null &&
+                            !x.Tags.Contains(TeamBoard.WorkItemExcludeTagName))
                 .Select(x => new Story(x))
                 .OrderByDescending(x => x.ClosedDate)
                 .ThenByDescending(x => x.ChangedDate)
