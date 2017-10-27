@@ -22,8 +22,6 @@ namespace VstsDash.WebApp.ViewModels
 
         public IReadOnlyCollection<Story> StoriesInProgress => GetStoriesInProgress();
 
-        public double StoryEffortsTotal => GetStoryEffortsTotal();
-
         public double StoryEffortsInProgress => GetStoryEffortsInProgress();
 
         public int StoryEffortsInProgressPercent => GetStoryEffortsInProgressPercent();
@@ -31,6 +29,8 @@ namespace VstsDash.WebApp.ViewModels
         public double StoryEffortsDone => GetStoryEffortsDone();
 
         public int StoryEffortsDonePercent => GetStoryEffortsDonePercent();
+
+        public double StoryEffortsTotal { get; set; }
 
         public WorkStoriesTeamCapacity TeamCapacity { get; set; }
 
@@ -91,11 +91,6 @@ namespace VstsDash.WebApp.ViewModels
         {
             var percent = StoryEffortsTotal > 0 ? (int) (StoryEffortsInProgress / StoryEffortsTotal * 100) : 0;
             return percent.Clamp(0, 100);
-        }
-
-        private double GetStoryEffortsTotal()
-        {
-            return Stories.Sum(x => x.Effort);
         }
 
         public class Story

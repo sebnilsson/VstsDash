@@ -27,6 +27,8 @@ namespace VstsDash.AppServices.WorkStories
             ToDate = toDate;
             IterationName = iteration.Name;
 
+            StoryEffortsTotal = workIteration.Items.Sum(x => x.Effort);
+
             Stories = GetStoryItems(workIteration);
         }
 
@@ -35,6 +37,8 @@ namespace VstsDash.AppServices.WorkStories
         public string IterationName { get; }
 
         public IReadOnlyCollection<Story> Stories { get; }
+
+        public double StoryEffortsTotal { get; }
 
         public TeamCapacity TeamCapacity { get; }
 
