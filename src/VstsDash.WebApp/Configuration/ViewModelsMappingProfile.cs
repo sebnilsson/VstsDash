@@ -5,6 +5,7 @@ using AutoMapper;
 using VstsDash.AppServices.TeamMeta;
 using VstsDash.AppServices.WorkActivity;
 using VstsDash.AppServices.WorkIteration;
+using VstsDash.AppServices.WorkStories;
 using VstsDash.AppServices.WorkTeamBoard;
 using VstsDash.WebApp.ViewModels;
 
@@ -17,6 +18,8 @@ namespace VstsDash.WebApp.Configuration
             MapHomeMetaViewModel();
 
             MapWorkActivityViewModel();
+
+            MapWorkStoriesViewModel();
 
             MapWorkTeamBoardViewModel();
         }
@@ -84,6 +87,15 @@ namespace VstsDash.WebApp.Configuration
                 .ForMember(
                     dest => dest.AuthorCommits,
                     opt => opt.MapFrom(src => src.AuthorCommits.OrderByDescending(ac => ac.Commits.Count)));
+        }
+
+        private void MapWorkStoriesViewModel()
+        {
+            CreateMap<WorkStories, WorkStoriesViewModel>();
+            CreateMap<Story, WorkStoriesViewModel.Story>();
+            CreateMap<StoryState, WorkStoriesViewModel.Story.StoryState>();
+            CreateMap<TeamCapacity, WorkStoriesViewModel.WorkStoriesTeamCapacity>();
+            CreateMap<TeamMemberCapacity, WorkStoriesViewModel.WorkStoriesTeamCapacity.WorkStoriesTeamCapacityMember>();
         }
 
         private void MapWorkTeamBoardViewModel()

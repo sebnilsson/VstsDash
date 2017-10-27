@@ -30,14 +30,9 @@
     @if (!isDashboard)
     {
         <a href="@Url.WorkActivity(projectId, teamId, iterationId, true)"
-           class="btn btn-outline-success btn-sm">
+           class="btn btn-outline-success btn-sm hidden-sm-down">
             <icon value="@Icons.Dashboard"/>
-            Dashboard
-        </a>
-        <a href="@Url.WorkTeamBoard(projectId, teamId, iterationId)"
-           class="btn btn-warning btn-sm">
-            <icon value="@Icons.TeamBoard"/>
-            Team board
+            Dashboard mode
         </a>
     }
 

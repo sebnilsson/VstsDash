@@ -21,13 +21,9 @@ namespace VstsDash.AppServices.WorkActivity
                                                                           };
 
         private readonly ICache _cache;
-
         private readonly IGitApiService _gitApi;
-
         private readonly IIterationsApiService _iterationsApi;
-
         private readonly ITeamsApiService _teamsApi;
-
         private readonly WorkIterationAppService _workIterationAppService;
 
         public WorkActivityAppService(

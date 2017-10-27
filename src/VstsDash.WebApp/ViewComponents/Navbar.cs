@@ -28,8 +28,9 @@ namespace VstsDash.WebApp.ViewComponents
 
         private IEnumerable<KeyValuePair<string, string>> GetItems()
         {
-            yield return new KeyValuePair<string, string>("Activity", Url.WorkActivity());
-            yield return new KeyValuePair<string, string>("Team board", Url.WorkTeamBoard());
+            yield return new KeyValuePair<string, string>("Activity", Url.WorkActivity(true));
+            yield return new KeyValuePair<string, string>("Stories", Url.WorkStories(true));
+            yield return new KeyValuePair<string, string>("Team board", Url.WorkTeamBoard(true));
         }
     }
 }

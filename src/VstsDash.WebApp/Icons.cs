@@ -18,8 +18,10 @@
 
         public const string Goal = "fa-futbol-o";
 
-        public const string TeamBoard = "fa-futbol-o";
-
         public const string Point = "fa-check-square-o";
+
+        public const string Stories = "fa-list-ul";
+
+        public const string TeamBoard = "fa-futbol-o";
     }
 }

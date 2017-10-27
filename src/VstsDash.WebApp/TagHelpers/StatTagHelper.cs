@@ -17,6 +17,9 @@ namespace VstsDash.WebApp.TagHelpers
         [HtmlAttributeName("class")]
         public string CssClass { get; set; }
 
+        [HtmlAttributeName("style")]
+        public string CssStyle { get; set; }
+
         [HtmlAttributeName("description")]
         public string Description { get; set; }
 
@@ -60,6 +63,11 @@ namespace VstsDash.WebApp.TagHelpers
                                : $"{DefaultCssClass} {CssClass}".Trim();
 
             output.Attributes.SetAttribute("class", cssClass);
+
+            if (!string.IsNullOrWhiteSpace(CssStyle))
+            {
+                output.Attributes.SetAttribute("style", CssStyle);
+            }
 
             if (!string.IsNullOrWhiteSpace(Title)) output.Attributes.SetAttribute("title", Title);
 

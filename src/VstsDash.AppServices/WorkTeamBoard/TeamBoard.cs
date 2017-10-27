@@ -10,9 +10,7 @@ namespace VstsDash.AppServices.WorkTeamBoard
     public class TeamBoard
     {
         public const string WorkItemAssistTagName = "dash-assist";
-
         public const string WorkItemBonusTagName = "dash-bonus";
-
         public const string WorkItemExcludeTagName = "dash-exclude";
 
         public TeamBoard(
@@ -22,11 +20,16 @@ namespace VstsDash.AppServices.WorkTeamBoard
             IterationDaysOffApiResponse teamDaysOff,
             Iteration workIteration)
         {
-            if (teamMembers == null) throw new ArgumentNullException(nameof(teamMembers));
-            if (iteration == null) throw new ArgumentNullException(nameof(iteration));
-            if (capacities == null) throw new ArgumentNullException(nameof(capacities));
-            if (teamDaysOff == null) throw new ArgumentNullException(nameof(teamDaysOff));
-            if (workIteration == null) throw new ArgumentNullException(nameof(workIteration));
+            if (teamMembers == null)
+                throw new ArgumentNullException(nameof(teamMembers));
+            if (iteration == null)
+                throw new ArgumentNullException(nameof(iteration));
+            if (capacities == null)
+                throw new ArgumentNullException(nameof(capacities));
+            if (teamDaysOff == null)
+                throw new ArgumentNullException(nameof(teamDaysOff));
+            if (workIteration == null)
+                throw new ArgumentNullException(nameof(workIteration));
 
             IterationName = iteration.Name;
 
@@ -96,20 +99,20 @@ namespace VstsDash.AppServices.WorkTeamBoard
             IDictionary<Guid, Score> scores)
         {
             return from teamMember in teamMembers
-                   let memberCapacity = teamCapacity.Members.FirstOrDefault(x => x.MemberId == teamMember.Id)
-                   let memberScore = scores.Where(x => x.Key == teamMember.Id).Select(x => x.Value).FirstOrDefault()
-                   select new Player(teamMember, teamCapacity, memberCapacity, memberScore);
+                let memberCapacity = teamCapacity.Members.FirstOrDefault(x => x.MemberId == teamMember.Id)
+                let memberScore = scores.Where(x => x.Key == teamMember.Id).Select(x => x.Value).FirstOrDefault()
+                select new Player(teamMember, teamCapacity, memberCapacity, memberScore);
         }
 
         private static IEnumerable<WorkItem> GetWorkItems(Iteration workIteration)
         {
-            var workItems = workIteration.Items.Where(
-                    x => !x.Tags.Contains(WorkItemExcludeTagName, StringComparer.OrdinalIgnoreCase))
+            var workItems = workIteration.Items
+                .Where(x => !x.Tags.Contains(WorkItemExcludeTagName, StringComparer.OrdinalIgnoreCase))
                 .ToList();
 
             foreach (var item in workItems)
-                item.ChildItems = item.ChildItems.Where(
-                        c => !c.Tags.Contains(WorkItemExcludeTagName, StringComparer.OrdinalIgnoreCase))
+                item.ChildItems = item.ChildItems
+                    .Where(c => !c.Tags.Contains(WorkItemExcludeTagName, StringComparer.OrdinalIgnoreCase))
                     .ToList();
 
             return workItems;

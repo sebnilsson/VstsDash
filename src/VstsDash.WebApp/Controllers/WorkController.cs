@@ -5,6 +5,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using VstsDash.AppServices.WorkActivity;
 using VstsDash.AppServices.WorkIteration;
+using VstsDash.AppServices.WorkStories;
 using VstsDash.AppServices.WorkTeamBoard;
 using VstsDash.RestApi;
 using VstsDash.WebApp.ViewModels;
@@ -14,13 +15,10 @@ namespace VstsDash.WebApp.Controllers
     public class WorkController : ControllerBase
     {
         private readonly IMapper _mapper;
-
         private readonly WorkActivityAppService _workActivityAppService;
-
         private readonly IWorkApiService _workApi;
-
         private readonly WorkIterationAppService _workIterationAppService;
-
+        private readonly WorkStoriesAppService _workStoriesAppService;
         private readonly WorkTeamBoardAppService _workTeamBoardAppService;
 
         public WorkController(
@@ -29,22 +27,24 @@ namespace VstsDash.WebApp.Controllers
             IWorkApiService workApi,
             WorkIterationAppService workIterationAppService,
             WorkActivityAppService workActivityAppService,
-            WorkTeamBoardAppService workTeamBoardAppService)
-            : base(appSettings, workApi)
+            WorkStoriesAppService workStoriesAppService,
+            WorkTeamBoardAppService workTeamBoardAppService) : base(appSettings, workApi)
         {
-            if (appSettings == null) throw new ArgumentNullException(nameof(appSettings));
+            if (appSettings == null)
+                throw new ArgumentNullException(nameof(appSettings));
 
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _workApi = workApi ?? throw new ArgumentNullException(nameof(workApi));
-            _workActivityAppService = workActivityAppService
-                                      ?? throw new ArgumentNullException(nameof(workActivityAppService));
-            _workIterationAppService = workIterationAppService
-                                       ?? throw new ArgumentNullException(nameof(workIterationAppService));
-            _workTeamBoardAppService = workTeamBoardAppService
-                                       ?? throw new ArgumentNullException(nameof(workTeamBoardAppService));
+            _workActivityAppService =
+                workActivityAppService ?? throw new ArgumentNullException(nameof(workActivityAppService));
+            _workIterationAppService = workIterationAppService ??
+                                       throw new ArgumentNullException(nameof(workIterationAppService));
+            _workStoriesAppService =
+                workStoriesAppService ?? throw new ArgumentNullException(nameof(workStoriesAppService));
+            _workTeamBoardAppService = workTeamBoardAppService ??
+                                       throw new ArgumentNullException(nameof(workTeamBoardAppService));
         }
 
-        [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> Activity(
             string projectId = null,
             string teamId = null,
@@ -85,7 +85,7 @@ namespace VstsDash.WebApp.Controllers
 
             return View(model);
         }
-        
+
         public async Task<IActionResult> Sprint(string projectId = null, string teamId = null)
         {
             var ensuredProjectId = GetProjectIdOrDefault(projectId);
@@ -98,7 +98,20 @@ namespace VstsDash.WebApp.Controllers
             return Redirect(redirectUrl);
         }
 
-        [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
+        public async Task<IActionResult> Stories(
+            string projectId = null,
+            string teamId = null,
+            string iterationId = null)
+        {
+            var idParams = await GetEnsuredIdParams(projectId, teamId, iterationId);
+
+            var workStories =
+                await _workStoriesAppService.GetStories(idParams.ProjectId, idParams.TeamId, idParams.IterationId);
+
+            var model = _mapper.Map<WorkStoriesViewModel>(workStories);
+            return View(model);
+        }
+
         public async Task<IActionResult> TeamBoard(
             string projectId = null,
             string teamId = null,
@@ -115,7 +128,6 @@ namespace VstsDash.WebApp.Controllers
             return View(model);
         }
 
-        [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> TeamBoardMember(
             Guid id,
             string projectId = null,

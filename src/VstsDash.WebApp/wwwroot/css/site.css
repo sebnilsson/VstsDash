@@ -56,6 +56,15 @@
 .border-right-1 {
     border-right: 1px solid #000;
 }
+.border-primary {
+    border-color: #0275d8 !important;
+}
+.border-success {
+    border-color: #5cb85c !important;
+}
+.border-warning {
+    border-color: #f0ad4e !important;
+}
 
 /* Dashboard-mode */
 body.dashboard {

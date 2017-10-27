@@ -1,0 +1,173 @@
+﻿@model WorkStoriesViewModel
+@{
+    var isDashboard = Context.Request.IsDashboard();
+
+    var requestQuery = Context.Request.Query;
+    var projectId = requestQuery["projectId"];
+    var teamId = requestQuery["teamId"];
+    var iterationId = requestQuery["iterationId"];
+
+    var dateText = $"{Model.FromDate:yyyy-MM-dd} - {Model.ToDate:yyyy-MM-dd}";
+
+    const string topStatsCssClass = "border-white-1 rounded ml-1 mr-1 pl-2 pr-2";
+
+    const string topStatsCssStyle = "flex-basis: 100px;";
+}
+
+<div class="activity-container main-container @(!isDashboard ? "container" : "container-fluid")">
+    <h1 class="h2">
+        <icon value="@Icons.Stories"/>
+        <strong>Stories</strong>@(!string.IsNullOrWhiteSpace(Model.IterationName) ? $": {Model.IterationName}" : null)
+
+        @if (!isDashboard)
+        {
+            <a href="@Url.WorkStories(projectId, teamId, iterationId, true)"
+               class="btn btn-outline-success btn-sm hidden-sm-down">
+                <icon value="@Icons.Dashboard"/>
+                Dashboard mode
+            </a>
+        }
+
+        @if (!string.IsNullOrWhiteSpace(dateText))
+        {
+            <small>@dateText</small>
+        }
+    </h1>
+</div>
+
+<div class="activity-container main-container container">
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="card card-outline-primary">
+                <h2 class="card-header h5 pl-2 pr-2 pt-1 pb-1">
+                    Efforts
+                </h2>
+
+                <div class="card-block p-1">
+                    <div class="d-flex flex-row justify-content-center text-center">
+                        <stat value="@Model.StoryEffortsTotal" description="Total"
+                              class="@topStatsCssClass bg-faded"
+                              style="@topStatsCssStyle"
+                              is-inverse="true"
+                              value-css="h4 mb-0"/>
+
+                        <stat value="@Model.StoryEffortsInProgress" description="In progress"
+                              class="@topStatsCssClass bg-faded border-warning"
+                              style="@topStatsCssStyle"
+                              value-css="h4 mb-0"/>
+
+                        <stat value="@Model.StoryEffortsDone" description="Done"
+                              class="@topStatsCssClass bg-faded border-success"
+                              style="@topStatsCssStyle"
+                              value-css="h4 mb-0"/>
+                    </div>
+
+                    @if (Model.StoryEffortsTotal > 0)
+                    {
+                        <div class="card-block pl-1 pr-1 pt-0 pb-1">
+                            <div class="progress mt-2">
+                                <div class="progress-bar bg-success" role="progressbar"
+                                     style="height: 20px; width: @(Model.StoryEffortsDonePercent)%;">
+                                    @if (!isDashboard && Model.StoryEffortsDonePercent > 0)
+                                    {
+                                        @:@(Model.StoryEffortsDonePercent)%
+                                    }
+                                </div>
+                                <div class="progress-bar bg-warning" role="progressbar"
+                                     style="height: 20px; width: @(Model.StoryEffortsInProgressPercent)%;">
+                                    @if (!isDashboard && Model.StoryEffortsInProgressPercent > 0)
+                                    {
+                                        @:@(Model.StoryEffortsInProgressPercent)%
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card card-outline-warning">
+                <h2 class="card-header h5 pl-2 pr-2 pt-1 pb-1">
+                    Capacity
+                </h2>
+
+                <div class="card-block p-1">
+                    <div class="d-flex flex-row justify-content-center text-center">
+                        <stat value="@(Model.CapacityTotal)h" description="Total"
+                              class="@topStatsCssClass bg-faded"
+                              style="@topStatsCssStyle"
+                              is-inverse="true"
+                              value-css="h4 mb-0"/>
+
+                        <stat value="@(Model.CapacityRemaining)h" description="Remaining"
+                              class="@topStatsCssClass bg-faded border-primary"
+                              style="@topStatsCssStyle"
+                              value-css="h4 mb-0"/>
+                    </div>
+                    @if (Model.CapacityTotal > 0)
+                    {
+                        <div class="card-block pl-1 pr-1 pt-0 pb-1">
+                            <div class="progress mt-2">
+                                <div class="progress-bar progress-bar-striped" role="progressbar"
+                                     style="height: 20px; width: @(Model.CapacityRemainingPercent)%;">
+                                    @if (!isDashboard && Model.CapacityRemainingPercent >= 0)
+                                    {
+                                        @:@(Model.CapacityRemainingPercent)%
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card card-outline-success mt-2">
+        <h2 class="card-header card-success text-white h4 pl-2 pr-2 pt-1 pb-1">
+            <icon value="check" />
+            Stories done
+        </h2>
+
+        <div class="card-block p-2">
+            @if (Model.StoriesDone.Any())
+            {
+                <div class="d-inline-flex flex-row flex-wrap align-items-stretch">
+                    @foreach (var story in Model.StoriesDone)
+                    {
+                        @Html.Partial("Stories/_Story", story)
+                    }
+                </div>
+            }
+            else
+            {
+                <em>No stories done yet...</em>
+            }
+        </div>
+    </div>
+
+    <div class="card card-outline-warning mt-2">
+        <h2 class="card-header card-warning text-white h4 pt-1 pb-1 pl-2 pr-2">
+            <icon value="code" />
+            Stories in progress
+        </h2>
+
+        <div class="card-block bg-faded p-2">
+            @if (Model.StoriesInProgress.Any())
+            {
+                <div class="d-flex d-inline-flex flex-wrap align-items-stretch">
+                    @foreach (var story in Model.StoriesDone)
+                    {
+                        @Html.Partial("Stories/_Story", story, new ViewDataDictionary(ViewData) {{"IsInProgress", true}})
+                    }
+                </div>
+            }
+            else
+            {
+                <em>No stories in progress yet...</em>
+            }
+        </div>
+    </div>
+</div>

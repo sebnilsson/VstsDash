@@ -89,10 +89,16 @@
                                                             Activity
                                                         </a>
 
+                                                        <a href="@Url.WorkStories(project.Id, team.Id, iteration.Id)"
+                                                           class="btn btn-success btn-sm">
+                                                            @Html.Icon(Icons.Stories, "fa-fw")
+                                                            Stories
+                                                        </a>
+
                                                         <a href="@Url.WorkTeamBoard(project.Id, team.Id, iteration.Id)"
                                                            class="btn btn-warning btn-sm">
                                                             @Html.Icon(Icons.TeamBoard, "fa-fw")
-                                                            Team board
+                                                            Team
                                                         </a>
                                                     </div>
                                                 </div>

@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Routing;
 
 namespace VstsDash.WebApp
 {
@@ -21,6 +22,19 @@ namespace VstsDash.WebApp
         }
 
         public static string WorkActivity(
+            this IUrlHelper urlHelper,
+            bool inheritRouteValues)
+        {
+            var query = urlHelper.ActionContext.HttpContext.Request.Query;
+
+            var projectId = Convert.ToString(query["projectId"]);
+            var teamId = Convert.ToString(query["teamId"]);
+            var iterationId = Convert.ToString(query["iterationId"]);
+            
+            return urlHelper.WorkActivity(projectId, teamId, iterationId, false);  
+        }
+
+            public static string WorkActivity(
             this IUrlHelper urlHelper,
             string projectId = null,
             string teamId = null,
@@ -86,6 +100,52 @@ namespace VstsDash.WebApp
                     projectId,
                     teamId
                 });
+        }
+
+        public static string WorkStories(
+            this IUrlHelper urlHelper,
+            bool inheritRouteValues)
+        {
+            var query = urlHelper.ActionContext.HttpContext.Request.Query;
+
+            var projectId = Convert.ToString(query["projectId"]);
+            var teamId = Convert.ToString(query["teamId"]);
+            var iterationId = Convert.ToString(query["iterationId"]);
+
+            return urlHelper.WorkStories(projectId, teamId, iterationId, false);
+        }
+
+        public static string WorkStories(
+            this IUrlHelper urlHelper,
+            string projectId = null,
+            string teamId = null,
+            string iterationId = null,
+            bool isDashboard = false)
+        {
+            return urlHelper.RouteUrl(
+                RouteNames.Default,
+                new
+                {
+                    Controller = "Work",
+                    Action = "Stories",
+                    projectId,
+                    teamId,
+                    iterationId,
+                    dashboard = isDashboard ? "1" : null
+                });
+        }
+
+        public static string WorkTeamBoard(
+            this IUrlHelper urlHelper,
+            bool inheritRouteValues)
+        {
+            var query = urlHelper.ActionContext.HttpContext.Request.Query;
+
+            var projectId = Convert.ToString(query["projectId"]);
+            var teamId = Convert.ToString(query["teamId"]);
+            var iterationId = Convert.ToString(query["iterationId"]);
+
+            return urlHelper.WorkTeamBoard(projectId, teamId, iterationId, false);
         }
 
         public static string WorkTeamBoard(
