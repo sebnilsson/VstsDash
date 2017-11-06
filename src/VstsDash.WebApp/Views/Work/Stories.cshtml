@@ -70,14 +70,14 @@
                     {
                         <div class="card-block pl-1 pr-1 pt-0 pb-1">
                             <div class="progress mt-2">
-                                <div class="progress-bar bg-success" role="progressbar"
+                                <div class="progress-bar bg-success d-flex align-items-center justify-content-center" role="progressbar"
                                      style="height: 24px; width: @(Model.EffortsDonePercent)%;">
                                     @if (!isDashboard && Model.EffortsDonePercent > 0)
                                     {
                                         @:@(Model.EffortsDonePercent)%
                                     }
                                 </div>
-                                <div class="progress-bar bg-warning" role="progressbar"
+                                <div class="progress-bar bg-warning d-flex align-items-center justify-content-center" role="progressbar"
                                      style="height: 24px; width: @(Model.EffortsInProgressPercent)%;">
                                     @if (!isDashboard && Model.EffortsInProgressPercent > 0)
                                     {
@@ -114,7 +114,7 @@
                     {
                         <div class="card-block pl-1 pr-1 pt-0 pb-1">
                             <div class="progress mt-2">
-                                <div class="progress-bar progress-bar-striped" role="progressbar"
+                                <div class="progress-bar progress-bar-striped d-flex align-items-center justify-content-center" role="progressbar"
                                      style="height: 24px; width: @(Model.CapacityRemainingPercent)%;">
                                     @if (!isDashboard && Model.CapacityRemainingPercent >= 0)
                                     {
