@@ -3,11 +3,9 @@
     var isDashboard = Context.Request.IsDashboard();
 
     var isInProgress = ViewData["IsInProgress"] as bool? ?? false;
-
-    const string storyCssClass = "col-lg-6 pl-2 pr-2 pt-1 pb-1";
 }
 
-<div class="@storyCssClass">
+<div class="col-lg-6 pl-2 pr-2 pt-1 pb-1">
     <div class="card @(!isInProgress ? "card-outline-success" : "card-outline-secondary") h-100">
         <h3 class="card-header d-flex h6 @(!isInProgress ? "bg-inverse text-white" : "small") p-2">
             <small class="align-self-center">
@@ -17,6 +15,13 @@
             <span class="flex-1 pl-2">
                 @Model.Title
             </span>
+            
+            @if (Model.IsBug)
+            {
+                <span class="badge badge-danger align-self-center">
+                    <icon value="bug" />
+                </span>
+            }
         </h3>
 
         <div class="card-block pl-2 pr-2 pt-1 pb-1 @(isInProgress ? "bg-faded" : null)">

@@ -6,6 +6,8 @@ namespace VstsDash.WebApp.ViewModels
 {
     public class WorkStoriesViewModel
     {
+        public IReadOnlyCollection<Story> AllParentWorkItems { get; set; }
+
         public double CapacityTotal => GetCapacityTotal();
 
         public double CapacityRemaining => GetCapacityRemaining();
@@ -22,15 +24,15 @@ namespace VstsDash.WebApp.ViewModels
 
         public IReadOnlyCollection<Story> StoriesInProgress => GetStoriesInProgress();
 
-        public double StoryEffortsInProgress => GetStoryEffortsInProgress();
+        public double EffortsInProgress => GetEffortsInProgress();
 
-        public int StoryEffortsInProgressPercent => GetStoryEffortsInProgressPercent();
+        public int EffortsInProgressPercent => GetEffortsInProgressPercent();
 
-        public double StoryEffortsDone => GetStoryEffortsDone();
+        public double EffortsDone => GetEffortsDone();
 
-        public int StoryEffortsDonePercent => GetStoryEffortsDonePercent();
+        public int EffortsDonePercent => GetEffortsDonePercent();
 
-        public double StoryEffortsTotal { get; set; }
+        public double EffortsTotal => GetEffortsTotal();
 
         public WorkStoriesTeamCapacity TeamCapacity { get; set; }
 
@@ -71,26 +73,31 @@ namespace VstsDash.WebApp.ViewModels
             return Stories.Where(x => x.State == Story.StoryState.InProgress).ToList();
         }
 
-        private double GetStoryEffortsDone()
+        private double GetEffortsDone()
         {
-            return Stories.Where(x => x.State == Story.StoryState.Done).Sum(x => x.Effort);
+            return AllParentWorkItems.Where(x => x.State == Story.StoryState.Done).Sum(x => x.Effort);
         }
 
-        private int GetStoryEffortsDonePercent()
+        private int GetEffortsDonePercent()
         {
-            var percent = StoryEffortsTotal > 0 ? (int) (StoryEffortsDone / StoryEffortsTotal * 100) : 0;
+            var percent = EffortsTotal > 0 ? (int) (EffortsDone / EffortsTotal * 100) : 0;
             return percent.Clamp(0, 100);
         }
 
-        private double GetStoryEffortsInProgress()
+        private double GetEffortsInProgress()
         {
-            return Stories.Where(x => x.State == Story.StoryState.InProgress).Sum(x => x.Effort);
+            return AllParentWorkItems.Where(x => x.State == Story.StoryState.InProgress).Sum(x => x.Effort);
         }
 
-        private int GetStoryEffortsInProgressPercent()
+        private int GetEffortsInProgressPercent()
         {
-            var percent = StoryEffortsTotal > 0 ? (int) (StoryEffortsInProgress / StoryEffortsTotal * 100) : 0;
+            var percent = EffortsTotal > 0 ? (int) (EffortsInProgress / EffortsTotal * 100) : 0;
             return percent.Clamp(0, 100);
+        }
+
+        private double GetEffortsTotal()
+        {
+            return AllParentWorkItems.Sum(x => x.Effort);
         }
 
         public class Story
@@ -113,6 +120,10 @@ namespace VstsDash.WebApp.ViewModels
             public double Effort { get; set; }
 
             public long Id { get; set; }
+
+            public bool IsBug { get; set; }
+
+            public bool IsStory { get; set; }
 
             public string MemberDisplayName { get; set; }
 

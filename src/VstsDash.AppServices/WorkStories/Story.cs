@@ -17,10 +17,12 @@ namespace VstsDash.AppServices.WorkStories
             CreatedDate = workItem.CreatedDate;
             Effort = workItem.Effort;
             Id = workItem.Id;
-            MemberDisplayName = workItem.AssignedToMember.DisplayName;
-            MemberId = workItem.AssignedToMember.Id;
-            MemberImageUrl = workItem.AssignedToMember.ImageUrl;
-            MemberUniqueName = workItem.AssignedToMember.UniqueName;
+            IsBug = workItem.IsTypeBug;
+            IsStory = workItem.IsTypeProductBacklogItem;
+            MemberDisplayName = workItem.AssignedToMember?.DisplayName;
+            MemberId = workItem.AssignedToMember?.Id ?? Guid.Empty;
+            MemberImageUrl = workItem.AssignedToMember?.ImageUrl;
+            MemberUniqueName = workItem.AssignedToMember?.UniqueName;
             Title = workItem.Title;
 
             State = GetState(workItem);
@@ -38,6 +40,10 @@ namespace VstsDash.AppServices.WorkStories
         public double Effort { get; }
 
         public long Id { get; }
+
+        public bool IsBug { get; }
+
+        public bool IsStory { get; }
 
         public string MemberDisplayName { get; }
 
@@ -57,7 +63,7 @@ namespace VstsDash.AppServices.WorkStories
 
             return childItems
                 .Where(x => x.IsTypeTask && x.AssignedToMember != null &&
-                            x.AssignedToMember.Id != workItem.AssignedToMember.Id)
+                            x.AssignedToMember.Id != workItem.AssignedToMember?.Id)
                 .Distinct(x => x.AssignedToMember.Id)
                 .OrderBy(x => x.AssignedToMember.DisplayName)
                 .Select(x => (x.AssignedToMember.DisplayName, x.AssignedToMember.ImageUrl))

@@ -49,39 +49,39 @@
 
                 <div class="card-block p-1">
                     <div class="d-flex flex-row justify-content-center text-center">
-                        <stat value="@Model.StoryEffortsTotal" description="Total"
+                        <stat value="@Model.EffortsTotal" description="Total"
                               class="@topStatsCssClass bg-faded"
                               style="@topStatsCssStyle"
                               is-inverse="true"
                               value-css="h4 mb-0"/>
 
-                        <stat value="@Model.StoryEffortsInProgress" description="In progress"
+                        <stat value="@Model.EffortsInProgress" description="In progress"
                               class="@topStatsCssClass bg-faded border-warning"
                               style="@topStatsCssStyle"
                               value-css="h4 mb-0"/>
 
-                        <stat value="@Model.StoryEffortsDone" description="Done"
+                        <stat value="@Model.EffortsDone" description="Done"
                               class="@topStatsCssClass bg-faded border-success"
                               style="@topStatsCssStyle"
                               value-css="h4 mb-0"/>
                     </div>
 
-                    @if (Model.StoryEffortsTotal > 0)
+                    @if (Model.EffortsTotal > 0)
                     {
                         <div class="card-block pl-1 pr-1 pt-0 pb-1">
                             <div class="progress mt-2">
                                 <div class="progress-bar bg-success" role="progressbar"
-                                     style="height: 24px; width: @(Model.StoryEffortsDonePercent)%;">
-                                    @if (!isDashboard && Model.StoryEffortsDonePercent > 0)
+                                     style="height: 24px; width: @(Model.EffortsDonePercent)%;">
+                                    @if (!isDashboard && Model.EffortsDonePercent > 0)
                                     {
-                                        @:@(Model.StoryEffortsDonePercent)%
+                                        @:@(Model.EffortsDonePercent)%
                                     }
                                 </div>
                                 <div class="progress-bar bg-warning" role="progressbar"
-                                     style="height: 24px; width: @(Model.StoryEffortsInProgressPercent)%;">
-                                    @if (!isDashboard && Model.StoryEffortsInProgressPercent > 0)
+                                     style="height: 24px; width: @(Model.EffortsInProgressPercent)%;">
+                                    @if (!isDashboard && Model.EffortsInProgressPercent > 0)
                                     {
-                                        @:@(Model.StoryEffortsInProgressPercent)%
+                                        @:@(Model.EffortsInProgressPercent)%
                                     }
                                 </div>
                             </div>

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using VstsDash.AppServices.WorkIteration;
-using VstsDash.AppServices.WorkTeamBoard;
 using VstsDash.RestApi.ApiResponses;
 
 namespace VstsDash.AppServices.WorkStories
@@ -27,10 +26,12 @@ namespace VstsDash.AppServices.WorkStories
             ToDate = toDate;
             IterationName = iteration.Name;
 
-            StoryEffortsTotal = workIteration.Items.Sum(x => x.Effort);
+            AllParentWorkItems = GetAllParentWorkItems(workIteration);
 
-            Stories = GetStoryItems(workIteration);
+            Stories = AllParentWorkItems.Where(x => x.IsStory).ToList();
         }
+
+        public IReadOnlyCollection<Story> AllParentWorkItems { get; }
 
         public DateTime FromDate { get; }
 
@@ -38,19 +39,14 @@ namespace VstsDash.AppServices.WorkStories
 
         public IReadOnlyCollection<Story> Stories { get; }
 
-        public double StoryEffortsTotal { get; }
-
         public TeamCapacity TeamCapacity { get; }
 
         public DateTime ToDate { get; }
 
-        private static IReadOnlyCollection<Story> GetStoryItems(Iteration workIteration)
+        private static List<Story> GetAllParentWorkItems(Iteration workIteration)
         {
-            var items = workIteration.Items ?? Enumerable.Empty<WorkItem>();
-
-            return items
-                .Where(x => x.IsTypeProductBacklogItem && x.AssignedToMember != null &&
-                            !x.Tags.Contains(TeamBoard.WorkItemExcludeTagName))
+            return (workIteration.Items ?? Enumerable.Empty<WorkItem>())
+                .Where(x => x.IsTypeProductBacklogItem || x.IsTypeBug)
                 .Select(x => new Story(x))
                 .OrderByDescending(x => x.ClosedDate)
                 .ThenByDescending(x => x.ChangedDate)
